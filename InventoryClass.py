@@ -5,10 +5,10 @@
 
 class Inventory:
 
-    def __init__(self, items):
+    def __init__(self, items={}):
         self.items = items
 
-    def listItems(self):
+    def list_items(self):
         for item in self.items:
             if self.items[item > 0]:
                 print(f'Name: {item} Quantity: {self.items[item]}')

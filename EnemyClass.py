@@ -4,18 +4,18 @@
 #Final Project: Enemy Class
 
 class Enemy:
-    def __init__(self, name, health, magic, damage, defense):
+    def __init__(self, name='', health=0, magic=0, damage=0, defense=0):
         self.name = name
         self.health = health
         self.magic = magic
         self.damage = damage
         self.defense = defense
 
-    def modifyHealth(self, change):
+    def modify_health(self, change):
         self.health += change
 
-    def modifyMagic(self, change):
+    def modify_magic(self, change):
         self.magic += change
     
-    def printStats(self):
+    def print_stats(self):
         print(f'____________________\n{self.name}\nHealth: {self.health}\nMagic: {self.magic}\nDamage: {self.damage}\nDefense: {self.defense}')
