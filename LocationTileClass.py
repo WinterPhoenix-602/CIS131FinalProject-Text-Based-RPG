@@ -6,15 +6,10 @@
 from EnemyClass import Enemy
 
 class Tile:
-    def __init__(self, name='', description='', enemy='', directions=[], north='', east='', south='', west=''):
+    def __init__(self, name='', description='', enemy=''):
         self.name = name
         self.description = description
         self.enemy = enemy
-        self.directions = directions
-        self.north = north
-        self.east = east
-        self.south = south
-        self.west = west
         
     def reader(self, input_dict, *kwargs):
         for key in input_dict:
