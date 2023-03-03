@@ -42,6 +42,7 @@ def menu(tile, dict_0):
                     dict_0=json.loads(a[0])
                     break
                 case 5:
+                    print('Yet to be implemented.')
                     continue
                 case 6:
                     break
