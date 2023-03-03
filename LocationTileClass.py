@@ -6,11 +6,15 @@
 from EnemyClass import Enemy
 
 class Tile:
-    def __init__(self, name='', description='', enemy='', directions=[]):
+    def __init__(self, name='', description='', enemy='', directions=[], north='', east='', south='', west=''):
         self.name = name
         self.description = description
         self.enemy = enemy
         self.directions = directions
+        self.north = north
+        self.east = east
+        self.south = south
+        self.west = west
         
     def reader(self, input_dict, *kwargs):
         for key in input_dict:
@@ -21,3 +25,6 @@ class Tile:
             except:
                 print("No such attribute, please consider adding it in init.")
                 continue
+
+    def offerDirections(self):
+        print(f'1: Go North\n2: Go East\n3: Go South\n4: Go West')
