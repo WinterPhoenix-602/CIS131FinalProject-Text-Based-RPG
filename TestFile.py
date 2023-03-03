@@ -15,7 +15,8 @@ dict_0=json.loads(a[0])
 tile_instance = Tile()
 tile_instance.reader(dict_0)
 
-print(f'{tile_instance.name} {tile_instance.enemy.name}')
+print(f'{tile_instance.name}\n{tile_instance.description}')
+tile_instance.offerDirections()
 
 def main():
     player = Player('Player', 100, 100, 5, 1)
