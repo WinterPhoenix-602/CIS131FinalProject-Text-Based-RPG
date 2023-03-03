@@ -1,0 +1,28 @@
+#Caiden Wilson
+#3/2/2023
+#CIS131
+#Final Project: Player Class
+
+class Player:
+    maxHealth = 100
+    maxMagic = 100
+
+    def __init__(self, name, health, magic, baseDamage, baseDefense):
+        self.name = name
+        self.health = health
+        self.magic = magic
+        self.baseDamage = baseDamage
+        self.baseDefense = baseDefense
+
+    def modifyHealth(self, change):
+        self.health += change
+        if self.health > self.maxHealth:
+            self.health = self.maxHealth
+
+    def modifyMagic(self, change):
+        self.magic += change
+        if self.magic > self.maxMagic:
+            self.magic = self.maxMagic
+    
+    def printStats(self):
+        print(f'____________________\n{self.name}\nHealth: {self.health}\nMagic: {self.magic}\nDamage: {self.baseDamage}\nDefense: {self.baseDefense}')
