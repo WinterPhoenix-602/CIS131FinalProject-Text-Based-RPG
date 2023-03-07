@@ -36,7 +36,7 @@ class Player:
 
     def attack(self, target):
         target.health -= self.damage
-        print(f"You hit {target.name} and dealt {self.damage}!")
+        print(f"You hit {target.name} and dealt {self.damage} damage!")
     
     def print_stats(self):
         print(f"{self.name}\t{self.health}\t{self.mana}\t{self.damage}")
