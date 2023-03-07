@@ -6,20 +6,19 @@
 from EnemyClass import Enemy
 
 class Tile:
-    def __init__(self, name = '', description = '', enemy = ''):
+    def __init__(self, name = '', description = '', enemies = {'enemyName':{'health':0, 'magic':0, 'damage':0, 'quantity':0}}):
         self.name = name
         self.description = description
-        self.enemy = enemy
+        self.enemies = enemies
+        self.enemies2 = {}
         
-    def reader(self, input_dict, *kwargs):
+    def reader(self, input_dict):
         for key in input_dict:
             try:
                 setattr(self, key, input_dict[key])
-                if self.enemy == 'goblin':
-                    self.enemy = Enemy('Goblin', 20, 0, 2, 1)
             except:
-                print("No such attribute, please consider adding it in init.")
+                print('No such attribute, please consider adding it in init.')
                 continue
-
-    def offerDirections(self):
-        print(f'1: Go North\n2: Go East\n3: Go South\n4: Go West')
+        for enemy in self.enemies:
+            for quantity in range(self.enemies[enemy]['quantity']):
+                self.enemies2[enemy + str(quantity)] = Enemy(f'{enemy} {str(quantity + 1)}', self.enemies[enemy]['health'], self.enemies[enemy]['magic'], self.enemies[enemy]['damage'])

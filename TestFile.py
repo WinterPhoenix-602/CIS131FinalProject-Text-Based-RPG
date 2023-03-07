@@ -45,7 +45,8 @@ def main():
     currentTile.reader(tiles_dict['tile' + str(tileCoords[0]) + str(tileCoords[1])])
 
     while True:
-        print(f'{currentTile.name}\n{currentTile.description}')
+        combat(currentTile)
+        print(f'{currentTile.name}\n{currentTile.description}')        
         tileCoords, tiles_dict, choice = menu(tileCoords, tiles_dict)
 
         if choice == 6:
@@ -56,5 +57,18 @@ def main():
             currentTile.reader(tiles_dict['tile' + str(tileCoords[0]) + str(tileCoords[1])])
         except KeyError:
             print('You can\'t go that way.\n__________________________________________________')
+            match choice:
+                case 1:
+                    tileCoords[1] -= 1
+                case 2:
+                    tileCoords[0] -= 1
+                case 3: 
+                    tileCoords[1] += 1
+                case 4:
+                    tileCoords[0] += 1
+
+def combat(currentTile):
+    for enemy in currentTile.enemies2:
+        currentTile.enemies2[enemy].print_stats()
 
 main()
