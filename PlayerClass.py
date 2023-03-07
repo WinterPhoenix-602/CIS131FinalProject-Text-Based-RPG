@@ -14,6 +14,14 @@ class Player:
         self.baseDamage = baseDamage
         self.baseDefense = baseDefense
 
+    def reader(self, input_dict):
+        for key in input_dict:
+            try:
+                setattr(self, key, input_dict[key])
+            except:
+                print('No such attribute, please consider adding it in init.')
+                continue
+    
     def modify_health(self, change):
         self.health += change
         if self.health > self.maxHealth:
