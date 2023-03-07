@@ -33,4 +33,4 @@ class Player:
             self.mana = self.maxMana
     
     def print_stats(self):
-        print(f'____________________\n{self.name}\nHealth: {self.health}\nMana: {self.mana}\nDamage: {self.damage}\nDefense: {self.defense}')
+        print(f'{self.name}\t{self.health}\t{self.mana}\t{self.damage}')
