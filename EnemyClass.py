@@ -22,6 +22,9 @@ class Enemy:
             print(f"{self.name} hit you and dealt {self.damage // target.defense} damage!")
         else:
             print(f"{self.name} tried to hit you, but missed!")
+
+    def death(self):
+        print(f"{self.name} falls on the floor, dead.")
     
     def print_stats(self):
         print(f"{self.name}\t{self.health}\t{self.damage}")
