@@ -21,4 +21,4 @@ class Tile:
                 continue
         for enemy in self.enemies:
             for quantity in range(self.enemies[enemy]['quantity']):
-                self.enemies_dict[enemy + str(quantity)] = Enemy(f'{enemy} {str(quantity + 1)}', self.enemies[enemy]['health'], self.enemies[enemy]['damage'])
+                self.enemies_dict[enemy + str(quantity + 1)] = Enemy(f'{enemy} {str(quantity + 1)}', self.enemies[enemy]['health'], self.enemies[enemy]['damage'])
