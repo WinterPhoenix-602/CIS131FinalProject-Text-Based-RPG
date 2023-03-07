@@ -34,7 +34,7 @@ def main():
     while True:
         player, currentTile = combat(player, currentTile)
         print(f"{currentTile.name}\n{currentTile.description}")        
-        tileCoords, tiles_dict, choice = menu(tileCoords, tiles_dict)
+        tileCoords, choice = menu(tileCoords)
 
         if choice == 6:
             print("Would you like to save your progress?")
@@ -54,7 +54,7 @@ def main():
                 case 4:
                     tileCoords[0] += 1
 
-def menu(tileCoords, tiles_dict):
+def menu(tileCoords):
     while True:
         try:
             choice = int(input("What would you like to do?\n1: Go North\n2: Go East\n3: Go South\n4: Go West\n5: Open Inventory\n6: Exit Game\n? "))
@@ -82,7 +82,7 @@ def menu(tileCoords, tiles_dict):
         except:
             print("I'm sorry, that's not a valid choice.")
             continue
-    return tileCoords, tiles_dict, choice
+    return tileCoords, choice
 
 def combat(player, currentTile):
     while len(currentTile.enemies_dict) > 0:
