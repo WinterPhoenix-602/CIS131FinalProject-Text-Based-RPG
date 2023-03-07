@@ -41,7 +41,7 @@ def main():
     with open('DefaultTiles.json','r') as file:
         a=file.readlines()
         file.close()
-    tiles_dict=json.loads(a[0])
+    tiles_dict = json.loads(a[0])
     currentTile.reader(tiles_dict['tile' + str(tileCoords[0]) + str(tileCoords[1])])
 
     while True:
