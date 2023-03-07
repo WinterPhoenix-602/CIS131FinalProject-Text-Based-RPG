@@ -14,14 +14,18 @@ def main():
     inventory = Inventory()
     tileCoords = [0,0]
     currentTile = Tile()
+    
+    #loads chosen save file
     while True:
         try:
-            saveFile = input("Input your save file: ")
-            with open(f"{saveFile}.json","r") as tilesFile:
-                a=tilesFile.readlines()
-                tilesFile.close()
-            tiles_dict = json.loads(a[0])
-            currentTile.reader(tiles_dict['tile' + str(tileCoords[0]) + str(tileCoords[1])])
+            saveFileName = input("Input your save file: ")
+            with open(f"{saveFileName}.json","r") as saveFile:
+                a=saveFile.readlines()
+                saveFile.close()
+            saveFile_dict = json.loads(a[0])
+            player_dict = saveFile_dict["player"]
+            tiles_dict = saveFile_dict["tiles"]
+            currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
             break
         except FileNotFoundError:
             print("I'm sorry, the file you entered does not exist.")
@@ -33,11 +37,11 @@ def main():
         tileCoords, tiles_dict, choice = menu(tileCoords, tiles_dict)
 
         if choice == 6:
-            print("Thank you for playing.")
+            print("Would you like to save your progress?")
             break
         
         try:
-            currentTile.reader(tiles_dict['tile' + str(tileCoords[0]) + str(tileCoords[1])])
+            currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
         except KeyError:
             print("You can't go that way.\n__________________________________________________")
             match choice:
