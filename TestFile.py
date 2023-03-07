@@ -46,6 +46,7 @@ def main():
                 with open(f"{saveFileName}.json","w") as saveFile:
                     json.dump(saveFile_dict, saveFile)
                     saveFile.close()
+                print("Thank you for playing.")
             break
         
         try:
@@ -87,7 +88,6 @@ def menu(tileCoords, saveFile):
                     while True:
                         save = input("Would you like to save your progress? (yes/no): ")
                         if save == "yes":
-                            print("Thank you for playing.")
                             break
                         elif save == "no":
                             save = input("Are you sure? (yes/no): ")
