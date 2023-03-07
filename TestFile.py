@@ -5,21 +5,30 @@
 
 import json
 from PlayerClass import Player
+from InventoryClass import Inventory
 from EnemyClass import Enemy
 from LocationTileClass import Tile
 
 def main():
     player = Player()
+    inventory = Inventory()
     tileCoords = [0,0]
     currentTile = Tile()
-    with open("DefaultTiles.json","r") as tilesFile:
-        a=tilesFile.readlines()
-        tilesFile.close()
-    tiles_dict = json.loads(a[0])
-    currentTile.reader(tiles_dict['tile' + str(tileCoords[0]) + str(tileCoords[1])])
+    while True:
+        try:
+            saveFile = input("Input your save file: ")
+            with open(f"{saveFile}.json","r") as tilesFile:
+                a=tilesFile.readlines()
+                tilesFile.close()
+            tiles_dict = json.loads(a[0])
+            currentTile.reader(tiles_dict['tile' + str(tileCoords[0]) + str(tileCoords[1])])
+            break
+        except FileNotFoundError:
+            print("I'm sorry, the file you entered does not exist.")
+            continue
 
     while True:
-        player = combat(player, currentTile)
+        player, currentTile = combat(player, currentTile)
         print(f"{currentTile.name}\n{currentTile.description}")        
         tileCoords, tiles_dict, choice = menu(tileCoords, tiles_dict)
 
@@ -74,11 +83,7 @@ def menu(tileCoords, tiles_dict):
 def combat(player, currentTile):
     while len(currentTile.enemies_dict) > 0:
         #prints list of enemies and relevant stats
-        print(f"Name\t\tHealth\tDamage")
-        print(f"__________________________________________________")
-        for enemy in currentTile.enemies_dict:
-            currentTile.enemies_dict[enemy].print_stats()
-        print(f"__________________________________________________")
+        currentTile.display_enemies()
 
         #print player status
         print(f"Name\tHealth\tMana\tDamage")
@@ -86,7 +91,7 @@ def combat(player, currentTile):
 
         #allows players to use actions
         try:
-            choice = int(input("What would you like to do?\n1: Attack\n2: Magic\n? ")) #displays options
+            choice = int(input("What would you like to do?\n1: Attack\n2: Magic\n3: Use Item\n? ")) #displays options
         except:
             print("I'm sorry, that's not a valid choice.")
             continue
@@ -106,10 +111,13 @@ def combat(player, currentTile):
                     continue
                 for count, enemy in enumerate(currentTile.enemies_dict): #damages selected target
                     if count + 1 == attackEnemy:
-                        player.attack(currentTile.enemies_dict[enemy])
-                        
+                        player.attack(currentTile.enemies_dict[enemy])        
             case 2:
                 print("Not yet implemented.")
+                continue
+            case 3:
+                print("Not yet implemented.")
+                continue
             case _:
                 print("I'm sorry, that's not a valid choice.")
                 continue
@@ -124,6 +132,6 @@ def combat(player, currentTile):
         for i in list(currentTile.enemies_dict.keys()):
             if currentTile.enemies_dict[i].health <= 0:
                 del currentTile.enemies_dict[i]
-    return player
+    return player, currentTile
 
 main()
