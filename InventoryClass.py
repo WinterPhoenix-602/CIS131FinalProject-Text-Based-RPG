@@ -12,4 +12,3 @@ class Inventory:
         for item in self.items:
             if self.items[item > 0]:
                 print(f'Name: {item} Quantity: {self.items[item]}')
-                
