@@ -3,6 +3,7 @@
 #CIS131
 #Final Project: Testing
 
+import sys
 import json
 from PlayerClass import Player
 from InventoryClass import Inventory
@@ -18,7 +19,7 @@ def main():
     #loads chosen save file
     while True:
         try:
-            saveFileName = input("Input your save file: ")
+            saveFileName = input("Input the name of your save file: ")
             with open(f"{saveFileName}.json","r") as saveFile:
                 a=saveFile.readlines()
                 saveFile.close()
@@ -34,10 +35,17 @@ def main():
     while True:
         player, currentTile = combat(player, currentTile)
         print(f"{currentTile.name}\n{currentTile.description}")        
-        tileCoords, choice = menu(tileCoords)
-
+        
+        #displays menu
+        tileCoords, choice, save = menu(tileCoords, saveFile)
         if choice == 6:
-            print("Would you like to save your progress?")
+            if save == "yes":
+                saveFile_dict["player"] = player_dict
+                saveFile_dict["tiles"] = tiles_dict
+                saveFileName = input("Input the name of your save file: ")
+                with open(f"{saveFileName}.json","w") as saveFile:
+                    json.dump(saveFile_dict, saveFile)
+                    saveFile.close()
             break
         
         try:
@@ -54,8 +62,9 @@ def main():
                 case 4:
                     tileCoords[0] += 1
 
-def menu(tileCoords):
+def menu(tileCoords, saveFile):
     while True:
+        save = ""
         try:
             choice = int(input("What would you like to do?\n1: Go North\n2: Go East\n3: Go South\n4: Go West\n5: Open Inventory\n6: Exit Game\n? "))
             match choice:
@@ -75,6 +84,23 @@ def menu(tileCoords):
                     print("Yet to be implemented.")
                     continue
                 case 6:
+                    while True:
+                        save = input("Would you like to save your progress? (yes/no): ")
+                        if save == "yes":
+                            print("Thank you for playing.")
+                            break
+                        elif save == "no":
+                            save = input("Are you sure? (yes/no): ")
+                            if save == "yes":
+                                print("Thank you for playing.")
+                                save = "no"
+                                return tileCoords, choice, save
+                            elif save == "no":
+                                continue
+                            else:
+                                print("I'm sorry, that is not a valid choice.")
+                        else:
+                                print("I'm sorry, that is not a valid choice.")
                     break
                 case _:
                     print("I'm sorry, that's not a valid choice.")
@@ -82,7 +108,7 @@ def menu(tileCoords):
         except:
             print("I'm sorry, that's not a valid choice.")
             continue
-    return tileCoords, choice
+    return tileCoords, choice, save
 
 def combat(player, currentTile):
     while len(currentTile.enemies_dict) > 0:
