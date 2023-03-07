@@ -132,6 +132,8 @@ def combat(player, currentTile):
         for i in list(currentTile.enemies_dict.keys()):
             if currentTile.enemies_dict[i].health <= 0:
                 del currentTile.enemies_dict[i]
+    for i in list(currentTile.enemies.keys()):
+        del currentTile.enemies[i]
     return player, currentTile
 
 main()
