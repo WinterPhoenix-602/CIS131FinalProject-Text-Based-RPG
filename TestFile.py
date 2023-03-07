@@ -68,8 +68,15 @@ def main():
                     tileCoords[0] += 1
 
 def combat(currentTile):
-    print(f'Name\t\tHealth\tDamage\t')
-    for enemy in currentTile.enemies_dict:
-        currentTile.enemies_dict[enemy].print_stats()
+    while len(currentTile.enemies_dict) > 0:
+        for i in list(currentTile.enemies_dict.keys()):
+            if currentTile.enemies_dict[i].health <= 0:
+                del currentTile.enemies_dict[i]
+        print(f'Name\t\tHealth\tDamage\t')
+        print(f'__________________________________________________')
+        for enemy in currentTile.enemies_dict:
+            currentTile.enemies_dict[enemy].print_stats()
+        print(f'__________________________________________________')
+        break
 
 main()
