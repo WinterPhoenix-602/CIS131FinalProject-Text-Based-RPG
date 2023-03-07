@@ -7,12 +7,12 @@ class Player:
     maxHealth = 100
     maxMana = 100
 
-    def __init__(self, name = 'Player', health = 100, mana = 50, baseDamage = 5, baseDefense = 1):
+    def __init__(self, name = 'Player', health = 100, mana = 50, damage = 5, defense = 1):
         self.name = name
         self.health = health
         self.mana = mana
-        self.baseDamage = baseDamage
-        self.baseDefense = baseDefense
+        self.damage = damage
+        self.defense = defense
 
     def reader(self, input_dict):
         for key in input_dict:
@@ -33,4 +33,4 @@ class Player:
             self.mana = self.maxMana
     
     def print_stats(self):
-        print(f'____________________\n{self.name}\nHealth: {self.health}\nMana: {self.mana}\nDamage: {self.baseDamage}\nDefense: {self.baseDefense}')
+        print(f'____________________\n{self.name}\nHealth: {self.health}\nMana: {self.mana}\nDamage: {self.damage}\nDefense: {self.defense}')
