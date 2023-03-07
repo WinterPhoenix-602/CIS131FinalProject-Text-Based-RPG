@@ -30,7 +30,7 @@ def main():
         try:
             currentTile.reader(tiles_dict['tile' + str(tileCoords[0]) + str(tileCoords[1])])
         except KeyError:
-            print("You can\'t go that way.\n__________________________________________________")
+            print("You can't go that way.\n__________________________________________________")
             match choice:
                 case 1:
                     tileCoords[1] -= 1
@@ -64,7 +64,7 @@ def menu(tileCoords, tiles_dict):
                 case 6:
                     break
         except TypeError:
-            print("I\'m sorry, that\'s not a valid choice.")
+            print("I'm sorry, that's not a valid choice.")
             continue
     return tileCoords, tiles_dict, choice
 
@@ -85,24 +85,23 @@ def combat(player, currentTile):
         try:
             choice = int(input("What would you like to do?\n1: Attack\n2: Magic\n? "))
         except:
-            print("I\'m sorry, that\'s not a valid choice.")
+            print("I'm sorry, that's not a valid choice.")
             continue
 
         match choice:
             case 1:
-                if len(currentTile.enemies_dict) > 0:
-                    print("Which enemy do you want to attack?")
-                    for count, enemy in enumerate(currentTile.enemies_dict):
-                        print(f"{count + 1}: {currentTile.enemies_dict[enemy].name}")
-                    try:
-                        attackEnemy = int(input("? "))
-                    except:
-                        print("I'm sorry, that's not a valid choice.")
-                        continue
-                    for count, enemy in enumerate(currentTile.enemies_dict):
-                        if count + 1 == attackEnemy:
-                            currentTile.enemies_dict[enemy].modify_health(-player.damage)
-                            print(f"You hit {currentTile.enemies_dict[enemy].name} and dealt {player.damage} damage!")
+                print("Which enemy do you want to attack?")
+                for count, enemy in enumerate(currentTile.enemies_dict):
+                    print(f"{count + 1}: {currentTile.enemies_dict[enemy].name}")
+                try:
+                    attackEnemy = int(input("? "))
+                except:
+                    print("I'm sorry, that's not a valid choice.")
+                    continue
+                for count, enemy in enumerate(currentTile.enemies_dict):
+                    if count + 1 == attackEnemy:
+                        currentTile.enemies_dict[enemy].modify_health(-player.damage)
+                        print(f"You hit {currentTile.enemies_dict[enemy].name} and dealt {player.damage} damage!")
             case 2:
                 print("Not yet implemented.")
         
