@@ -8,38 +8,22 @@ from PlayerClass import Player
 from EnemyClass import Enemy
 from LocationTileClass import Tile
 
-def menu(tile, dict_0):
+def menu(tileCoords, tiles_dict):
     while True:
         try:
-            choice = int(input('What would you like to do?\n1: Go North\n2: Go East\n3: Go South\n4: Go West\n5: Open Inventory\n6: Exit Game '))
+            choice = int(input('What would you like to do?\n1: Go North\n2: Go East\n3: Go South\n4: Go West\n5: Open Inventory\n6: Exit Game\n? '))
             match choice:
                 case 1:
-                    tile[1] += 1
-                    with open('Tile' + str(tile[0]) + str(tile[1]) + '.json','r') as file:
-                        a=file.readlines()
-                        file.close()
-                    dict_0=json.loads(a[0])
+                    tileCoords[1] += 1
                     break
                 case 2:
-                    tile[0] += 1
-                    with open('Tile' + str(tile[0]) + str(tile[1]) + '.json','r') as file:
-                        a=file.readlines()
-                        file.close()
-                    dict_0=json.loads(a[0])
+                    tileCoords[0] += 1
                     break
                 case 3: 
-                    tile[1] -= 1
-                    with open('Tile' + str(tile[0]) + str(tile[1]) + '.json','r') as file:
-                        a=file.readlines()
-                        file.close()
-                    dict_0=json.loads(a[0])
+                    tileCoords[1] -= 1
                     break
                 case 4:
-                    tile[0] -= 1
-                    with open('Tile' + str(tile[0]) + str(tile[1]) + '.json','r') as file:
-                        a=file.readlines()
-                        file.close()
-                    dict_0=json.loads(a[0])
+                    tileCoords[0] -= 1
                     break
                 case 5:
                     print('Yet to be implemented.')
@@ -49,22 +33,24 @@ def menu(tile, dict_0):
         except TypeError:
             print('I\'m sorry, that\'s not a valid choice.')
             continue
-        except FileNotFoundError:
-            print('You can\'t go that way.')
-    return tile, dict_0, choice
+    return tileCoords, tiles_dict, choice
 
 def main():
-    tile = [0,0]
-    with open('Tile' + str(tile[0]) + str(tile[1]) + '.json','r') as file:
+    tileCoords = [0,0]
+    currentTile = Tile()
+    with open('DefaultTiles.json','r') as file:
         a=file.readlines()
         file.close()
-    dict_0=json.loads(a[0])
-    while True:
-        tile_instance = Tile()
-        tile_instance.reader(dict_0)
+    tiles_dict=json.loads(a[0])
+    currentTile.reader(tiles_dict['tile' + str(tileCoords[0]) + str(tileCoords[1])])
 
-        print(f'{tile_instance.name}\n{tile_instance.description}')
-        tile, dict_0, choice = menu(tile, dict_0)
+    while True:
+        print(f'{currentTile.name}\n{currentTile.description}')
+        tileCoords, tiles_dict, choice = menu(tileCoords, tiles_dict)
+        try:
+            currentTile.reader(tiles_dict['tile' + str(tileCoords[0]) + str(tileCoords[1])])
+        except KeyError:
+            print('You can\'t go that way.\n__________________________________________________')
 
         if choice == 6:
             break
