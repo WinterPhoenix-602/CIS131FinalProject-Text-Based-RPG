@@ -4,7 +4,6 @@
 #Final Project: Enemy Class
 
 from random import randint #enables use of random numbers
-from PlayerClass import Player
 
 class Enemy:
     def __init__(self, name = "", health = 0, damage = 0, accuracy = 50):
