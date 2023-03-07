@@ -63,7 +63,10 @@ def menu(tileCoords, tiles_dict):
                     continue
                 case 6:
                     break
-        except TypeError:
+                case _:
+                    print("I'm sorry, that's not a valid choice.")
+                    continue
+        except:
             print("I'm sorry, that's not a valid choice.")
             continue
     return tileCoords, tiles_dict, choice
@@ -83,27 +86,39 @@ def combat(player, currentTile):
 
         #allows players to use actions
         try:
-            choice = int(input("What would you like to do?\n1: Attack\n2: Magic\n? "))
+            choice = int(input("What would you like to do?\n1: Attack\n2: Magic\n? ")) #displays options
         except:
             print("I'm sorry, that's not a valid choice.")
             continue
 
         match choice:
             case 1:
-                print("Which enemy do you want to attack?")
+                print("Which enemy do you want to attack?") #displays target selection
                 for count, enemy in enumerate(currentTile.enemies_dict):
                     print(f"{count + 1}: {currentTile.enemies_dict[enemy].name}")
                 try:
-                    attackEnemy = int(input("? "))
+                    attackEnemy = int(input("? ")) #gets selected target
+                    if attackEnemy > len(currentTile.enemies_dict):
+                        print("I'm sorry, that's not a valid choice.")
+                        continue
                 except:
                     print("I'm sorry, that's not a valid choice.")
                     continue
-                for count, enemy in enumerate(currentTile.enemies_dict):
+                for count, enemy in enumerate(currentTile.enemies_dict): #damages selected target
                     if count + 1 == attackEnemy:
-                        currentTile.enemies_dict[enemy].modify_health(-player.damage)
-                        print(f"You hit {currentTile.enemies_dict[enemy].name} and dealt {player.damage} damage!")
+                        player.attack(currentTile.enemies_dict[enemy])
+                        
             case 2:
                 print("Not yet implemented.")
+            case _:
+                print("I'm sorry, that's not a valid choice.")
+                continue
+        
+        for enemy in currentTile.enemies_dict: #enemy turn(s)
+            if currentTile.enemies_dict[enemy].health <= 0:
+                currentTile.enemies_dict[enemy].death()
+            else:
+                currentTile.enemies_dict[enemy].attack(player)
         
         #removes dead enemies from enemies dictionary
         for i in list(currentTile.enemies_dict.keys()):
