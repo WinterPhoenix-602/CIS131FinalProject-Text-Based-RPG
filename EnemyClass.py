@@ -4,12 +4,13 @@
 #Final Project: Enemy Class
 
 class Enemy:
-    def __init__(self, name = '', health = 0, magic = 0, damage = 0, defense = 0):
+    def __init__(self, name = '', health = 0, magic = 0, damage = 0, defense = 0, quantity = 0):
         self.name = name
         self.health = health
         self.magic = magic
         self.damage = damage
         self.defense = defense
+        self.quantity = quantity
 
     def modify_health(self, change):
         self.health += change
