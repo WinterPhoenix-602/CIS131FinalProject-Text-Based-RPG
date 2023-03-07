@@ -49,6 +49,7 @@ def main():
         tileCoords, tiles_dict, choice = menu(tileCoords, tiles_dict)
 
         if choice == 6:
+            print('Thank you for playing.')
             break
         
         try:
