@@ -9,11 +9,13 @@ from EnemyClass import Enemy
 from LocationTileClass import Tile
 
 def main():
+    player = Player()
+
     tileCoords = [0,0]
     currentTile = Tile()
-    with open('DefaultTiles.json','r') as file:
-        a=file.readlines()
-        file.close()
+    with open('DefaultTiles.json','r') as tilesFile:
+        a=tilesFile.readlines()
+        tilesFile.close()
     tiles_dict = json.loads(a[0])
     currentTile.reader(tiles_dict['tile' + str(tileCoords[0]) + str(tileCoords[1])])
 
@@ -80,6 +82,9 @@ def combat(currentTile):
         for enemy in currentTile.enemies_dict:
             currentTile.enemies_dict[enemy].print_stats()
         print(f'__________________________________________________')
+
+        #print player status
+
 
         #allows players to use actions
         choice = int(input('What would you like to do?\n1: Attack\n2:? '))
