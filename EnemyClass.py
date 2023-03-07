@@ -19,7 +19,7 @@ class Enemy:
     def attack(self, target):
         if randint(1, 100) < self.accuracy:
             target.health -= self.damage / target.defense
-            print(f"{self.name} hit you and dealt {self.damage / target.defense}!")
+            print(f"{self.name} hit you and dealt {self.damage // target.defense}!")
         else:
             print(f"{self.name} tried to hit you, but missed!")
     
