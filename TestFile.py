@@ -68,6 +68,7 @@ def main():
                     tileCoords[0] += 1
 
 def combat(currentTile):
+    print(f'Name\t\tHealth\tDamage\t')
     for enemy in currentTile.enemies_dict:
         currentTile.enemies_dict[enemy].print_stats()
 

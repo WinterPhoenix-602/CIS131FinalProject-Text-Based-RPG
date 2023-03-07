@@ -6,7 +6,7 @@
 from EnemyClass import Enemy
 
 class Tile:
-    def __init__(self, name = '', description = '', enemies = {'enemyName':{'health':0, 'magic':0, 'damage':0, 'quantity':0}}):
+    def __init__(self, name = '', description = '', enemies = {'enemyName':{'health':0, 'damage':0, 'quantity':0}}):
         self.name = name
         self.description = description
         self.enemies = enemies
@@ -21,4 +21,4 @@ class Tile:
                 continue
         for enemy in self.enemies:
             for quantity in range(self.enemies[enemy]['quantity']):
-                self.enemies_dict[enemy + str(quantity)] = Enemy(f'{enemy} {str(quantity + 1)}', self.enemies[enemy]['health'], self.enemies[enemy]['magic'], self.enemies[enemy]['damage'])
+                self.enemies_dict[enemy + str(quantity)] = Enemy(f'{enemy} {str(quantity + 1)}', self.enemies[enemy]['health'], self.enemies[enemy]['damage'])
