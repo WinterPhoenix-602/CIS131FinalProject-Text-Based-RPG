@@ -10,7 +10,7 @@ class Tile:
         self.name = name
         self.description = description
         self.enemies = enemies
-        self.enemies2 = {}
+        self.enemies_dict = {}
         
     def reader(self, input_dict):
         for key in input_dict:
@@ -21,4 +21,4 @@ class Tile:
                 continue
         for enemy in self.enemies:
             for quantity in range(self.enemies[enemy]['quantity']):
-                self.enemies2[enemy + str(quantity)] = Enemy(f'{enemy} {str(quantity + 1)}', self.enemies[enemy]['health'], self.enemies[enemy]['magic'], self.enemies[enemy]['damage'])
+                self.enemies_dict[enemy + str(quantity)] = Enemy(f'{enemy} {str(quantity + 1)}', self.enemies[enemy]['health'], self.enemies[enemy]['magic'], self.enemies[enemy]['damage'])
