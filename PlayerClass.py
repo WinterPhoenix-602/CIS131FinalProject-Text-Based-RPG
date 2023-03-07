@@ -5,12 +5,12 @@
 
 class Player:
     maxHealth = 100
-    maxMagic = 100
+    maxMana = 100
 
-    def __init__(self, name = 'Player', health = 100, magic = 50, baseDamage = 5, baseDefense = 1):
+    def __init__(self, name = 'Player', health = 100, mana = 50, baseDamage = 5, baseDefense = 1):
         self.name = name
         self.health = health
-        self.magic = magic
+        self.mana = mana
         self.baseDamage = baseDamage
         self.baseDefense = baseDefense
 
@@ -27,10 +27,10 @@ class Player:
         if self.health > self.maxHealth:
             self.health = self.maxHealth
 
-    def modify_magic(self, change):
-        self.magic += change
-        if self.magic > self.maxMagic:
-            self.magic = self.maxMagic
+    def modify_mana(self, change):
+        self.mana += change
+        if self.mana > self.maxMana:
+            self.mana = self.maxMana
     
     def print_stats(self):
-        print(f'____________________\n{self.name}\nHealth: {self.health}\nMagic: {self.magic}\nDamage: {self.baseDamage}\nDefense: {self.baseDefense}')
+        print(f'____________________\n{self.name}\nHealth: {self.health}\nMana: {self.mana}\nDamage: {self.baseDamage}\nDefense: {self.baseDefense}')
