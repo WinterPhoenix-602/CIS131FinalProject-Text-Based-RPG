@@ -13,7 +13,6 @@ from LocationTileClass import Tile
 def main():
     player = Player()
     inventory = Inventory()
-    tileCoords = [0,0]
     currentTile = Tile()
     
     #loads chosen save file
@@ -26,6 +25,7 @@ def main():
             saveFile_dict = json.loads(a[0])
             player_dict = saveFile_dict["player"]
             tiles_dict = saveFile_dict["tiles"]
+            tileCoords = saveFile_dict["location"]
             currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
             break
         except FileNotFoundError:
@@ -42,6 +42,7 @@ def main():
             if save == "yes":
                 saveFile_dict["player"] = player_dict
                 saveFile_dict["tiles"] = tiles_dict
+                saveFile_dict["location"] = tileCoords
                 saveFileName = input("Input the name of your save file: ")
                 with open(f"{saveFileName}.json","w") as saveFile:
                     json.dump(saveFile_dict, saveFile)
