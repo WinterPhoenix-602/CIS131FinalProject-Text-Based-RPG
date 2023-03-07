@@ -4,7 +4,7 @@
 #Final Project: Enemy Class
 
 class Enemy:
-    def __init__(self, name='', health=0, magic=0, damage=0, defense=0):
+    def __init__(self, name = '', health = 0, magic = 0, damage = 0, defense = 0):
         self.name = name
         self.health = health
         self.magic = magic

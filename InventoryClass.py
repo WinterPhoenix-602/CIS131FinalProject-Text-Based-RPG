@@ -5,7 +5,7 @@
 
 class Inventory:
 
-    def __init__(self, items={}):
+    def __init__(self, items = {}):
         self.items = items
 
     def list_items(self):

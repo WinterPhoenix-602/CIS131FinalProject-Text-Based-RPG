@@ -7,7 +7,7 @@ class Player:
     maxHealth = 100
     maxMagic = 100
 
-    def __init__(self, name='', health=0, magic=0, baseDamage=0, baseDefense=0):
+    def __init__(self, name = '', health = 0, magic = 0, baseDamage = 0, baseDefense = 0):
         self.name = name
         self.health = health
         self.magic = magic

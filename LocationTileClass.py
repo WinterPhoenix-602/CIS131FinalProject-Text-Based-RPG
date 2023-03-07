@@ -6,7 +6,7 @@
 from EnemyClass import Enemy
 
 class Tile:
-    def __init__(self, name='', description='', enemy=''):
+    def __init__(self, name = '', description = '', enemy = ''):
         self.name = name
         self.description = description
         self.enemy = enemy
