@@ -47,12 +47,13 @@ def main():
     while True:
         print(f'{currentTile.name}\n{currentTile.description}')
         tileCoords, tiles_dict, choice = menu(tileCoords, tiles_dict)
+
+        if choice == 6:
+            break
+        
         try:
             currentTile.reader(tiles_dict['tile' + str(tileCoords[0]) + str(tileCoords[1])])
         except KeyError:
             print('You can\'t go that way.\n__________________________________________________')
-
-        if choice == 6:
-            break
 
 main()
