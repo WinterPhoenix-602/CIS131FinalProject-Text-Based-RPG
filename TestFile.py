@@ -18,12 +18,20 @@ def main():
     player_dict, tiles_dict, currentTile, tileCoords, saveFileName = loadGame(mainMenu())
     if type(player_dict) != dict:
         exit()
+    if saveFileName == "NewGame":
+        while True:
+            player.name = input("Choose a name for your character (no more than seven characters long): ")
+            if len(player.name) > 7:
+                print("I'm sorry, that name is too long.")
+                continue
+            player_dict["name"] = player.name
+            break
     while True:
         player, currentTile = combat(player, currentTile)
         print(f"{currentTile.name}\n{currentTile.description}")        
         
         #displays tile menu
-        tileCoords, choice, save = tileMenu(tileCoords)
+        tileCoords, choice, save = tileMenu(player, tileCoords)
         if choice == 6:
             if save == "yes":
                 saveGame(player_dict, tiles_dict, tileCoords, currentTile, saveFileName)
@@ -127,10 +135,14 @@ def loadGame(menuChoice):
             player_dict, tiles_dict, currentTile, tileCoords, saveFileName = 0, 0, 0, 0, 0
             return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
 
-def tileMenu(tileCoords):
+def tileMenu(player, tileCoords):
     save = ""
     while True:
         try:
+            #print player status
+            print(f"Name\tHealth\tMana\tDamage")
+            player.print_stats()
+
             choice = int(input("What would you like to do?\n1: Go North\n2: Go East\n3: Go South\n4: Go West\n5: Open Inventory\n6: Exit Game\n? "))
             match choice:
                 case 1:
