@@ -54,6 +54,78 @@ def mainMenu():
             print(invalidChoice)
             continue
         return choice
+    
+def loadGame(menuChoice):
+    #loads chosen save file
+    currentTile = Tile()
+    while True:
+        if menuChoice == 1:
+            with open(f"NewGame.json","r") as saveFile:
+                b=saveFile.readlines()
+                saveFile.close()
+            currentGame_dict = json.loads(b[0])
+            player_dict = currentGame_dict["player"]
+            tiles_dict = currentGame_dict["tiles"]
+            tileCoords = currentGame_dict["location"]
+            currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
+            saveFileName = "NewGame"
+            return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
+        elif menuChoice == 2:
+            try:
+                with open(f"SaveFileInfo.json","r") as savesInfo:
+                    a=savesInfo.readlines()
+                    savesInfo.close()
+                saveFiles_dict = json.loads(a[0])
+                saveFiles_keyList = list(saveFiles_dict.keys())
+                print("Which game save would you like to load?")
+                for count, saveFile in enumerate(saveFiles_dict):
+                    print(f"{count + 1}: {saveFiles_dict[saveFile]['name']} {saveFiles_dict[saveFile]['info']}")
+                    if count + 1 == len(saveFiles_dict):
+                        print("6: Go Back")
+                try:
+                    saveChoice = int(input("? "))                        
+                except:
+                    print(invalidChoice)
+                    continue
+                match saveChoice:
+                    case 1:
+                        saveFileName = saveFiles_keyList[0]
+                    case 2:
+                        saveFileName = saveFiles_keyList[1]
+                    case 3:
+                        saveFileName = saveFiles_keyList[2]
+                    case 4:
+                        saveFileName = saveFiles_keyList[3]
+                    case 5:
+                        saveFileName = saveFiles_keyList[4]
+                    case 6:
+                        player_dict, tiles_dict, currentTile, tileCoords, saveFileName = loadGame(mainMenu())
+                        return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
+                    case _:
+                        print(invalidChoice)
+                        continue
+                with open(f"{saveFileName}.json","r") as saveFile:
+                    b=saveFile.readlines()
+                    saveFile.close()
+                currentGame_dict = json.loads(b[0])
+                player_dict = currentGame_dict["player"]
+                tiles_dict = currentGame_dict["tiles"]
+                tileCoords = currentGame_dict["location"]
+                currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
+                return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
+            except FileNotFoundError:
+                with open(f"NewGame.json","r") as saveFile:
+                    b=saveFile.readlines()
+                    saveFile.close()
+                currentGame_dict = json.loads(b[0])
+                player_dict = currentGame_dict["player"]
+                tiles_dict = currentGame_dict["tiles"]
+                tileCoords = currentGame_dict["location"]
+                currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
+                return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
+        else:
+            player_dict, tiles_dict, currentTile, tileCoords, saveFileName = 0, 0, 0, 0, 0
+            return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
 
 def tileMenu(tileCoords):
     save = ""
@@ -157,78 +229,6 @@ def combat(player, currentTile):
     for i in list(currentTile.enemies.keys()):
         del currentTile.enemies[i]
     return player, currentTile
-
-def loadGame(menuChoice):
-    #loads chosen save file
-    currentTile = Tile()
-    while True:
-        if menuChoice == 1:
-            with open(f"NewGame.json","r") as saveFile:
-                b=saveFile.readlines()
-                saveFile.close()
-            currentGame_dict = json.loads(b[0])
-            player_dict = currentGame_dict["player"]
-            tiles_dict = currentGame_dict["tiles"]
-            tileCoords = currentGame_dict["location"]
-            currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
-            saveFileName = "NewGame"
-            return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
-        elif menuChoice == 2:
-            try:
-                with open(f"SaveFileInfo.json","r") as savesInfo:
-                    a=savesInfo.readlines()
-                    savesInfo.close()
-                saveFiles_dict = json.loads(a[0])
-                saveFiles_keyList = list(saveFiles_dict.keys())
-                print("Which game save would you like to load?")
-                for count, saveFile in enumerate(saveFiles_dict):
-                    print(f"{count + 1}: {saveFiles_dict[saveFile]['name']} {saveFiles_dict[saveFile]['info']}")
-                    if count + 1 == len(saveFiles_dict):
-                        print("6: Go Back")
-                try:
-                    saveChoice = int(input("? "))                        
-                except:
-                    print(invalidChoice)
-                    continue
-                match saveChoice:
-                    case 1:
-                        saveFileName = saveFiles_keyList[0]
-                    case 2:
-                        saveFileName = saveFiles_keyList[1]
-                    case 3:
-                        saveFileName = saveFiles_keyList[2]
-                    case 4:
-                        saveFileName = saveFiles_keyList[3]
-                    case 5:
-                        saveFileName = saveFiles_keyList[4]
-                    case 6:
-                        player_dict, tiles_dict, currentTile, tileCoords, saveFileName = loadGame(mainMenu())
-                        return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
-                    case _:
-                        print(invalidChoice)
-                        continue
-                with open(f"{saveFileName}.json","r") as saveFile:
-                    b=saveFile.readlines()
-                    saveFile.close()
-                currentGame_dict = json.loads(b[0])
-                player_dict = currentGame_dict["player"]
-                tiles_dict = currentGame_dict["tiles"]
-                tileCoords = currentGame_dict["location"]
-                currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
-                return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
-            except FileNotFoundError:
-                with open(f"NewGame.json","r") as saveFile:
-                    b=saveFile.readlines()
-                    saveFile.close()
-                currentGame_dict = json.loads(b[0])
-                player_dict = currentGame_dict["player"]
-                tiles_dict = currentGame_dict["tiles"]
-                tileCoords = currentGame_dict["location"]
-                currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
-                return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
-        else:
-            player_dict, tiles_dict, currentTile, tileCoords, saveFileName = 0, 0, 0, 0, 0
-            return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
 
 def saveGame(player_dict, tiles_dict, tileCoords, currentTile, saveFileName):
     currentGame_dict = {}
