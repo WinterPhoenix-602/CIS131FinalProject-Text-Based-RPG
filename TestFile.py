@@ -14,25 +14,7 @@ from datetime import datetime
 def main():
     player = Player()
     inventory = Inventory()
-    currentTile = Tile()
-    
-    #loads chosen save file
-    while True:
-        try:
-            saveFileName = input("Input the name of your save file: ")
-            with open(f"{saveFileName}.json","r") as saveFile:
-                a=saveFile.readlines()
-                saveFile.close()
-            saveFile_dict = json.loads(a[0])
-            player_dict = saveFile_dict["player"]
-            tiles_dict = saveFile_dict["tiles"]
-            tileCoords = saveFile_dict["location"]
-            currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
-            break
-        except FileNotFoundError:
-            print("I'm sorry, the file you entered does not exist.")
-            continue
-
+    player_dict, tiles_dict, currentTile, tileCoords, saveFileName = loadGame()
     while True:
         player, currentTile = combat(player, currentTile)
         print(f"{currentTile.name}\n{currentTile.description}")        
@@ -41,7 +23,7 @@ def main():
         tileCoords, choice, save = menu(tileCoords)
         if choice == 6:
             if save == "yes":
-                saveGame(saveFile_dict, player_dict, tiles_dict, tileCoords)
+                saveGame(player_dict, tiles_dict, tileCoords, saveFileName)
             break
         
         try:
@@ -98,10 +80,10 @@ def menu(tileCoords):
                                 print("I'm sorry, that is not a valid choice.")
                     break
                 case _:
-                    print("I'm sorry, that's not a valid choice.")
+                    print("I'm sorry, that is not a valid choice.")
                     continue
         except:
-            print("I'm sorry, that's not a valid choice.")
+            print("I'm sorry, that is not a valid choice.")
             continue
     return tileCoords, choice, save
 
@@ -118,7 +100,7 @@ def combat(player, currentTile):
         try:
             choice = int(input("What would you like to do?\n1: Attack\n2: Magic\n3: Use Item\n? ")) #displays options
         except:
-            print("I'm sorry, that's not a valid choice.")
+            print("I'm sorry, that is not a valid choice.")
             continue
 
         match choice:
@@ -129,10 +111,10 @@ def combat(player, currentTile):
                 try:
                     attackEnemy = int(input("? ")) #gets selected target
                     if attackEnemy > len(currentTile.enemies_dict):
-                        print("I'm sorry, that's not a valid choice.")
+                        print("I'm sorry, that is not a valid choice.")
                         continue
                 except:
-                    print("I'm sorry, that's not a valid choice.")
+                    print("I'm sorry, that is not a valid choice.")
                     continue
                 for count, enemy in enumerate(currentTile.enemies_dict): #damages selected target
                     if count + 1 == attackEnemy:
@@ -144,7 +126,7 @@ def combat(player, currentTile):
                 print("Not yet implemented.")
                 continue
             case _:
-                print("I'm sorry, that's not a valid choice.")
+                print("I'm sorry, that is not a valid choice.")
                 continue
         
         for enemy in currentTile.enemies_dict: #enemy turn(s)
@@ -161,13 +143,62 @@ def combat(player, currentTile):
         del currentTile.enemies[i]
     return player, currentTile
 
-def saveGame(saveFile_dict, player_dict, tiles_dict, tileCoords):
-    saveFile_dict["player"] = player_dict
-    saveFile_dict["tiles"] = tiles_dict
-    saveFile_dict["location"] = tileCoords
-    saveFileName = input("Input the name of your save file: ")
+def loadGame():
+    #loads chosen save file
+    currentTile = Tile()
+    while True:
+        try:
+            with open(f"SaveFileInfo.json","r") as savesInfo:
+                a=savesInfo.readlines()
+                savesInfo.close()
+            saveFiles_dict = json.loads(a[0])
+            saveFiles_keyList = list(saveFiles_dict.keys())
+            print("Which game save would you like to load?")
+            for count, saveFile in enumerate(saveFiles_dict):
+                if saveFile != "NewGame":
+                    print(f"{count}: {saveFiles_dict[saveFile]['name']} {saveFiles_dict[saveFile]['info']}")
+            try:
+                saveChoice = int(input("? "))
+                if saveChoice > len(saveFiles_dict):
+                    print("I'm sorry, that is not a valid choice.")
+            except:
+                print("I'm sorry, that is not a valid choice.")
+                continue
+            match saveChoice:
+                case 1:
+                    saveFileName = saveFiles_keyList[1]
+            with open(f"{saveFileName}.json","r") as saveFile:
+                b=saveFile.readlines()
+                saveFile.close()
+            currentGame_dict = json.loads(b[0])
+            player_dict = currentGame_dict["player"]
+            tiles_dict = currentGame_dict["tiles"]
+            tileCoords = currentGame_dict["location"]
+            currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
+            return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
+        except FileNotFoundError:
+            print("I'm sorry, the file you entered does not exist.")
+            continue
+
+def saveGame(player_dict, tiles_dict, tileCoords, saveFileName):
+    currentGame_dict = {}
+    currentGame_dict["player"] = player_dict
+    currentGame_dict["tiles"] = tiles_dict
+    currentGame_dict["location"] = tileCoords
+    saveTime = f"({datetime.now().replace(microsecond = 0).isoformat(' ')})"
+
+    with open(f"SaveFileInfo.json","r") as saveInfo:
+        a=saveInfo.readlines()
+        saveInfo.close()
+    saveFiles_dict = json.loads(a[0])
+    saveFiles_dict[saveFileName]["info"] = saveTime
+
+    with open(f"SaveFileInfo.json","w") as saveInfo:
+        json.dump(saveFiles_dict, saveInfo)
+        saveInfo.close()
+
     with open(f"{saveFileName}.json","w") as saveFile:
-        json.dump(saveFile_dict, saveFile)
+        json.dump(currentGame_dict, saveFile)
         saveFile.close()
     print("Thank you for playing.")
 
