@@ -12,6 +12,7 @@ from datetime import datetime
 
 invalidChoice = "I'm sorry, that is not a valid choice."
 
+#the main function
 def main():
     inventory = Inventory()
     player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName = loadGame(mainMenu())
@@ -42,6 +43,7 @@ def main():
                 case 4:
                     tileCoords[0] += 1
 
+#displays main menu, choose between new game, loading save, or ending program
 def mainMenu():
     while True:
         try:
@@ -53,7 +55,8 @@ def mainMenu():
             print(invalidChoice)
             continue
         return choice
-    
+
+#loads saved game
 def loadGame(menuChoice):
     #loads chosen save file
     currentTile = Tile()
@@ -107,7 +110,7 @@ def loadGame(menuChoice):
                     case 5:
                         saveFileName = saveFiles_keyList[4]
                     case 6:
-                        player_dict, tiles_dict, currentTile, tileCoords, saveFileName = loadGame(mainMenu())
+                        player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName = loadGame(mainMenu())
                         return player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName
                     case _:
                         print(invalidChoice)
@@ -143,6 +146,7 @@ def loadGame(menuChoice):
             player_dict, tiles_dict, currentTile, tileCoords, saveFileName = 0, 0, 0, 0, 0
             return player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName
 
+#displays action menu for current tile
 def tileMenu(player, tileCoords):
     save = ""
     while True:
@@ -194,6 +198,7 @@ def tileMenu(player, tileCoords):
             continue
     return tileCoords, choice, save
 
+#
 def combat(player, currentTile):
     while len(currentTile.enemies_dict) > 0:
         #prints list of enemies and relevant stats
