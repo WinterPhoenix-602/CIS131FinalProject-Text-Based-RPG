@@ -9,6 +9,7 @@ from PlayerClass import Player
 from InventoryClass import Inventory
 from EnemyClass import Enemy
 from LocationTileClass import Tile
+from datetime import datetime
 
 def main():
     player = Player()
@@ -37,17 +38,10 @@ def main():
         print(f"{currentTile.name}\n{currentTile.description}")        
         
         #displays menu
-        tileCoords, choice, save = menu(tileCoords, saveFile)
+        tileCoords, choice, save = menu(tileCoords)
         if choice == 6:
             if save == "yes":
-                saveFile_dict["player"] = player_dict
-                saveFile_dict["tiles"] = tiles_dict
-                saveFile_dict["location"] = tileCoords
-                saveFileName = input("Input the name of your save file: ")
-                with open(f"{saveFileName}.json","w") as saveFile:
-                    json.dump(saveFile_dict, saveFile)
-                    saveFile.close()
-                print("Thank you for playing.")
+                saveGame(saveFile_dict, player_dict, tiles_dict, tileCoords)
             break
         
         try:
@@ -64,7 +58,7 @@ def main():
                 case 4:
                     tileCoords[0] += 1
 
-def menu(tileCoords, saveFile):
+def menu(tileCoords):
     while True:
         save = ""
         try:
@@ -166,5 +160,15 @@ def combat(player, currentTile):
     for i in list(currentTile.enemies.keys()):
         del currentTile.enemies[i]
     return player, currentTile
+
+def saveGame(saveFile_dict, player_dict, tiles_dict, tileCoords):
+    saveFile_dict["player"] = player_dict
+    saveFile_dict["tiles"] = tiles_dict
+    saveFile_dict["location"] = tileCoords
+    saveFileName = input("Input the name of your save file: ")
+    with open(f"{saveFileName}.json","w") as saveFile:
+        json.dump(saveFile_dict, saveFile)
+        saveFile.close()
+    print("Thank you for playing.")
 
 main()
