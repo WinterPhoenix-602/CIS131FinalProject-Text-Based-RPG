@@ -13,19 +13,10 @@ from datetime import datetime
 invalidChoice = "I'm sorry, that is not a valid choice."
 
 def main():
-    player = Player()
     inventory = Inventory()
-    player_dict, tiles_dict, currentTile, tileCoords, saveFileName = loadGame(mainMenu())
+    player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName = loadGame(mainMenu())
     if type(player_dict) != dict:
         exit()
-    if saveFileName == "NewGame":
-        while True:
-            player.name = input("Choose a name for your character (no more than seven characters long): ")
-            if len(player.name) > 7:
-                print("I'm sorry, that name is too long.")
-                continue
-            player_dict["name"] = player.name
-            break
     while True:
         player, currentTile = combat(player, currentTile)
         print(f"{currentTile.name}\n{currentTile.description}")        
@@ -34,7 +25,7 @@ def main():
         tileCoords, choice, save = tileMenu(player, tileCoords)
         if choice == 6:
             if save == "yes":
-                saveGame(player_dict, tiles_dict, tileCoords, currentTile, saveFileName)
+                saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFileName)
             break
         
         try:
@@ -66,6 +57,7 @@ def mainMenu():
 def loadGame(menuChoice):
     #loads chosen save file
     currentTile = Tile()
+    player = Player()
     while True:
         if menuChoice == 1:
             with open(f"NewGame.json","r") as saveFile:
@@ -76,6 +68,14 @@ def loadGame(menuChoice):
             tiles_dict = currentGame_dict["tiles"]
             tileCoords = currentGame_dict["location"]
             currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
+            player.reader(player_dict)
+            while True:
+                player.name = input("Choose a name for your character (no more than seven characters long): ")
+                if len(player.name) > 7:
+                    print("I'm sorry, that name is too long.")
+                    continue
+                player_dict["name"] = player.name
+                break
             saveFileName = "NewGame"
             return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
         elif menuChoice == 2:
@@ -108,7 +108,7 @@ def loadGame(menuChoice):
                         saveFileName = saveFiles_keyList[4]
                     case 6:
                         player_dict, tiles_dict, currentTile, tileCoords, saveFileName = loadGame(mainMenu())
-                        return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
+                        return player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName
                     case _:
                         print(invalidChoice)
                         continue
@@ -120,7 +120,8 @@ def loadGame(menuChoice):
                 tiles_dict = currentGame_dict["tiles"]
                 tileCoords = currentGame_dict["location"]
                 currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
-                return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
+                player.reader(player_dict)
+                return player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName
             except FileNotFoundError:
                 with open(f"NewGame.json","r") as saveFile:
                     b=saveFile.readlines()
@@ -130,10 +131,17 @@ def loadGame(menuChoice):
                 tiles_dict = currentGame_dict["tiles"]
                 tileCoords = currentGame_dict["location"]
                 currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
-                return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
+                while True:
+                    player.name = input("Choose a name for your character (no more than seven characters long): ")
+                    if len(player.name) > 7:
+                        print("I'm sorry, that name is too long.")
+                        continue
+                    player_dict["name"] = player.name
+                    break
+                return player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName
         else:
             player_dict, tiles_dict, currentTile, tileCoords, saveFileName = 0, 0, 0, 0, 0
-            return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
+            return player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName
 
 def tileMenu(player, tileCoords):
     save = ""
@@ -242,8 +250,10 @@ def combat(player, currentTile):
         del currentTile.enemies[i]
     return player, currentTile
 
-def saveGame(player_dict, tiles_dict, tileCoords, currentTile, saveFileName):
+def saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFileName):
     currentGame_dict = {}
+    player_dict["health"] = player.health
+    player_dict["mana"] = player.mana
     currentGame_dict["player"] = player_dict
     currentGame_dict["tiles"] = tiles_dict
     currentGame_dict["location"] = tileCoords
@@ -296,6 +306,7 @@ def saveGame(player_dict, tiles_dict, tileCoords, currentTile, saveFileName):
             break
         
     saveFiles_dict[saveFileName]["info"] = f"(Last Saved: {datetime.now().replace(microsecond = 0).isoformat(' ')} Location: {currentTile.name})"
+    saveFiles_dict[saveFileName]["name"] = player_dict["name"]
 
     with open(f"SaveFileInfo.json","w") as saveInfo:
         json.dump(saveFiles_dict, saveInfo)
