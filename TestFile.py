@@ -16,6 +16,8 @@ def main():
     player = Player()
     inventory = Inventory()
     player_dict, tiles_dict, currentTile, tileCoords, saveFileName = loadGame(mainMenu())
+    if type(player_dict) != dict:
+        exit()
     while True:
         player, currentTile = combat(player, currentTile)
         print(f"{currentTile.name}\n{currentTile.description}")        
@@ -44,8 +46,8 @@ def main():
 def mainMenu():
     while True:
         try:
-            choice = int(input("1: New Game\n2: Load Game\n? "))
-            if choice < 1 or choice > 2:
+            choice = int(input("1: New Game\n2: Load Game\n3: Exit\n? "))
+            if choice < 1 or choice > 3:
                 print(invalidChoice)
                 continue
         except:
@@ -171,7 +173,7 @@ def loadGame(menuChoice):
             currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
             saveFileName = "NewGame"
             return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
-        else:
+        elif menuChoice == 2:
             try:
                 with open(f"SaveFileInfo.json","r") as savesInfo:
                     a=savesInfo.readlines()
@@ -201,6 +203,7 @@ def loadGame(menuChoice):
                         saveFileName = saveFiles_keyList[4]
                     case 6:
                         player_dict, tiles_dict, currentTile, tileCoords, saveFileName = loadGame(mainMenu())
+                        return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
                     case _:
                         print(invalidChoice)
                         continue
@@ -223,6 +226,9 @@ def loadGame(menuChoice):
                 tileCoords = currentGame_dict["location"]
                 currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
                 return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
+        else:
+            player_dict, tiles_dict, currentTile, tileCoords, saveFileName = 0, 0, 0, 0, 0
+            return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
 
 def saveGame(player_dict, tiles_dict, tileCoords, currentTile, saveFileName):
     currentGame_dict = {}
