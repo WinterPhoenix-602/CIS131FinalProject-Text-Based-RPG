@@ -19,8 +19,8 @@ def main():
         player, currentTile = combat(player, currentTile)
         print(f"{currentTile.name}\n{currentTile.description}")        
         
-        #displays menu
-        tileCoords, choice, save = menu(tileCoords)
+        #displays tile menu
+        tileCoords, choice, save = tileMenu(tileCoords)
         if choice == 6:
             if save == "yes":
                 saveGame(player_dict, tiles_dict, tileCoords, saveFileName)
@@ -40,7 +40,7 @@ def main():
                 case 4:
                     tileCoords[0] += 1
 
-def menu(tileCoords):
+def tileMenu(tileCoords):
     while True:
         save = ""
         try:
@@ -161,12 +161,14 @@ def loadGame():
                 saveChoice = int(input("? "))
                 if saveChoice > len(saveFiles_dict):
                     print("I'm sorry, that is not a valid choice.")
+                    continue
             except:
                 print("I'm sorry, that is not a valid choice.")
                 continue
-            match saveChoice:
-                case 1:
-                    saveFileName = saveFiles_keyList[1]
+            for count in enumerate(saveFiles_dict):
+                match saveChoice:
+                    case count:
+                        saveFileName = saveFiles_keyList[count]
             with open(f"{saveFileName}.json","r") as saveFile:
                 b=saveFile.readlines()
                 saveFile.close()
@@ -177,15 +179,22 @@ def loadGame():
             currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
             return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
         except FileNotFoundError:
-            print("I'm sorry, the file you entered does not exist.")
-            continue
+            with open(f"NewGame.json","r") as saveFile:
+                b=saveFile.readlines()
+                saveFile.close()
+            currentGame_dict = json.loads(b[0])
+            player_dict = currentGame_dict["player"]
+            tiles_dict = currentGame_dict["tiles"]
+            tileCoords = currentGame_dict["location"]
+            currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
+            return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
 
 def saveGame(player_dict, tiles_dict, tileCoords, saveFileName):
     currentGame_dict = {}
     currentGame_dict["player"] = player_dict
     currentGame_dict["tiles"] = tiles_dict
     currentGame_dict["location"] = tileCoords
-    saveTime = f"({datetime.now().replace(microsecond = 0).isoformat(' ')})"
+    saveTime = f"(Last Saved: {datetime.now().replace(microsecond = 0).isoformat(' ')})"
 
     with open(f"SaveFileInfo.json","r") as saveInfo:
         a=saveInfo.readlines()
