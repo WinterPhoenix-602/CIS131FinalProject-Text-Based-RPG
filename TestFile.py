@@ -4,16 +4,20 @@
 #Final Project: Testing
 
 import json
+import os
 from PlayerClass import Player
 from EnemyClass import Enemy
 from LocationTileClass import Tile
 from datetime import datetime
 
 invalidChoice = "I'm sorry, that is not a valid choice."
+mainPath = os.path.dirname(__file__)
+newGamePath = os.path.join(mainPath, "SaveFiles\\NewGame.json")
+saveFileInfoPath = os.path.join(mainPath, "SaveFiles\\SaveFileInfo.json")
 
 #the main function
 def main():
-    player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName = loadGame(mainMenu())
+    player, player_dict, tiles_dict, currentTile, tileCoords, saveFilePath = loadGame(mainMenu())
     turn = 0
     if type(player_dict) != dict:
         exit()
@@ -25,8 +29,8 @@ def main():
         turn, tileCoords, choice, save = tileMenu(turn, player, tileCoords)
         if choice == 6:
             if save == "yes":
-                saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFileName)
-            player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName = loadGame(mainMenu())
+                saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFilePath)
+            player, player_dict, tiles_dict, currentTile, tileCoords, saveFilePath = loadGame(mainMenu())
         
         try:
             currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
@@ -64,7 +68,7 @@ def loadGame(menuChoice):
     player = Player()
     while True:
         if menuChoice == 1:
-            with open(f"NewGame.json","r") as saveFile:
+            with open(newGamePath,"r") as saveFile:
                 b=saveFile.readlines()
                 saveFile.close()
             currentGame_dict = json.loads(b[0])
@@ -81,15 +85,14 @@ def loadGame(menuChoice):
                     continue
                 player_dict["name"] = player.name
                 break
-            saveFileName = "NewGame"
-            return player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName
+            saveFilePath = newGamePath
+            return player, player_dict, tiles_dict, currentTile, tileCoords, saveFilePath
         elif menuChoice == 2:
             try:
-                with open(f"SaveFileInfo.json","r") as savesInfo:
+                with open(saveFileInfoPath,"r") as savesInfo:
                     a=savesInfo.readlines()
                     savesInfo.close()
                 saveFiles_dict = json.loads(a[0])
-                saveFiles_keyList = list(saveFiles_dict.keys())
                 print("Which game save would you like to load?")
                 for count, saveFile in enumerate(saveFiles_dict):
                     print(f"{count + 1}: {saveFiles_dict[saveFile]['name']} {saveFiles_dict[saveFile]['info']}")
@@ -103,22 +106,22 @@ def loadGame(menuChoice):
                     continue
                 match saveChoice:
                     case 1:
-                        saveFileName = saveFiles_keyList[0]
+                        saveFilePath = os.path.join(mainPath, "SaveFiles\\Save1.json")
                     case 2:
-                        saveFileName = saveFiles_keyList[1]
+                        saveFilePath = os.path.join(mainPath, "SaveFiles\\Save2.json")
                     case 3:
-                        saveFileName = saveFiles_keyList[2]
+                        saveFilePath = os.path.join(mainPath, "SaveFiles\\Save3.json")
                     case 4:
-                        saveFileName = saveFiles_keyList[3]
+                        saveFilePath = os.path.join(mainPath, "SaveFiles\\Save4.json")
                     case 5:
-                        saveFileName = saveFiles_keyList[4]
+                        saveFilePath = os.path.join(mainPath, "SaveFiles\\Save5.json")
                     case 6:
-                        player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName = loadGame(mainMenu())
-                        return player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName
+                        player, player_dict, tiles_dict, currentTile, tileCoords, saveFilePath = loadGame(mainMenu())
+                        return player, player_dict, tiles_dict, currentTile, tileCoords, saveFilePath
                     case _:
                         print(invalidChoice)
                         continue
-                with open(f"{saveFileName}.json","r") as saveFile:
+                with open(saveFilePath,"r") as saveFile:
                     b=saveFile.readlines()
                     saveFile.close()
                 currentGame_dict = json.loads(b[0])
@@ -127,27 +130,13 @@ def loadGame(menuChoice):
                 tileCoords = currentGame_dict["location"]
                 currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
                 player.reader(player_dict)
-                return player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName
+                return player, player_dict, tiles_dict, currentTile, tileCoords, saveFilePath
             except FileNotFoundError:
-                with open(f"NewGame.json","r") as saveFile:
-                    b=saveFile.readlines()
-                    saveFile.close()
-                currentGame_dict = json.loads(b[0])
-                player_dict = currentGame_dict["player"]
-                tiles_dict = currentGame_dict["tiles"]
-                tileCoords = currentGame_dict["location"]
-                currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
-                while True:
-                    player.name = input("Choose a name for your character (no more than seven characters long): ")
-                    if len(player.name) > 7:
-                        print("I'm sorry, that name is too long.")
-                        continue
-                    player_dict["name"] = player.name
-                    break
-                return player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName
+                print("I'm sorry, that save slot is empty.")
+                continue
         else:
-            player_dict, tiles_dict, currentTile, tileCoords, saveFileName = 0, 0, 0, 0, 0
-            return player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName
+            player_dict, tiles_dict, currentTile, tileCoords, saveFilePath = 0, 0, 0, 0, 0
+            return player, player_dict, tiles_dict, currentTile, tileCoords, saveFilePath
 
 #displays action menu for current tile
 def tileMenu(turn, player, tileCoords):
@@ -346,7 +335,7 @@ def encounterText(currentTile):
                     print(f"and {currentTile.enemies[enemy]['quantity']} {enemy}s!")
 
 #saves current game
-def saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFileName):
+def saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFilePath):
     currentGame_dict = {}
     player_dict["health"] = player.health
     player_dict["mana"] = player.mana
@@ -354,13 +343,13 @@ def saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFileN
     currentGame_dict["tiles"] = tiles_dict
     currentGame_dict["location"] = tileCoords
 
-    with open(f"SaveFileInfo.json","r") as saveInfo:
+    with open(saveFileInfoPath,"r") as saveInfo:
         a=saveInfo.readlines()
         saveInfo.close()
     saveFiles_dict = json.loads(a[0])
     saveFiles_keyList = list(saveFiles_dict.keys())
 
-    if saveFileName == "NewGame":
+    if saveFilePath == newGamePath:
         while True:
             print("Which slot would you like to save your progress in?")
             for count, saveFile in enumerate(saveFiles_dict):
@@ -390,28 +379,28 @@ def saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFileN
                 continue
             match saveChoice:
                 case 1:
-                    saveFileName = saveFiles_keyList[0]
+                    saveFilePath = os.path.join(mainPath, "SaveFiles\\Save1.json")
                 case 2:
-                    saveFileName = saveFiles_keyList[1]
+                    saveFilePath = os.path.join(mainPath, "SaveFiles\\Save2.json")
                 case 3:
-                    saveFileName = saveFiles_keyList[2]
+                    saveFilePath = os.path.join(mainPath, "SaveFiles\\Save3.json")
                 case 4:
-                    saveFileName = saveFiles_keyList[3]
+                    saveFilePath = os.path.join(mainPath, "SaveFiles\\Save4.json")
                 case 5:
-                    saveFileName = saveFiles_keyList[4]
+                    saveFilePath = os.path.join(mainPath, "SaveFiles\\Save5.json")
                 case _:
                     print(invalidChoice)
                     continue
             break
         
-    saveFiles_dict[saveFileName]["info"] = f"(Last Saved: {datetime.now().replace(microsecond = 0).isoformat(' ')} Location: {currentTile.name})"
-    saveFiles_dict[saveFileName]["name"] = player_dict["name"]
+    saveFiles_dict[saveFilePath]["info"] = f"(Last Saved: {datetime.now().replace(microsecond = 0).isoformat(' ')} Location: {currentTile.name})"
+    saveFiles_dict[saveFilePath]["name"] = player_dict["name"]
 
-    with open(f"SaveFileInfo.json","w") as saveInfo:
+    with open(saveFileInfoPath,"w") as saveInfo:
         json.dump(saveFiles_dict, saveInfo)
         saveInfo.close()
 
-    with open(f"{saveFileName}.json","w") as saveFile:
+    with open(saveFilePath,"w") as saveFile:
         json.dump(currentGame_dict, saveFile)
         saveFile.close()
     print("Thank you for playing.")
