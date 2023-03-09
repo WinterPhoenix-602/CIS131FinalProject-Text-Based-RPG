@@ -7,17 +7,30 @@ from random import randint #enables use of random numbers
 
 class Enemy:
     def __init__(self, name = "", health = 0, damage = 0, accuracy = 50):
-        self.name = name
-        self.health = health
-        self.damage = damage
-        self.accuracy = accuracy
+        self._name = name
+        self._health = health
+        self._damage = damage
+        self._accuracy = accuracy
 
     #getters
-    def getName(self):
-        return self.name
-    def getHealth(self):
-        return self.health
+    def get_name(self):
+        return self._name
+    def get_health(self):
+        return self._health
+    def get_damage(self):
+        return self._damage
+    def get_accuracy(self):
+        return self._accuracy
     
+    #setters
+    def set_name(self, name):
+        self._name = name
+    def set_health(self, health):
+        self._health = health
+    def set_damage(self, damage):
+        self._damage = damage
+    def set_accuracy(self, accuracy):
+        self._accuracy = accuracy
 
     def modify_health(self, change):
         self.health += change
