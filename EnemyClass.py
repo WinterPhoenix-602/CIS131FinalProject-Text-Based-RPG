@@ -18,9 +18,9 @@ class Enemy:
     def attack(self, target):
         if randint(1, 100) < self.accuracy:
             target.modify_health(-self.damage // target.defense)
-            print(f"{self.name} hit you and dealt {self.damage // target.defense} damage!")
+            print(f"{self.name} hits you and deals {self.damage // target.defense} damage!")
         else:
-            print(f"{self.name} tried to hit you, but missed!")
+            print(f"{self.name} tries to hit you, and misses!")
 
     def death(self):
         print(f"{self.name} falls on the floor, dead.")

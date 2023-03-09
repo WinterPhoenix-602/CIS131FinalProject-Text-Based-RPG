@@ -33,6 +33,7 @@ class Player:
 
     def modify_mana(self, change):
         self.mana += change
+        print(f"Your mana regenerated {change} points.")
         if self.mana > self.maxMana:
             self.mana = self.maxMana
 
