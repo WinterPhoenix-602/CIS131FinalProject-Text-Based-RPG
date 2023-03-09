@@ -85,7 +85,6 @@ def loadGame(menuChoice):
                 if len(player.get_name()) > 7:
                     print("I'm sorry, that name is too long.")
                     continue
-                player_dict["name"] = player.get_name()
                 break
             saveFilePath = newGamePath
             return player, player_dict, tiles_dict, currentTile, tileCoords, saveFilePath
@@ -342,8 +341,9 @@ def encounterText(currentTile):
 #saves current game
 def saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFilePath):
     currentGame_dict = {}
-    player_dict["health"] = player.get_health()
-    player_dict["mana"] = player.get_mana()
+    player_dict["_name"] = player.get_name()
+    player_dict["_health"] = player.get_health()
+    player_dict["_mana"] = player.get_mana()
     currentGame_dict["player"] = player_dict
     currentGame_dict["tiles"] = tiles_dict
     currentGame_dict["location"] = tileCoords
@@ -398,8 +398,8 @@ def saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFileP
                     continue
             break
         
+        saveFiles_dict["Save" + str(saveChoice)]["name"] = player_dict["_name"]
     saveFiles_dict["Save" + str(saveChoice)]["info"] = f"(Last Saved: {datetime.now().replace(microsecond = 0).isoformat(' ')} Location: {currentTile.get_name()})"
-    saveFiles_dict["Save" + str(saveChoice)]["name"] = player_dict["name"]
 
     with open(saveFileInfoPath,"w") as saveInfo:
         json.dump(saveFiles_dict, saveInfo)
