@@ -13,7 +13,6 @@ invalidChoice = "I'm sorry, that is not a valid choice."
 
 #the main function
 def main():
-    inventory = Inventory()
     player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName = loadGame(mainMenu())
     if type(player_dict) != dict:
         exit()
@@ -197,7 +196,7 @@ def tileMenu(player, tileCoords):
             continue
     return tileCoords, choice, save
 
-#
+#processes combat
 def combat(player, currentTile):
     while len(currentTile.enemies_dict) > 0:
         #prints list of enemies and relevant stats
@@ -216,17 +215,20 @@ def combat(player, currentTile):
 
         match choice:
             case 1:
-                print("Which enemy do you want to attack?") #displays target selection
-                for count, enemy in enumerate(currentTile.enemies_dict):
-                    print(f"{count + 1}: {currentTile.enemies_dict[enemy].name}")
-                try:
-                    attackEnemy = int(input("? ")) #gets selected target
-                    if attackEnemy > len(currentTile.enemies_dict):
+                if len(currentTile.enemies_dict) > 1:
+                    print("Which enemy do you want to attack?") #displays target selection
+                    for count, enemy in enumerate(currentTile.enemies_dict):
+                        print(f"{count + 1}: {currentTile.enemies_dict[enemy].name}")
+                    try:
+                        attackEnemy = int(input("? ")) #gets selected target
+                        if attackEnemy > len(currentTile.enemies_dict):
+                            print(invalidChoice)
+                            continue
+                    except:
                         print(invalidChoice)
                         continue
-                except:
-                    print(invalidChoice)
-                    continue
+                else:
+                    attackEnemy = 1
                 for count, enemy in enumerate(currentTile.enemies_dict): #damages selected target
                     if count + 1 == attackEnemy:
                         player.attack(currentTile.enemies_dict[enemy])        
@@ -254,6 +256,7 @@ def combat(player, currentTile):
         del currentTile.enemies[i]
     return player, currentTile
 
+#saves current game
 def saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFileName):
     currentGame_dict = {}
     player_dict["health"] = player.health
@@ -307,6 +310,9 @@ def saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFileN
                     saveFileName = saveFiles_keyList[3]
                 case 5:
                     saveFileName = saveFiles_keyList[4]
+                case _:
+                    print(invalidChoice)
+                    continue
             break
         
     saveFiles_dict[saveFileName]["info"] = f"(Last Saved: {datetime.now().replace(microsecond = 0).isoformat(' ')} Location: {currentTile.name})"
