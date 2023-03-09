@@ -80,7 +80,7 @@ def loadGame(menuChoice):
                 player_dict["name"] = player.name
                 break
             saveFileName = "NewGame"
-            return player_dict, tiles_dict, currentTile, tileCoords, saveFileName
+            return player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName
         elif menuChoice == 2:
             try:
                 with open(f"SaveFileInfo.json","r") as savesInfo:
