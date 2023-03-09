@@ -32,14 +32,15 @@ class Player:
             self.health = self.maxHealth
 
     def modify_mana(self, change):
-        if change > 1:
+        if change > 1 and self.mana + change < 50:
             self.mana += change
-            print(f"Your mana regenerates {change} points.")
-        else:
+            print(f"Your mana regenerates {change} points.\n")
+        elif change < 1:
             self.mana += change
-            print(f"You expend {change} mana.")
-        if self.mana > self.maxMana:
-            self.mana = self.maxMana
+            print(f"You expend {change} mana.\n")
+        elif self.mana != 50:
+            print(f"Your mana regenerates {50 - self.mana} points.\n")
+            self.mana += (50 - self.mana)
 
     def attack(self, target, attackType):
         match attackType:
@@ -53,6 +54,10 @@ class Player:
                 print("Invalid attack type.")
 
     def shield_turns(self, turns):
+        if turns > 0 and self.shield > 0:
+            print("Your mana flows out to reinforce your protection.\n")
+        elif turns > 0:
+            print("Your mana surges out into a shining shield, protecting you from harm.\n")
         self.shield += turns
         if self.shield > 0:
             self.defense = 2
