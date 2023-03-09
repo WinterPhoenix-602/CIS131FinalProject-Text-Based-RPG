@@ -26,10 +26,12 @@ def main():
         if choice == 6:
             if save == "yes":
                 saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFileName)
-            break
+            player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName = loadGame(mainMenu())
         
         try:
             currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
+            #triggers passive actions
+            turn, player = passiveActions(turn, player)
         except KeyError:
             print("You can't go that way.\n__________________________________________________")
             match choice:
@@ -47,7 +49,6 @@ def mainMenu():
     while True:
         try:
             choice = int(input("1: New Game\n2: Load Game\n3: Exit\n? "))
-            print("\n")
             if choice < 1 or choice > 3:
                 print(invalidChoice)
                 continue
@@ -74,6 +75,7 @@ def loadGame(menuChoice):
             player.reader(player_dict)
             while True:
                 player.name = input("Choose a name for your character (no more than seven characters long): ")
+                print("")
                 if len(player.name) > 7:
                     print("I'm sorry, that name is too long.")
                     continue
@@ -95,7 +97,7 @@ def loadGame(menuChoice):
                         print("6: Go Back")
                 try:
                     saveChoice = int(input("? "))
-                    print("\n")
+                    print("")
                 except:
                     print(invalidChoice)
                     continue
@@ -150,16 +152,15 @@ def loadGame(menuChoice):
 #displays action menu for current tile
 def tileMenu(turn, player, tileCoords):
     save = ""
-    #triggers passive actions
-    turn, player = passiveActions(turn, player)
     while True:
         try:
             #print player status
             print(f"Name\tHealth\tMana\tDamage")
             player.print_stats()
+            print("")
 
             choice = int(input("What would you like to do?\n1: Go North\n2: Go East\n3: Go South\n4: Go West\n5: Open Inventory\n6: Exit Game\n? "))
-            print("\n")
+            print("")
             match choice:
                 case 1:
                     tileCoords[1] += 1
@@ -184,7 +185,7 @@ def tileMenu(turn, player, tileCoords):
                         elif save == "no":
                             save = input("Are you sure? (yes/no): ")
                             if save == "yes":
-                                print("Thank you for playing.")
+                                print("\nThank you for playing.\n")
                                 save = "no"
                                 return turn, tileCoords, choice, save
                             elif save == "no":
@@ -204,6 +205,16 @@ def tileMenu(turn, player, tileCoords):
 
 #processes combat
 def combat(turn, player, currentTile):
+    if len(currentTile.enemies_dict) == 1:
+        enemy = list(currentTile.enemies.keys())
+        print(f"You ran into a {enemy[0]}!")
+    elif len(currentTile.enemies_dict) > 1 and len(currentTile.enemies_dict) < 6:
+        print("You ran into a group of", end = " ")
+        encounterText(currentTile)
+    elif len(currentTile.enemies_dict) >= 6:
+        print("You ran into a horde of", end = " ")
+        encounterText(currentTile)
+
     while len(currentTile.enemies_dict) > 0:
         #prints list of enemies and relevant stats
         currentTile.display_enemies()
@@ -214,8 +225,8 @@ def combat(turn, player, currentTile):
 
         #allows players to use actions
         try:
-            choice = int(input("What would you like to do?\n1: Melee Attack\n2: Cast Magic\n3: Use Item\n? ")) #displays options
-            print("\n")
+            choice = int(input("\nWhat would you like to do?\n1: Melee Attack\n2: Cast Magic\n3: Use Item\n? ")) #displays options
+            print("")
         except:
             print(invalidChoice)
             continue
@@ -228,7 +239,7 @@ def combat(turn, player, currentTile):
                         print(f"{count + 1}: {currentTile.enemies_dict[enemy].name}")
                     try:
                         attackEnemy = int(input("? ")) #gets selected target
-                        print("\n")
+                        print("")
                         if attackEnemy > len(currentTile.enemies_dict):
                             print(invalidChoice)
                             continue
@@ -243,7 +254,7 @@ def combat(turn, player, currentTile):
             case 2:
                 try:
                     spell = int(input("What would you like to cast?\nName\t\tMana Cost\tEffect\n1: Fireball\t5\t\tDeals 8 Damage to All Enemies\n2: Shield\t15\t\tHalves Incoming Damage for 3 Turns\n3: Heal\t\tVariable\tConverts 2x Mana Cost to Health\n? "))
-                    print("\n")
+                    print("")
                     match spell:
                         case 1:
                             if player.mana >= 5:
@@ -251,14 +262,14 @@ def combat(turn, player, currentTile):
                                 for count, enemy in enumerate(currentTile.enemies_dict): #damages selected target
                                     player.attack(currentTile.enemies_dict[enemy], "fireball")
                             else:
-                                print("Insufficient mana.")
+                                print("Insufficient mana.\n")
                                 continue
                         case 2:
                             if player.mana >= 15:
                                 player.modify_mana(-15)
                                 player.shield_turns(3)
                             else:
-                                print("Insufficient mana.")
+                                print("Insufficient mana.\n")
                                 continue
                         case 3:
                             print("Not yet implemented.")
@@ -275,11 +286,13 @@ def combat(turn, player, currentTile):
                 print(invalidChoice)
                 continue
         
+        print("")
         for enemy in currentTile.enemies_dict: #enemy turn(s)
             if currentTile.enemies_dict[enemy].health <= 0:
                 currentTile.enemies_dict[enemy].death()
             else:
                 currentTile.enemies_dict[enemy].attack(player)
+        print("")
 
         #triggers passive actions
         turn, player = passiveActions(turn, player)
@@ -292,6 +305,34 @@ def combat(turn, player, currentTile):
     for i in list(currentTile.enemies.keys()):
         del currentTile.enemies[i]
     return turn, player, currentTile
+
+#displays encountered enemies
+def encounterText(currentTile):
+    for count, enemy in enumerate(currentTile.enemies):
+        if len(currentTile.enemies) < 2:
+            print(f"{currentTile.enemies[enemy]['quantity']} {enemy}s!")
+        elif len(currentTile.enemies) < 3:
+            if count + 1 != len(currentTile.enemies):
+                if currentTile.enemies[enemy]['quantity'] <= 1:
+                    print(f"{currentTile.enemies[enemy]['quantity']} {enemy} and", end = " ")
+                else:
+                    print(f"{currentTile.enemies[enemy]['quantity']} {enemy}s and", end = " ")
+            else:
+                if currentTile.enemies[enemy]['quantity'] <= 1:
+                    print(f"{currentTile.enemies[enemy]['quantity']} {enemy}!")
+                else:
+                    print(f"{currentTile.enemies[enemy]['quantity']} {enemy}s!")
+        else:
+            if count + 1 != len(currentTile.enemies):
+                if currentTile.enemies[enemy]['quantity'] <= 1:
+                    print(f"{currentTile.enemies[enemy]['quantity']} {enemy},", end = " ")
+                else:
+                    print(f"{currentTile.enemies[enemy]['quantity']} {enemy}s,", end = " ")
+            else:
+                if currentTile.enemies[enemy]['quantity'] <= 1:
+                    print(f"and {currentTile.enemies[enemy]['quantity']} {enemy}!")
+                else:
+                    print(f"and {currentTile.enemies[enemy]['quantity']} {enemy}s!")
 
 #saves current game
 def saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFileName):
