@@ -26,5 +26,5 @@ class Tile:
     def display_enemies(self):
         print(f"Enemy Name\tHealth\tDamage")
         for enemy in self.enemies_dict:
-            self.enemies_dict[enemy].print_stats()
+            print(self.enemies_dict[enemy].__repr__())
         print(f"__________________________________________________")
