@@ -5,7 +5,6 @@
 
 import json
 from PlayerClass import Player
-from InventoryClass import Inventory
 from EnemyClass import Enemy
 from LocationTileClass import Tile
 from datetime import datetime

@@ -9,12 +9,13 @@ class Player:
     maxHealth = 100
     maxMana = 100
 
-    def __init__(self, name = "Player", health = 100, mana = 50, damage = 5, defense = 1):
+    def __init__(self, name = "Player", health = 100, mana = 50, damage = 5, defense = 1, inventory = {}):
         self.name = name
         self.health = health
         self.mana = mana
         self.damage = damage
         self.defense = defense
+        self.inventory = inventory
 
     def reader(self, input_dict):
         for key in input_dict:
