@@ -55,6 +55,6 @@ class Player:
             self.defense = 1
     
     def print_stats(self):
-        print(f"{self.name} + {self.inventory['equipped']['damage']} ({self.inventory['equipped']['name']}) = {self.damage + self.inventory['equipped']['damage']}\t{self.health}\t{self.mana}\t{self.damage}")
+        print(f"{self.name}\t{self.health}\t{self.mana}\t{self.damage} + {self.inventory['equipped']['damage']} ({self.inventory['equipped']['name']}) = {self.damage + self.inventory['equipped']['damage']}")
         if self.shield > 0:
             print(f"Shielded turns remaining: {self.shield}")
