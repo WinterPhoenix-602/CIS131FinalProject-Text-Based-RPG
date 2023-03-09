@@ -7,11 +7,32 @@ from EnemyClass import Enemy
 
 class Tile:
     def __init__(self, name = "", description = "", enemies = {"enemyName":{"health":0, "damage":0, "quantity":0}}):
-        self.name = name
-        self.description = description
-        self.enemies = enemies
-        self.enemies_dict = {}
+        self._name = name
+        self._description = description
+        self._enemies = enemies
+        self._enemies_dict = {}
         
+    #getters
+    def get_name(self):
+        return self._name
+    def get_description(self):
+        return self._description
+    def get_enemies(self):
+        return self._enemies
+    def get_enemie_dict(self):
+        return self._enemies_dict
+
+    #setters
+    def set_name(self, name):
+        self._name = name
+    def set_description(self, description):
+        self._description = description
+    def set_enemies(self, enemies):
+        self._enemies = enemies
+    def set_enemie_dict(self, enemies_dict):
+        self._enemies_dict = enemies_dict
+
+    #sets attributes from input dictionary
     def reader(self, input_dict):
         for key in input_dict:
             try:
@@ -23,6 +44,7 @@ class Tile:
             for quantity in range(self.enemies[enemy]["quantity"]):
                 self.enemies_dict[enemy + str(quantity + 1)] = Enemy(f"{enemy} {str(quantity + 1)}", self.enemies[enemy]["health"], self.enemies[enemy]["damage"])
 
+    #displays enemies present on the tile
     def display_enemies(self):
         print(f"Enemy Name\tHealth\tDamage")
         for enemy in self.enemies_dict:
