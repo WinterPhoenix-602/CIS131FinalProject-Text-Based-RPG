@@ -38,7 +38,7 @@ class Player:
 
     def attack(self, target, damage):
         target.modify_health(-damage)
-        print(f"You hit {target.name} and dealt {self.damage} damage!")
+        print(f"You hit {target.name} and dealt {damage} damage!")
 
     def shield_turns(self, turns):
         self.shield += turns
