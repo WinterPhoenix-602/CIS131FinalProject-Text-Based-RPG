@@ -47,6 +47,7 @@ def mainMenu():
     while True:
         try:
             choice = int(input("1: New Game\n2: Load Game\n3: Exit\n? "))
+            print("\n")
             if choice < 1 or choice > 3:
                 print(invalidChoice)
                 continue
@@ -93,7 +94,8 @@ def loadGame(menuChoice):
                     if count + 1 == len(saveFiles_dict):
                         print("6: Go Back")
                 try:
-                    saveChoice = int(input("? "))                        
+                    saveChoice = int(input("? "))
+                    print("\n")
                 except:
                     print(invalidChoice)
                     continue
@@ -157,6 +159,7 @@ def tileMenu(turn, player, tileCoords):
             player.print_stats()
 
             choice = int(input("What would you like to do?\n1: Go North\n2: Go East\n3: Go South\n4: Go West\n5: Open Inventory\n6: Exit Game\n? "))
+            print("\n")
             match choice:
                 case 1:
                     tileCoords[1] += 1
@@ -212,6 +215,7 @@ def combat(turn, player, currentTile):
         #allows players to use actions
         try:
             choice = int(input("What would you like to do?\n1: Melee Attack\n2: Cast Magic\n3: Use Item\n? ")) #displays options
+            print("\n")
         except:
             print(invalidChoice)
             continue
@@ -224,6 +228,7 @@ def combat(turn, player, currentTile):
                         print(f"{count + 1}: {currentTile.enemies_dict[enemy].name}")
                     try:
                         attackEnemy = int(input("? ")) #gets selected target
+                        print("\n")
                         if attackEnemy > len(currentTile.enemies_dict):
                             print(invalidChoice)
                             continue
@@ -238,6 +243,7 @@ def combat(turn, player, currentTile):
             case 2:
                 try:
                     spell = int(input("What would you like to cast?\nName\t\tMana Cost\tEffect\n1: Fireball\t5\t\tDeals 8 Damage to All Enemies\n2: Shield\t15\t\tHalves Incoming Damage for 3 Turns\n3: Heal\t\tVariable\tConverts 2x Mana Cost to Health\n? "))
+                    print("\n")
                     match spell:
                         case 1:
                             if player.mana >= 5:
