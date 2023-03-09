@@ -44,6 +44,8 @@ class Player:
             case "fireball":
                 target.modify_health(-8)
                 print(f"The fire engulfed {target.name} and dealt 8 damage!")
+            case _:
+                print("Invalid attack type.")
 
     def shield_turns(self, turns):
         self.shield += turns
