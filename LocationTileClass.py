@@ -24,8 +24,7 @@ class Tile:
                 self.enemies_dict[enemy + str(quantity + 1)] = Enemy(f"{enemy} {str(quantity + 1)}", self.enemies[enemy]["health"], self.enemies[enemy]["damage"])
 
     def display_enemies(self):
-        print(f"Name\t\tHealth\tDamage")
-        print(f"__________________________________________________")
+        print(f"Enemy Name\tHealth\tDamage")
         for enemy in self.enemies_dict:
             self.enemies_dict[enemy].print_stats()
         print(f"__________________________________________________")

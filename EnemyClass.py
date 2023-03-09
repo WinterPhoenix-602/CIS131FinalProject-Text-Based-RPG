@@ -26,4 +26,7 @@ class Enemy:
         print(f"{self.name} falls on the floor, dead.")
     
     def print_stats(self):
-        print(f"{self.name}\t{self.health}\t{self.damage}")
+        if not "Troll" in self.name:
+            print(f"{self.name}\t{self.health}\t{self.damage}")
+        else:
+            print(f"{self.name}\t\t{self.health}\t{self.damage}")
