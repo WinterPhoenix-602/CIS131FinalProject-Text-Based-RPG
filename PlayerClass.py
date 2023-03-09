@@ -9,12 +9,13 @@ class Player:
     maxHealth = 100
     maxMana = 100
 
-    def __init__(self, name = "Player", health = 100, mana = 50, damage = 5, defense = 1, inventory = {}):
+    def __init__(self, name = "Player", health = 100, mana = 50, damage = 5, defense = 1, shield = 0, inventory = {}):
         self.name = name
         self.health = health
         self.mana = mana
         self.damage = damage
         self.defense = defense
+        self.shield = shield
         self.inventory = inventory
 
     def reader(self, input_dict):
@@ -38,6 +39,11 @@ class Player:
     def attack(self, target):
         target.health -= self.damage
         print(f"You hit {target.name} and dealt {self.damage} damage!")
+
+    def shield_turns(self, turns):
+        self.shield += turns
     
     def print_stats(self):
         print(f"{self.name}\t{self.health}\t{self.mana}\t{self.damage}")
+        if self.shield > 0:
+            print(f"Shielded turns remaining: {self.shield}")
