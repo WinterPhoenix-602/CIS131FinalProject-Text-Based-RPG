@@ -22,7 +22,7 @@ def main():
         print(f"{currentTile.name}\n{currentTile.description}")        
         
         #displays tile menu
-        tileCoords, choice, save = tileMenu(player, tileCoords)
+        turn, tileCoords, choice, save = tileMenu(turn, player, tileCoords)
         if choice == 6:
             if save == "yes":
                 saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFileName)
@@ -30,9 +30,6 @@ def main():
         
         try:
             currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
-            #triggers passive actions
-            turn, player = passiveActions(turn, player)
-            turn += 1
         except KeyError:
             print("You can't go that way.\n__________________________________________________")
             match choice:
@@ -149,8 +146,10 @@ def loadGame(menuChoice):
             return player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName
 
 #displays action menu for current tile
-def tileMenu(player, tileCoords):
+def tileMenu(turn, player, tileCoords):
     save = ""
+    #triggers passive actions
+    turn, player = passiveActions(turn, player)
     while True:
         try:
             #print player status
@@ -184,7 +183,7 @@ def tileMenu(player, tileCoords):
                             if save == "yes":
                                 print("Thank you for playing.")
                                 save = "no"
-                                return tileCoords, choice, save
+                                return turn, tileCoords, choice, save
                             elif save == "no":
                                 continue
                             else:
@@ -198,7 +197,7 @@ def tileMenu(player, tileCoords):
         except:
             print(invalidChoice)
             continue
-    return tileCoords, choice, save
+    return turn, tileCoords, choice, save
 
 #processes combat
 def combat(turn, player, currentTile):
@@ -238,7 +237,7 @@ def combat(turn, player, currentTile):
                         player.attack(currentTile.enemies_dict[enemy], "melee")        
             case 2:
                 try:
-                    spell = int(input("What would you like to cast?\nName\t\tMana Cost\tEffect\n1: Fireball\t5\t\t8 Damage to All Enemies\n2: Shield\t15\t\tHalves Incoming Damage for 3 Turns\n3: Heal\t\tVariable\tConverts 2x Mana Cost to Health\n? "))
+                    spell = int(input("What would you like to cast?\nName\t\tMana Cost\tEffect\n1: Fireball\t5\t\tDeals 8 Damage to All Enemies\n2: Shield\t15\t\tHalves Incoming Damage for 3 Turns\n3: Heal\t\tVariable\tConverts 2x Mana Cost to Health\n? "))
                     match spell:
                         case 1:
                             if player.mana >= 5:
@@ -249,8 +248,12 @@ def combat(turn, player, currentTile):
                                 print("Insufficient mana.")
                                 continue
                         case 2:
-                            print("Not yet implemented.")
-                            continue
+                            if player.mana >= 15:
+                                player.modify_mana(-15)
+                                player.shield_turns(3)
+                            else:
+                                print("Insufficient mana.")
+                                continue
                         case 3:
                             print("Not yet implemented.")
                             continue
@@ -362,6 +365,8 @@ def passiveActions(turn, player):
         player.modify_mana(5)
     if player.shield > 0:
         player.shield_turns(-1)
+        if player.shield == 0:
+            print("Your shield flickers and dies.")
     return turn, player
 
 main()
