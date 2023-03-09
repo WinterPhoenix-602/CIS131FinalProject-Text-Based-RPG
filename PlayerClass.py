@@ -72,7 +72,7 @@ class Player:
         else:
             self.defense = 1
     
-    def __repr__(self):
+    def __str__(self):
         if self.shield > 0:
             return f"{self.name}\t{self.health}\t{self.mana}\t{self.damage} + {self.inventory['equipped']['damage']} ({self.inventory['equipped']['name']}) = {self.damage + self.inventory['equipped']['damage']}\nShielded turns remaining: {self.shield}"
         else:

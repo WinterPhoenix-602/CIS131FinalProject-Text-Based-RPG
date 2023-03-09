@@ -12,6 +12,13 @@ class Enemy:
         self.damage = damage
         self.accuracy = accuracy
 
+    #getters
+    def getName(self):
+        return self.name
+    def getHealth(self):
+        return self.health
+    
+
     def modify_health(self, change):
         self.health += change
 
@@ -25,7 +32,7 @@ class Enemy:
     def death(self):
         print(f"{self.name} falls on the floor, dead.")
     
-    def __repr__(self):
+    def __str__(self):
         if not "Troll" in self.name:
             return f"{self.name}\t{self.health}\t{self.damage}"
         else:

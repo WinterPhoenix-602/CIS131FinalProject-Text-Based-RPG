@@ -145,7 +145,7 @@ def tileMenu(turn, player, tileCoords):
         try:
             #print player status
             print(f"Name\tHealth\tMana\tDamage")
-            print(player.__repr__())
+            print(player.__str__())
             print("")
 
             choice = int(input("What would you like to do?\n1: Go North\n2: Go East\n3: Go South\n4: Go West\n5: Open Inventory\n6: Exit Game\n? "))
@@ -202,7 +202,7 @@ def combat(turn, player, currentTile):
 
         #print player status
         print(f"Name\tHealth\tMana\tDamage")
-        print(player.__repr__())
+        print(player.__str__())
 
         #allows players to use actions
         try:
