@@ -27,9 +27,17 @@ class Player:
                 continue
     
     def modify_health(self, change):
-        self.health += change
-        if self.health > self.maxHealth:
-            self.health = self.maxHealth
+        if change >= 1 and self.health + change < 100:
+            self.health += change
+            print(f"You are healed for {change} health points.")
+        elif change < 1:
+            self.health += change
+        elif self.health != 100:
+            if 100 - self.health == 1:
+                print(f"You are healed for {100 - self.health} health point. Overspent a bit there.")
+            else:
+                print(f"You are healed for {100 - self.health} health points. Overspent a bit there.")
+            self.health += (100 - self.health)
 
     def modify_mana(self, change):
         if change > 1 and self.mana + change < 50:
@@ -37,7 +45,7 @@ class Player:
             print(f"Your mana regenerates {change} points.\n")
         elif change < 1:
             self.mana += change
-            print(f"You expend {change} mana.\n")
+            print(f"You expend {change} mana.")
         elif self.mana != 50:
             print(f"Your mana regenerates {50 - self.mana} points.\n")
             self.mana += (50 - self.mana)
@@ -55,9 +63,9 @@ class Player:
 
     def shield_turns(self, turns):
         if turns > 0 and self.shield > 0:
-            print("Your mana flows out to reinforce your protection.\n")
+            print("Your mana flows out to reinforce your protection.")
         elif turns > 0:
-            print("Your mana surges out into a shining shield, protecting you from harm.\n")
+            print("Your mana surges out into a shining shield, protecting you from harm.")
         self.shield += turns
         if self.shield > 0:
             self.defense = 2
