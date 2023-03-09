@@ -205,15 +205,7 @@ def tileMenu(turn, player, tileCoords):
 
 #processes combat
 def combat(turn, player, currentTile):
-    if len(currentTile.enemies_dict) == 1:
-        enemy = list(currentTile.enemies.keys())
-        print(f"You ran into a {enemy[0]}!")
-    elif len(currentTile.enemies_dict) > 1 and len(currentTile.enemies_dict) < 6:
-        print("You ran into a group of", end = " ")
-        encounterText(currentTile)
-    elif len(currentTile.enemies_dict) >= 6:
-        print("You ran into a horde of", end = " ")
-        encounterText(currentTile)
+    encounterText(currentTile)
 
     while len(currentTile.enemies_dict) > 0:
         #prints list of enemies and relevant stats
@@ -308,10 +300,17 @@ def combat(turn, player, currentTile):
 
 #displays encountered enemies
 def encounterText(currentTile):
+    if len(currentTile.enemies_dict) == 1:
+        enemy = list(currentTile.enemies.keys())
+        print(f"You ran into a {enemy[0]}!")
+    elif len(currentTile.enemies_dict) > 1 and len(currentTile.enemies_dict) < 6:
+        print("You ran into a group of", end = " ")
+    elif len(currentTile.enemies_dict) >= 6:
+        print("You ran into a horde of", end = " ")
     for count, enemy in enumerate(currentTile.enemies):
-        if len(currentTile.enemies) < 2:
+        if len(currentTile.enemies) < 2 and len(currentTile.enemies_dict) != 1:
             print(f"{currentTile.enemies[enemy]['quantity']} {enemy}s!")
-        elif len(currentTile.enemies) < 3:
+        elif len(currentTile.enemies) < 3 and len(currentTile.enemies_dict) != 1:
             if count + 1 != len(currentTile.enemies):
                 if currentTile.enemies[enemy]['quantity'] <= 1:
                     print(f"{currentTile.enemies[enemy]['quantity']} {enemy} and", end = " ")
@@ -322,7 +321,7 @@ def encounterText(currentTile):
                     print(f"{currentTile.enemies[enemy]['quantity']} {enemy}!")
                 else:
                     print(f"{currentTile.enemies[enemy]['quantity']} {enemy}s!")
-        else:
+        elif len(currentTile.enemies_dict) != 1:
             if count + 1 != len(currentTile.enemies):
                 if currentTile.enemies[enemy]['quantity'] <= 1:
                     print(f"{currentTile.enemies[enemy]['quantity']} {enemy},", end = " ")
