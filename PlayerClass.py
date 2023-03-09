@@ -32,8 +32,12 @@ class Player:
             self.health = self.maxHealth
 
     def modify_mana(self, change):
-        self.mana += change
-        print(f"Your mana regenerated {change} points.")
+        if change > 1:
+            self.mana += change
+            print(f"Your mana regenerates {change} points.")
+        else:
+            self.mana += change
+            print(f"You expend {change} mana.")
         if self.mana > self.maxMana:
             self.mana = self.maxMana
 
@@ -44,7 +48,7 @@ class Player:
                 print(f"You hit {target.name} and deal {self.damage + self.inventory['equipped']['damage']} damage!")
             case "fireball":
                 target.modify_health(-8)
-                print(f"The fire engulfed {target.name} and dealt 8 damage!")
+                print(f"The fire engulfs {target.name} and deals 8 damage!")
             case _:
                 print("Invalid attack type.")
 
