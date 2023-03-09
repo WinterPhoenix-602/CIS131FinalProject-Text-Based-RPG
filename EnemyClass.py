@@ -20,7 +20,7 @@ class Enemy:
             target.modify_health(-self.damage // target.defense)
             print(f"{self.name} hits you and deals {self.damage // target.defense} damage!")
         else:
-            print(f"{self.name} tries to hit you, and misses!")
+            print(f"{self.name} tries to hit you, but misses.")
 
     def death(self):
         print(f"{self.name} falls on the floor, dead.")
