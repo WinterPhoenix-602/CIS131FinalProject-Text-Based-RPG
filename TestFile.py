@@ -251,7 +251,7 @@ def combat(turn, player, currentTile):
                         case 1:
                             if player.mana >= 5:
                                 player.modify_mana(-5)
-                                for count, enemy in enumerate(currentTile.enemies_dict): #damages selected target
+                                for count, enemy in enumerate(currentTile.enemies_dict):
                                     player.attack(currentTile.enemies_dict[enemy], "fireball")
                             else:
                                 print("Insufficient mana.\n")
@@ -264,8 +264,20 @@ def combat(turn, player, currentTile):
                                 print("Insufficient mana.\n")
                                 continue
                         case 3:
-                            print("Not yet implemented.")
-                            continue
+                            try:
+                                heal = int(input("How much mana will you expend? "))
+                            except:
+                                print("Not a valid amount of mana.")
+                                continue
+                            if heal <= player.mana and heal > 0:
+                                player.modify_mana(-heal)
+                                player.modify_health(heal * 2)
+                            elif heal <= 0:
+                                print("You can't expend less than 1 mana.")
+                                continue
+                            else:
+                                print("You don't have enough mana.")
+                                continue
                         case _:
                             print(invalidChoice)
                             continue
