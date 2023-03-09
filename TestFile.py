@@ -132,7 +132,7 @@ def loadGame(menuChoice):
                 player.reader(player_dict)
                 return player, player_dict, tiles_dict, currentTile, tileCoords, saveFilePath
             except FileNotFoundError:
-                print("I'm sorry, that save slot is empty.")
+                print("I'm sorry, that save slot is empty.\n")
                 continue
         else:
             player_dict, tiles_dict, currentTile, tileCoords, saveFilePath = 0, 0, 0, 0, 0
@@ -393,8 +393,8 @@ def saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFileP
                     continue
             break
         
-    saveFiles_dict[saveFilePath]["info"] = f"(Last Saved: {datetime.now().replace(microsecond = 0).isoformat(' ')} Location: {currentTile.name})"
-    saveFiles_dict[saveFilePath]["name"] = player_dict["name"]
+    saveFiles_dict["Save" + str(saveChoice)]["info"] = f"(Last Saved: {datetime.now().replace(microsecond = 0).isoformat(' ')} Location: {currentTile.name})"
+    saveFiles_dict["Save" + str(saveChoice)]["name"] = player_dict["name"]
 
     with open(saveFileInfoPath,"w") as saveInfo:
         json.dump(saveFiles_dict, saveInfo)
