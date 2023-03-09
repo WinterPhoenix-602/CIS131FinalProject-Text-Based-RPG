@@ -19,7 +19,7 @@ class Tile:
         return self._description
     def get_enemies(self):
         return self._enemies
-    def get_enemie_dict(self):
+    def get_enemies_dict(self):
         return self._enemies_dict
 
     #setters
@@ -29,7 +29,7 @@ class Tile:
         self._description = description
     def set_enemies(self, enemies):
         self._enemies = enemies
-    def set_enemie_dict(self, enemies_dict):
+    def set_enemies_dict(self, enemies_dict):
         self._enemies_dict = enemies_dict
 
     #sets attributes from input dictionary
@@ -40,13 +40,13 @@ class Tile:
             except:
                 print("No such attribute, please consider adding it in init.")
                 continue
-        for enemy in self.enemies:
-            for quantity in range(self.enemies[enemy]["quantity"]):
-                self.enemies_dict[enemy + str(quantity + 1)] = Enemy(f"{enemy} {str(quantity + 1)}", self.enemies[enemy]["health"], self.enemies[enemy]["damage"])
+        for enemy in self._enemies:
+            for quantity in range(self._enemies[enemy]["quantity"]):
+                self._enemies_dict[enemy + str(quantity + 1)] = Enemy(f"{enemy} {str(quantity + 1)}", self._enemies[enemy]["health"], self._enemies[enemy]["maxHealth"], self._enemies[enemy]["damage"])
 
     #displays enemies present on the tile
     def display_enemies(self):
         print(f"Enemy Name\tHealth\tDamage")
-        for enemy in self.enemies_dict:
-            print(self.enemies_dict[enemy].__str__())
+        for enemy in self._enemies_dict:
+            print(self._enemies_dict[enemy].__str__())
         print(f"__________________________________________________")

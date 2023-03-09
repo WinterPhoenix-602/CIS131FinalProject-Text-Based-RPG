@@ -6,9 +6,11 @@
 from random import randint #enables use of random numbers
 
 class Enemy:
-    def __init__(self, name = "", health = 0, damage = 0, accuracy = 50):
+    #initialization method
+    def __init__(self, name = "", health = 0, maxHealth = 0, damage = 0, accuracy = 50):
         self._name = name
         self._health = health
+        self._maxHealth = maxHealth
         self._damage = damage
         self._accuracy = accuracy
 
@@ -17,6 +19,8 @@ class Enemy:
         return self._name
     def get_health(self):
         return self._health
+    def get_maxHealth(self):
+        return self._maxHealth
     def get_damage(self):
         return self._damage
     def get_accuracy(self):
@@ -27,26 +31,42 @@ class Enemy:
         self._name = name
     def set_health(self, health):
         self._health = health
+    def set_maxHealth(self, maxHealth):
+        self._maxHealth = maxHealth
     def set_damage(self, damage):
         self._damage = damage
     def set_accuracy(self, accuracy):
         self._accuracy = accuracy
 
+    #adds/subtracts value to health, displays appropriate message
     def modify_health(self, change):
-        self.health += change
+        if change >= 1 and self._health + change < self._maxHealth:
+            self._health += change
+            print(f"{self._name} is healed for {change} health points.")
+        elif change < 1:
+            self._health += change
+        elif self._health != self._maxHealth:
+            if self._maxHealth - self._health == 1:
+                print(f"{self._name} is healed for {self._maxHealth - self._health} health point.")
+            else:
+                print(f"{self._name} is healed for {self._maxHealth - self._health} health points.")
+            self._health += (self._maxHealth - self._health)
 
+    #attacks input target
     def attack(self, target):
-        if randint(1, 100) < self.accuracy:
-            target.modify_health(-self.damage // target.defense)
-            print(f"{self.name} hits you and deals {self.damage // target.defense} damage!")
+        if randint(1, 100) < self._accuracy:
+            target.modify_health(-self._damage // target.get_defense())
+            print(f"{self._name} hits you and deals {self._damage // target.get_defense()} damage!")
         else:
-            print(f"{self.name} tries to hit you, but misses.")
+            print(f"{self._name} tries to hit you, but misses.")
 
+    #displays death message
     def death(self):
-        print(f"{self.name} falls on the floor, dead.")
+        print(f"{self._name} falls on the floor, dead.")
     
+    #returns formatted string representation
     def __str__(self):
-        if not "Troll" in self.name:
-            return f"{self.name}\t{self.health}\t{self.damage}"
+        if not "Troll" in self._name:
+            return f"{self._name}\t{self._health}\t{self._damage}"
         else:
-            return f"{self.name}\t\t{self.health}\t{self.damage}"
+            return f"{self._name}\t\t{self._health}\t{self._damage}"
