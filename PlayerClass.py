@@ -36,9 +36,14 @@ class Player:
         if self.mana > self.maxMana:
             self.mana = self.maxMana
 
-    def attack(self, target, damage):
-        target.modify_health(-damage)
-        print(f"You hit {target.name} and dealt {damage} damage!")
+    def attack(self, target, attackType):
+        match attackType:
+            case "melee":
+                target.modify_health(-self.damage)
+                print(f"You hit {target.name} and deal {self.damage} damage!")
+            case "fireball":
+                target.modify_health(-8)
+                print(f"The fire engulfed {target.name} and dealt 8 damage!")
 
     def shield_turns(self, turns):
         self.shield += turns
