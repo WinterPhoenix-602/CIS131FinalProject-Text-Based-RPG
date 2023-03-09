@@ -10,13 +10,45 @@ class Player:
     maxMana = 100
 
     def __init__(self, name = "Player", health = 100, mana = 50, damage = 1, defense = 1, shield = 0, inventory = {"equipped":{"name":"Iron Sword", "damage":5}}):
-        self.name = name
-        self.health = health
-        self.mana = mana
-        self.damage = damage
-        self.defense = defense
-        self.shield = shield
-        self.inventory = inventory
+        self._name = name
+        self._health = health
+        self._mana = mana
+        self._damage = damage
+        self._defense = defense
+        self._shield = shield
+        self._inventory = inventory
+
+    #getters
+    def get_name(self):
+        return self._name
+    def get_health(self):
+        return self._health
+    def get_mana(self):
+        return self._mana
+    def get_damage(self):
+        return self._damage
+    def get_defense(self):
+        return self._defense
+    def get_shield(self):
+        return self._shield
+    def get_inventory(self):
+        return self._inventory
+    
+    #setters
+    def set_name(self, name):
+        self._name = name
+    def set_health(self, health):
+        self._health = health
+    def set_mana(self, mana):
+        self._mana = mana
+    def set_damage(self, damage):
+        self._damage = damage
+    def set_defense(self, defense):
+        self._defense = defense
+    def set_shield(self, shield):
+        self._shield = shield
+    def set_inventory(self, inventory):
+        self._inventory = inventory
 
     def reader(self, input_dict):
         for key in input_dict:
