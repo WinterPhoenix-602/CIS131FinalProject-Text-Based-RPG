@@ -235,14 +235,42 @@ def combat(turn, player, currentTile):
                     attackEnemy = 1
                 for count, enemy in enumerate(currentTile.enemies_dict): #damages selected target
                     if count + 1 == attackEnemy:
-                        player.attack(currentTile.enemies_dict[enemy])        
+                        player.attack(currentTile.enemies_dict[enemy], player.damage)        
             case 2:
-                print("""What would you like to cast?
-Name        Mana Cost   Effect
-1: Fireball 5           8 Damage
-2: Shield   15          Halves Incoming Damage for 3 Turns
-3: Heal     Variable    Converts 2x Input Mana to Health""")
-                continue
+                try:
+                    spell = int(input("What would you like to cast?\nName\t\tMana Cost\tEffect\n1: Fireball\t5\t\t8 Damage\n2: Shield\t15\t\tHalves Incoming Damage for 3 Turns\n3: Heal\t\tVariable\tConverts 2x Mana Cost to Health\n? "))
+                    match spell:
+                        case 1:
+                            if player.mana >= 5:
+                                player.modify_mana(-5)
+                                if len(currentTile.enemies_dict) > 1:
+                                    print("Which enemy do you want to attack?") #displays target selection
+                                    for count, enemy in enumerate(currentTile.enemies_dict):
+                                        print(f"{count + 1}: {currentTile.enemies_dict[enemy].name}")
+                                    try:
+                                        attackEnemy = int(input("? ")) #gets selected target
+                                        if attackEnemy > len(currentTile.enemies_dict):
+                                            print(invalidChoice)
+                                            continue
+                                    except:
+                                        print(invalidChoice)
+                                        continue
+                                else:
+                                    attackEnemy = 1
+                                for count, enemy in enumerate(currentTile.enemies_dict): #damages selected target
+                                    if count + 1 == attackEnemy:
+                                        player.attack(currentTile.enemies_dict[enemy], 8)
+                        case 2:
+                            print("Not yet implemented.")
+                            continue
+                        case 3:
+                            print("Not yet implemented.")
+                            continue
+                        case _:
+                            print(invalidChoice)
+                            continue
+                except:
+                    print(invalidChoice)
             case 3:
                 print("Not yet implemented.")
                 continue
