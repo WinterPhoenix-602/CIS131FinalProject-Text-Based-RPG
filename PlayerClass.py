@@ -37,11 +37,15 @@ class Player:
             self.mana = self.maxMana
 
     def attack(self, target):
-        target.health -= self.damage
+        target.modify_health(-self.damage)
         print(f"You hit {target.name} and dealt {self.damage} damage!")
 
     def shield_turns(self, turns):
         self.shield += turns
+        if self.shield > 0:
+            self.defense = 2
+        else:
+            self.defense = 1
     
     def print_stats(self):
         print(f"{self.name}\t{self.health}\t{self.mana}\t{self.damage}")

@@ -14,10 +14,12 @@ invalidChoice = "I'm sorry, that is not a valid choice."
 #the main function
 def main():
     player, player_dict, tiles_dict, currentTile, tileCoords, saveFileName = loadGame(mainMenu())
+    turn = 0
     if type(player_dict) != dict:
         exit()
     while True:
-        player, currentTile = combat(player, currentTile)
+        turn, player = passiveActions(turn, player)
+        player, currentTile = combat(turn, player, currentTile)
         print(f"{currentTile.name}\n{currentTile.description}")        
         
         #displays tile menu
@@ -29,6 +31,7 @@ def main():
         
         try:
             currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
+            turn += 1
         except KeyError:
             print("You can't go that way.\n__________________________________________________")
             match choice:
@@ -197,8 +200,11 @@ def tileMenu(player, tileCoords):
     return tileCoords, choice, save
 
 #processes combat
-def combat(player, currentTile):
+def combat(turn, player, currentTile):
     while len(currentTile.enemies_dict) > 0:
+        #triggers passive actions
+        turn, player = passiveActions(turn, player)
+        
         #prints list of enemies and relevant stats
         currentTile.display_enemies()
 
@@ -208,7 +214,7 @@ def combat(player, currentTile):
 
         #allows players to use actions
         try:
-            choice = int(input("What would you like to do?\n1: Attack\n2: Magic\n3: Use Item\n? ")) #displays options
+            choice = int(input("What would you like to do?\n1: Melee Attack\n2: Cast Magic\n3: Use Item\n? ")) #displays options
         except:
             print(invalidChoice)
             continue
@@ -233,7 +239,11 @@ def combat(player, currentTile):
                     if count + 1 == attackEnemy:
                         player.attack(currentTile.enemies_dict[enemy])        
             case 2:
-                print("Not yet implemented.")
+                print("""What would you like to cast?
+Name        Mana Cost   Effect
+1: Fireball 5           8 Damage
+2: Shield   15          Halves Incoming Damage for 3 Turns
+3: Heal     Variable    Converts 2x Input Mana to Health""")
                 continue
             case 3:
                 print("Not yet implemented.")
@@ -252,6 +262,8 @@ def combat(player, currentTile):
         for i in list(currentTile.enemies_dict.keys()):
             if currentTile.enemies_dict[i].health <= 0:
                 del currentTile.enemies_dict[i]
+
+        turn += 1
     for i in list(currentTile.enemies.keys()):
         del currentTile.enemies[i]
     return player, currentTile
@@ -326,5 +338,12 @@ def saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFileN
         json.dump(currentGame_dict, saveFile)
         saveFile.close()
     print("Thank you for playing.")
+
+#passive actions
+def passiveActions(turn, player):
+    if turn % 2 == 0:
+        player.modify_mana(5)
+    if player.shield > 0:
+        player.shield_turns(-1)
 
 main()
