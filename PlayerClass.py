@@ -9,7 +9,7 @@ class Player:
     maxHealth = 100
     maxMana = 100
 
-    def __init__(self, name = "Player", health = 100, mana = 50, damage = 5, defense = 1, shield = 0, inventory = {}):
+    def __init__(self, name = "Player", health = 100, mana = 50, damage = 1, defense = 1, shield = 0, inventory = {"equipped":{"name":"Iron Sword", "damage":5}}):
         self.name = name
         self.health = health
         self.mana = mana
@@ -39,8 +39,8 @@ class Player:
     def attack(self, target, attackType):
         match attackType:
             case "melee":
-                target.modify_health(-self.damage)
-                print(f"You hit {target.name} and deal {self.damage} damage!")
+                target.modify_health(-(self.damage + self.inventory["equipped"]["damage"]))
+                print(f"You hit {target.name} and deal {self.damage + self.inventory['equipped']['damage']} damage!")
             case "fireball":
                 target.modify_health(-8)
                 print(f"The fire engulfed {target.name} and dealt 8 damage!")
@@ -55,6 +55,6 @@ class Player:
             self.defense = 1
     
     def print_stats(self):
-        print(f"{self.name}\t{self.health}\t{self.mana}\t{self.damage}")
+        print(f"{self.name} + {self.inventory['equipped']['damage']} ({self.inventory['equipped']['name']}) = {self.damage + self.inventory['equipped']['damage']}\t{self.health}\t{self.mana}\t{self.damage}")
         if self.shield > 0:
             print(f"Shielded turns remaining: {self.shield}")
