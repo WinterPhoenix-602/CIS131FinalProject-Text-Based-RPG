@@ -18,8 +18,7 @@ def main():
     if type(player_dict) != dict:
         exit()
     while True:
-        turn, player = passiveActions(turn, player)
-        player, currentTile = combat(turn, player, currentTile)
+        turn, player, currentTile = combat(turn, player, currentTile)
         print(f"{currentTile.name}\n{currentTile.description}")        
         
         #displays tile menu
@@ -31,6 +30,8 @@ def main():
         
         try:
             currentTile.reader(tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])])
+            #triggers passive actions
+            turn, player = passiveActions(turn, player)
             turn += 1
         except KeyError:
             print("You can't go that way.\n__________________________________________________")
@@ -202,9 +203,6 @@ def tileMenu(player, tileCoords):
 #processes combat
 def combat(turn, player, currentTile):
     while len(currentTile.enemies_dict) > 0:
-        #triggers passive actions
-        turn, player = passiveActions(turn, player)
-        
         #prints list of enemies and relevant stats
         currentTile.display_enemies()
 
@@ -257,16 +255,18 @@ Name        Mana Cost   Effect
                 currentTile.enemies_dict[enemy].death()
             else:
                 currentTile.enemies_dict[enemy].attack(player)
+
+        #triggers passive actions
+        turn, player = passiveActions(turn, player)
         
         #removes dead enemies from enemies dictionary
         for i in list(currentTile.enemies_dict.keys()):
             if currentTile.enemies_dict[i].health <= 0:
                 del currentTile.enemies_dict[i]
 
-        turn += 1
     for i in list(currentTile.enemies.keys()):
         del currentTile.enemies[i]
-    return player, currentTile
+    return turn, player, currentTile
 
 #saves current game
 def saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFileName):
@@ -341,9 +341,11 @@ def saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFileN
 
 #passive actions
 def passiveActions(turn, player):
+    turn += 1
     if turn % 2 == 0:
         player.modify_mana(5)
     if player.shield > 0:
         player.shield_turns(-1)
+    return turn, player
 
 main()
