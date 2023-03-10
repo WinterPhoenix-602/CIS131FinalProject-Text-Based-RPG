@@ -9,9 +9,8 @@ from PlayerClass import Player
 from EnemyClass import Enemy
 from LocationTileClass import Tile
 from datetime import datetime
-from tabulate import tabulate
 
-invalidChoice = "I'm sorry, that is not a valid choice."
+invalidChoice = "I'm sorry, that is not a valid choice.\n"
 mainPath = os.path.dirname(__file__)
 newGamePath = os.path.join(mainPath, "SaveFiles\\NewGame.json")
 saveFileInfoPath = os.path.join(mainPath, "SaveFiles\\SaveFileInfo.json")
@@ -145,7 +144,7 @@ def tileMenu(turn, player, tileCoords):
     save = ""
     while True:
         #print player status
-        print(tabulate(player.list_stats(), tablefmt="fancy_grid"))
+        print(player)
         print("")
         try:
             choice = int(input("What would you like to do?\n1: Go North\n2: Go East\n3: Go South\n4: Go West\n5: Open Inventory\n6: Exit Game\n? "))
@@ -194,14 +193,14 @@ def tileMenu(turn, player, tileCoords):
 
 def openInventory(player):
     while True:
-        print(tabulate(player.inventory_table("Full"), tablefmt="fancy_grid"))
+        print(player.get_inventory_table("Full"))
         try:
             inventoryChoice = int(input("\nWhat would you like to do?\n1: Equip Weapon\n2: Equip Shield\n3: Use Item\n4: Go Back\n? "))
             print("")
             match inventoryChoice:
                 case 1:
-                    print("Which Weapon would you like to equip?")
-                    print(tabulate(player.inventory_table("Weapon"), tablefmt="fancy_grid"))
+                    print("Which weapon would you like to equip?")
+                    print(player.get_inventory_table("Weapon"))
                     try:
                         weaponChoice = int(input("? "))
                         print("")
@@ -211,14 +210,13 @@ def openInventory(player):
                         for count, weapon in enumerate(player.get_inventory()["Weapon"]):
                             if count + 1 == weaponChoice:
                                 player.equip_item(player.get_inventory()["Weapon"][weapon])
-                                print(f"You have equipped your {weapon}.\n")
                                 continue
                     except:
                         print(invalidChoice)
                         continue
                 case 2:
-                    print("Which Shield would you like to equip?")
-                    print(tabulate(player.inventory_table("Shield"), tablefmt="fancy_grid"))
+                    print("Which shield would you like to equip?")
+                    print(player.get_inventory_table("Shield"))
                     try:
                         shieldChoice = int(input("? "))
                         print("")
@@ -228,10 +226,22 @@ def openInventory(player):
                         for count, shield in enumerate(player.get_inventory()["Shield"]):
                             if count + 1 == shieldChoice:
                                 player.equip_item(player.get_inventory()["Shield"][shield])
-                                if shield != "Unequipped":
-                                    print(f"You have equipped your {shield}.\n")
-                                else:
-                                    print(f"You have unequipped your shield.\n")
+                                continue
+                    except:
+                        print(invalidChoice)
+                        continue
+                case 3:
+                    print("Which item would you like to use?")
+                    print(player.get_inventory_table("Consumable"))
+                    try:
+                        itemChoice = int(input("? "))
+                        print("")
+                        if itemChoice > len(player.get_inventory()["Consumable"]):
+                            print(invalidChoice)
+                            continue
+                        for count, item in enumerate(player.get_inventory()["Consumable"]):
+                            if count + 1 == itemChoice:
+                                player.use_item(item)
                                 continue
                     except:
                         print(invalidChoice)
@@ -253,7 +263,7 @@ def combat(turn, player, currentTile):
         currentTile.display_enemies()
 
         #print player status
-        print(tabulate(player.list_stats(), tablefmt="fancy_grid"))
+        print(player)
 
         #allows players to use actions
         try:
