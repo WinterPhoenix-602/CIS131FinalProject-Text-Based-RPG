@@ -300,7 +300,7 @@ def combat(turn, player, currentTile):
                 del currentTile.get_enemies_dict()[i]
 
     for i in list(currentTile.get_enemies().keys()):
-        currentTile.set_enemies({})
+        del currentTile.get_enemies()[i]
     return turn, player, currentTile
 
 #displays encountered enemies
@@ -399,7 +399,7 @@ def saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFileP
             break
         
         saveFiles_dict["Save" + str(saveChoice)]["name"] = player_dict["_name"]
-    saveFiles_dict["Save" + str(saveChoice)]["info"] = f"(Last Saved: {datetime.now().replace(microsecond = 0).isoformat(' ')} Location: {currentTile.get_name()})"
+        saveFiles_dict["Save" + str(saveChoice)]["info"] = f"(Last Saved: {datetime.now().replace(microsecond = 0).isoformat(' ')} Location: {currentTile.get_name()})"
 
     with open(saveFileInfoPath,"w") as saveInfo:
         json.dump(saveFiles_dict, saveInfo)
