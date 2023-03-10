@@ -4,6 +4,7 @@
 #Final Project: Location Tile Class
 
 from EnemyClass import Enemy
+from tabulate import tabulate
 
 class Tile:
     def __init__(self, name = "", description = "", enemies = {"enemyName":{"health":0, "damage":0, "quantity":0}}):
@@ -43,10 +44,10 @@ class Tile:
         for enemy in self._enemies:
             for quantity in range(self._enemies[enemy]["quantity"]):
                 self._enemies_dict[enemy + str(quantity + 1)] = Enemy(f"{enemy} {str(quantity + 1)}", self._enemies[enemy]["health"], self._enemies[enemy]["maxHealth"], self._enemies[enemy]["damage"])
-                
+
     #displays enemies present on the tile
     def display_enemies(self):
-        print(f"Enemy Name\tHealth\tDamage")
+        table = [["Name", "Health", "Damage"]]
         for enemy in self._enemies_dict:
-            print(self._enemies_dict[enemy].__str__())
-        print(f"__________________________________________________")
+            table.append(self._enemies_dict[enemy].list_stats())  
+        print(tabulate(table, tablefmt="fancy_grid"))
