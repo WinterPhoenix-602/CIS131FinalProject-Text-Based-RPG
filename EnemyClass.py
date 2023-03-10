@@ -64,9 +64,7 @@ class Enemy:
     def death(self):
         print(f"{self._name} falls on the floor, dead.")
     
-    #returns formatted string representation
-    def __str__(self):
-        if not "Troll" in self._name:
-            return f"{self._name}\t{self._health}\t{self._damage}"
-        else:
-            return f"{self._name}\t\t{self._health}\t{self._damage}"
+    #returns formatted list representation
+    def list_stats(self):
+        table = [self._name, self._health, self._damage]
+        return table
