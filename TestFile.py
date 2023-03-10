@@ -9,6 +9,7 @@ from PlayerClass import Player
 from EnemyClass import Enemy
 from LocationTileClass import Tile
 from datetime import datetime
+from tabulate import tabulate
 
 invalidChoice = "I'm sorry, that is not a valid choice."
 mainPath = os.path.dirname(__file__)
@@ -144,8 +145,7 @@ def tileMenu(turn, player, tileCoords):
     save = ""
     while True:
         #print player status
-        print(f"Name\tHealth\tMana\tDamage")
-        print(player.__str__())
+        print(tabulate(player.list_stats(), tablefmt="fancy_grid"))
         print("")
         try:
             choice = int(input("What would you like to do?\n1: Go North\n2: Go East\n3: Go South\n4: Go West\n5: Open Inventory\n6: Exit Game\n? "))
@@ -203,8 +203,7 @@ def combat(turn, player, currentTile):
         currentTile.display_enemies()
 
         #print player status
-        print(f"Name\tHealth\tMana\tDamage")
-        print(player.__str__())
+        print(tabulate(player.list_stats(), tablefmt="fancy_grid"))
 
         #allows players to use actions
         try:
@@ -343,6 +342,10 @@ def saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFileP
     player_dict["_name"] = player.get_name()
     player_dict["_health"] = player.get_health()
     player_dict["_mana"] = player.get_mana()
+    for itemType in player.get_inventory():
+        if itemType != "Equipped":
+            for item in player.get_inventory()[itemType]:
+                player_dict["_inventory"][itemType][item] = {"stats":player.get_inventory()[itemType][item].get_stats(), "quantity":player.get_inventory()[itemType][item].get_quantity()}
     currentGame_dict["player"] = player_dict
     currentGame_dict["tiles"] = tiles_dict
     currentGame_dict["location"] = tileCoords
@@ -365,7 +368,7 @@ def saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFileP
                     continue
                 while True:
                     if saveFiles_dict[saveFiles_keyList[saveChoice - 1]]["info"] != "(Empty)":
-                        surety = input(f"This will overwrite the current game in {saveFiles_dict[saveFiles_keyList[saveChoice - 1]]['name']}. Are you sure? (yes/no): ")
+                        surety = input(f"This will overwrite the current save for {saveFiles_dict[saveFiles_keyList[saveChoice - 1]]['name']}. Are you sure? (yes/no): ")
                         if surety == "no":
                             break
                         elif surety == "yes":
