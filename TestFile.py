@@ -27,7 +27,7 @@ def main():
         print(f"{currentTile.get_name()}\n{currentTile.get_description()}")        
         
         #displays tile menu
-        turn, tileCoords, choice, save = tileMenu(turn, player, tileCoords)
+        turn, player, tileCoords, choice, save = tileMenu(turn, player, tileCoords)
         if choice == 6:
             if save == "yes":
                 saveGame(player_dict, player, tiles_dict, tileCoords, currentTile, saveFilePath)
@@ -164,7 +164,7 @@ def tileMenu(turn, player, tileCoords):
                     tileCoords[0] -= 1
                     break
                 case 5:
-                    print("Yet to be implemented.")
+                    player = openInventory(player)
                     continue
                 case 6:
                     while True:
@@ -176,7 +176,7 @@ def tileMenu(turn, player, tileCoords):
                             if save == "yes":
                                 print("\nThank you for playing.\n")
                                 save = "no"
-                                return turn, tileCoords, choice, save
+                                return turn, player, tileCoords, choice, save
                             elif save == "no":
                                 continue
                             else:
@@ -190,7 +190,57 @@ def tileMenu(turn, player, tileCoords):
         except:
             print(invalidChoice)
             continue
-    return turn, tileCoords, choice, save
+    return turn, player, tileCoords, choice, save
+
+def openInventory(player):
+    while True:
+        print(tabulate(player.inventory_table("Full"), tablefmt="fancy_grid"))
+        try:
+            inventoryChoice = int(input("\nWhat would you like to do?\n1: Equip Weapon\n2: Equip Shield\n3: Use Item\n4: Go Back\n? "))
+            print("")
+            match inventoryChoice:
+                case 1:
+                    print("Which Weapon would you like to equip?")
+                    print(tabulate(player.inventory_table("Weapon"), tablefmt="fancy_grid"))
+                    try:
+                        weaponChoice = int(input("? "))
+                        print("")
+                        if weaponChoice > len(player.get_inventory()["Weapon"]):
+                            print(invalidChoice)
+                            continue
+                        for count, weapon in enumerate(player.get_inventory()["Weapon"]):
+                            if count + 1 == weaponChoice:
+                                player.equip_item(player.get_inventory()["Weapon"][weapon])
+                                print(f"You have equipped your {weapon}.\n")
+                                continue
+                    except:
+                        print(invalidChoice)
+                        continue
+                case 2:
+                    print("Which Shield would you like to equip?")
+                    print(tabulate(player.inventory_table("Shield"), tablefmt="fancy_grid"))
+                    try:
+                        shieldChoice = int(input("? "))
+                        print("")
+                        if shieldChoice > len(player.get_inventory()["Shield"]):
+                            print(invalidChoice)
+                            continue
+                        for count, shield in enumerate(player.get_inventory()["Shield"]):
+                            if count + 1 == shieldChoice:
+                                player.equip_item(player.get_inventory()["Shield"][shield])
+                                if shield != "Unequipped":
+                                    print(f"You have equipped your {shield}.\n")
+                                else:
+                                    print(f"You have unequipped your shield.\n")
+                                continue
+                    except:
+                        print(invalidChoice)
+                        continue
+                case 4:
+                    return player
+        except:
+            print(invalidChoice)
+            continue
 
 #processes combat
 def combat(turn, player, currentTile):

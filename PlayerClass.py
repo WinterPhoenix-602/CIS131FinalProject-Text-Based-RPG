@@ -7,7 +7,7 @@ from ItemClass import Item
 
 class Player:
     #initialization method
-    def __init__(self, name = "Player", health = 100, maxHealth = 100, mana = 50, maxMana = 50, damage = 1, defense = 1, shieldDuration = 0, inventory = {"Equipped":{"Weapon":"Fists", "Shield":"None"}, "Weapons":{"Fists":{"stats":{"Damage":1}, "quantity":2}, "Wooden Sword":{"stats":{"Damage":5}, "quantity":1}}, "Shields":{"Wooden Shield":{"stats":{"Defense":2}, "quantity":1}}, "Consumables":{"Burrito":{"stats":{"Health":15}, "quantity":3}}}):
+    def __init__(self, name = "Player", health = 100, maxHealth = 100, mana = 50, maxMana = 50, damage = 1, defense = 1, shieldDuration = 0, inventory = {"Equipped":{"Weapon":"Fists", "Shield":"None"}, "Weapon":{"Fists":{"stats":{"Damage":1}, "quantity":2}, "Wooden Sword":{"stats":{"Damage":5}, "quantity":1}}, "Shield":{"Wooden Shield":{"stats":{"Defense":2}, "quantity":1}}, "Consumable":{"Burrito":{"stats":{"Health":15}, "quantity":3}}}):
         self._name = name
         self._health = health
         self._maxHealth = maxHealth
@@ -70,8 +70,8 @@ class Player:
             if itemType != "Equipped":
                 for item in self._inventory[itemType]:
                     self._inventory[itemType][item] = Item(itemType, item, self._inventory[itemType][item]["stats"], self._inventory[itemType][item]["quantity"])
-        self.equip_item(self._inventory["Weapons"][self._inventory["Equipped"]["Weapon"]])
-        self.equip_item(self._inventory["Shields"][self._inventory["Equipped"]["Shield"]])
+        self.equip_item(self._inventory["Weapon"][self._inventory["Equipped"]["Weapon"]])
+        self.equip_item(self._inventory["Shield"][self._inventory["Equipped"]["Shield"]])
     
     #adds/subtracts value to health, displays appropriate message
     def modify_health(self, change):
@@ -125,23 +125,35 @@ class Player:
 
     
     def equip_item(self, selected):
-        if selected.get_itemType() == "Weapons":
+        if selected.get_itemType() == "Weapon":
             self._inventory["Equipped"]["Weapon"] = selected.get_name()
             self._damage = selected.get_stats()["Damage"]
-        if selected.get_itemType() == "Shields":
+        if selected.get_itemType() == "Shield":
             self._inventory["Equipped"]["Shield"] = selected.get_name()
             self._defense = selected.get_stats()["Defense"]
 
     #returns formatted inventory table representation
-    def inventory_string(self):
-        inventoryTable = [""]
+    def inventory_table(self, invType):
+        inventoryTable = []
+        if invType == "Full":
+            for itemType in self._inventory:
+                if itemType != "Equipped":
+                    inventoryTable.append([f"{itemType} Name", "Stats", "Amount"])
+                    for item in self._inventory[itemType]:
+                        if item != "Fists" and item != "Unequipped":
+                            inventoryTable.append([item, f"{list(self._inventory[itemType][item].get_stats().keys())[0]}: {self._inventory[itemType][item].get_stats()[list(self._inventory[itemType][item].get_stats().keys())[0]]}", self._inventory[itemType][item].get_quantity()])
+        if invType == "Weapon":
+            for count, item in enumerate(self._inventory[invType]):
+                inventoryTable.append([f"{count + 1}: {item}", f"{list(self._inventory[invType][item].get_stats().keys())[0]}: {self._inventory[invType][item].get_stats()[list(self._inventory[invType][item].get_stats().keys())[0]]}", self._inventory[invType][item].get_quantity()])
+        if invType == "Shield":
+            for count, item in enumerate(self._inventory[invType]):
+                inventoryTable.append([f"{count + 1}: {item}", f"{list(self._inventory[invType][item].get_stats().keys())[0]}: {self._inventory[invType][item].get_stats()[list(self._inventory[invType][item].get_stats().keys())[0]]}", self._inventory[invType][item].get_quantity()])
         return inventoryTable
     
     #returns formatted list representation
     def list_stats(self):
-        table = [["Name", "Health", "Mana", "Damage", "Defense"], [self._name, self._health, self._mana, f"{self._inventory['Weapons'][self._inventory['Equipped']['Weapon']].get_stats()['Damage']} ({self._inventory['Weapons'][self._inventory['Equipped']['Weapon']].get_name()})", f"{self._inventory['Shields'][self._inventory['Equipped']['Shield']].get_stats()['Defense']} ({self._inventory['Shields'][self._inventory['Equipped']['Shield']].get_name()})"]]
+        table = [["Name", "Health", "Mana", "Damage", "Defense"], [self._name, self._health, self._mana, f"{self._inventory['Weapon'][self._inventory['Equipped']['Weapon']].get_stats()['Damage']} ({self._inventory['Weapon'][self._inventory['Equipped']['Weapon']].get_name()})", f"{self._inventory['Shield'][self._inventory['Equipped']['Shield']].get_stats()['Defense']} ({self._inventory['Shield'][self._inventory['Equipped']['Shield']].get_name()})"]]
         if self._shieldDuration > 0:
             table[0].append("Shield")
             table[1].append(f"{self._shieldDuration} turns left")
         return table
-        
