@@ -7,7 +7,7 @@ from random import randint
 
 class Player:
     #initialization method
-    def __init__(self, name = "Player", health = 100, maxHealth = 100, mana = 50, maxMana = 50, damage = 1, defense = 1, shieldDuration = 0, inventory = {"equipped":{"name":"Iron Sword", "damage":5}}):
+    def __init__(self, name = "Player", health = 100, maxHealth = 100, mana = 50, maxMana = 50, damage = 1, defense = 1, shieldDuration = 0, inventory = {"equipped":{"weapon":{"name":"Wooden Sword", "damage":5}}}):
         self._name = name
         self._health = health
         self._maxHealth = maxHealth
@@ -97,8 +97,8 @@ class Player:
     def attack(self, target, attackType):
         match attackType:
             case "melee":
-                target.modify_health(-(self._damage + self._inventory["equipped"]["damage"]))
-                print(f"You hit {target.get_name()} and deal {self._damage + self._inventory['equipped']['damage']} damage!")
+                target.modify_health(-(self._damage + self._inventory["equipped"]["weapon"]["damage"]))
+                print(f"You hit {target.get_name()} and deal {self._damage + self._inventory['equipped']['weapon']['damage']} damage!")
             case "fireball":
                 target.modify_health(-8)
                 print(f"The fire engulfs {target.get_name()} and deals 8 damage!")
@@ -116,10 +116,14 @@ class Player:
             self._defense = 2
         else:
             self._defense = 1
+
+    #displays inventory
+    def display_inventory(self):
+        pass
     
     #returns formatted string representation
     def __str__(self):
         if self._shieldDuration > 0:
-            return f"{self._name}\t{self._health}\t{self._mana}\t{self._damage} + {self._inventory['equipped']['damage']} ({self._inventory['equipped']['name']}) = {self._damage + self._inventory['equipped']['damage']}\nShielded turns remaining: {self._shieldDuration}"
+            return f"{self._name}\t{self._health}\t{self._mana}\t{self._damage} + {self._inventory['equipped']['weapon']['damage']} ({self._inventory['equipped']['weapon']['name']}) = {self._damage + self._inventory['equipped']['weapon']['damage']}\nShielded turns remaining: {self._shieldDuration}"
         else:
-            return f"{self._name}\t{self._health}\t{self._mana}\t{self._damage} + {self._inventory['equipped']['damage']} ({self._inventory['equipped']['name']}) = {self._damage + self._inventory['equipped']['damage']}"
+            return f"{self._name}\t{self._health}\t{self._mana}\t{self._damage} + {self._inventory['equipped']['weapon']['damage']} ({self._inventory['equipped']['weapon']['name']}) = {self._damage + self._inventory['equipped']['weapon']['damage']}"

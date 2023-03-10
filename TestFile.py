@@ -143,12 +143,11 @@ def loadGame(menuChoice):
 def tileMenu(turn, player, tileCoords):
     save = ""
     while True:
+        #print player status
+        print(f"Name\tHealth\tMana\tDamage")
+        print(player.__str__())
+        print("")
         try:
-            #print player status
-            print(f"Name\tHealth\tMana\tDamage")
-            print(player.__str__())
-            print("")
-
             choice = int(input("What would you like to do?\n1: Go North\n2: Go East\n3: Go South\n4: Go West\n5: Open Inventory\n6: Exit Game\n? "))
             print("")
             match choice:
