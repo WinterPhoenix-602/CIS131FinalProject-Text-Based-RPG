@@ -3,6 +3,8 @@
 #CIS131
 #Final Project: Item Class
 
+from tabulate import tabulate
+
 class Item:
     #initialization method
     def __init__(self, itemType = "", name = "", stats = {}, quantity = 0):
@@ -33,7 +35,13 @@ class Item:
 
     #returns formatted string representation
     def __str__(self):
-        itemString = f"{self._name}\t| "
-        for count, stat in enumerate(self._stats):
-            itemString += f"{list(self._stats.keys())[count]}: {self._stats[stat]}\t| "
-        return itemString
+        itemTable = [self._name]
+        statString = ""
+        if len(self._stats) > 1:
+            for stat in self._stats:
+                statString += f"{stat}: {self._stats[stat]} "
+        else:
+            statString = f"{stat}: {self._stats[stat]}"
+        itemTable.append(statString)
+        itemTable.append(self._quantity)
+        return tabulate([itemTable], tablefmt="fancy_grid")
