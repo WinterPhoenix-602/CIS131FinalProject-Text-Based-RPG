@@ -4,7 +4,6 @@
 #Final Project: Player Class
 
 from ItemClass import Item
-from tabulate import tabulate
 
 class Player:
     #initialization method
@@ -143,14 +142,9 @@ class Player:
     #returns formatted list representation
     def list_stats(self):
         if self._shieldDuration <= 0:
-            table = [["Name", "Health", "Mana", "Damage", "Shield"]]
-            return [self._name] + [self._health] + [self._mana] + [f"{self._inventory['Weapons'][self._inventory['Equipped']['Weapon']].get_stats()['Damage']} ({self._inventory['Weapons'][self._inventory['Equipped']['Weapon']].get_name()})"]
+            table = [["Name", "Health", "Mana", "Damage"], [self._name, self._health, self._mana, f"{self._inventory['Weapons'][self._inventory['Equipped']['Weapon']].get_stats()['Damage']} ({self._inventory['Weapons'][self._inventory['Equipped']['Weapon']].get_name()})"]]
+            return table
         else:
-            return [self._name] + [self._health] + [self._mana] + [f"{self._inventory['Weapons'][self._inventory['Equipped']['Weapon']].get_stats()['Damage']} ({self._inventory['Weapons'][self._inventory['Equipped']['Weapon']].get_name()})"] + [f"{self._shieldDuration} turns left"]
-x = Player()
-
-x.reader({"_name":"Player", "_health":100, "_mana":50, "_damage":1, "_defense":0, "_shield":0, "_inventory":{"Equipped":{"Weapon":"Fists", "Shield":"Wooden Shield"}, "Weapons":{"Fists":{"stats":{"Damage":1}, "quantity":2}, "Wooden Sword":{"stats":{"Damage":5}, "quantity":1}}, "Shields":{"Wooden Shield":{"stats":{"Defense":2}, "quantity":1}}, "Consumables":{"Burrito":{"stats":{"Health":15}, "quantity":3}}}})
-
-table = [["Name", "Health", "Mana", "Damage", "Shield"], x.list_stats()]
-
-print(tabulate(table, tablefmt='fancy_grid'))
+            table = [["Name", "Health", "Mana", "Damage", "Shield"], [self._name, self._health, self._mana, f"{self._inventory['Weapons'][self._inventory['Equipped']['Weapon']].get_stats()['Damage']} ({self._inventory['Weapons'][self._inventory['Equipped']['Weapon']].get_name()})", f"{self._shieldDuration} turns left"]]
+            return table
+        
