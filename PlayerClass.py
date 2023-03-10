@@ -132,19 +132,16 @@ class Player:
             self._inventory["Equipped"]["Shield"] = selected.get_name()
             self._defense = selected.get_stats()["Defense"]
 
-    #returns formatted inventory representation
+    #returns formatted inventory table representation
     def inventory_string(self):
-        inventoryString = f"Equipped Items:\nSlot:\tName\t\tStats\n"
-        for item in self._inventory["equipped"]:
-            inventoryString += f"{item}:\t{self._inventory['equipped'][item]['name']}\t{self._inventory['equipped'][item]['stats']}"
-        return inventoryString
+        inventoryTable = [""]
+        return inventoryTable
     
     #returns formatted list representation
     def list_stats(self):
-        if self._shieldDuration <= 0:
-            table = [["Name", "Health", "Mana", "Damage", "Defense"], [self._name, self._health, self._mana, f"{self._inventory['Weapons'][self._inventory['Equipped']['Weapon']].get_stats()['Damage']} ({self._inventory['Weapons'][self._inventory['Equipped']['Weapon']].get_name()})", f"{self._inventory['Shields'][self._inventory['Equipped']['Shield']].get_stats()['Defense']} ({self._inventory['Shields'][self._inventory['Equipped']['Shield']].get_name()})"]]
-            return table
-        else:
-            table = [["Name", "Health", "Mana", "Damage", "Defense", "Shield"], [self._name, self._health, self._mana, f"{self._inventory['Weapons'][self._inventory['Equipped']['Weapon']].get_stats()['Damage']} ({self._inventory['Weapons'][self._inventory['Equipped']['Weapon']].get_name()})", f"{self._inventory['Shields'][self._inventory['Equipped']['Shield']].get_stats()['Defense']} ({self._inventory['Shields'][self._inventory['Equipped']['Shield']].get_name()})", f"{self._shieldDuration} turns left"]]
-            return table
+        table = [["Name", "Health", "Mana", "Damage", "Defense"], [self._name, self._health, self._mana, f"{self._inventory['Weapons'][self._inventory['Equipped']['Weapon']].get_stats()['Damage']} ({self._inventory['Weapons'][self._inventory['Equipped']['Weapon']].get_name()})", f"{self._inventory['Shields'][self._inventory['Equipped']['Shield']].get_stats()['Defense']} ({self._inventory['Shields'][self._inventory['Equipped']['Shield']].get_name()})"]]
+        if self._shieldDuration > 0:
+            table[0].append("Shield")
+            table[1].append(f"{self._shieldDuration} turns left")
+        return table
         
