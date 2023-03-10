@@ -3,9 +3,12 @@
 #CIS131
 #Final Project: Player Class
 
+from ItemClass import Item
+from tabulate import tabulate
+
 class Player:
     #initialization method
-    def __init__(self, name = "Player", health = 100, maxHealth = 100, mana = 50, maxMana = 50, damage = 1, defense = 1, shieldDuration = 0, inventory = {}):
+    def __init__(self, name = "Player", health = 100, maxHealth = 100, mana = 50, maxMana = 50, damage = 1, defense = 1, shieldDuration = 0, inventory = {"Equipped":{"Weapon":"Fists", "Shield":"None"}, "Weapons":{"Fists":{"stats":{"Damage":1}, "quantity":2}, "Wooden Sword":{"stats":{"Damage":5}, "quantity":1}}, "Shields":{"Wooden Shield":{"stats":{"Defense":2}, "quantity":1}}, "Consumables":{"Burrito":{"stats":{"Health":15}, "quantity":3}}}):
         self._name = name
         self._health = health
         self._maxHealth = maxHealth
@@ -64,6 +67,12 @@ class Player:
             except:
                 print("No such attribute, please consider adding it in init.")
                 continue
+        for itemType in self._inventory:
+            if itemType != "Equipped":
+                for item in self._inventory[itemType]:
+                    self._inventory[itemType][item] = Item(itemType, item, self._inventory[itemType][item]["stats"], self._inventory[itemType][item]["quantity"])
+        self.equip_item(self._inventory["Weapons"][self._inventory["Equipped"]["Weapon"]])
+        self.equip_item(self._inventory["Shields"][self._inventory["Equipped"]["Shield"]])
     
     #adds/subtracts value to health, displays appropriate message
     def modify_health(self, change):
@@ -95,8 +104,8 @@ class Player:
     def attack(self, target, attackType):
         match attackType:
             case "melee":
-                target.modify_health(-(self._inventory["equipped"]["Weapon"]["damage"]))
-                print(f"You hit {target.get_name()} and deal {self._inventory['equipped']['Weapon']['damage']} damage!")
+                target.modify_health(-(self._damage))
+                print(f"You hit {target.get_name()} and deal {self._damage} damage!")
             case "fireball":
                 target.modify_health(-8)
                 print(f"The fire engulfs {target.get_name()} and deals 8 damage!")
@@ -115,6 +124,15 @@ class Player:
         else:
             self._defense = 1
 
+    
+    def equip_item(self, selected):
+        if selected.get_itemType() == "Weapons":
+            self._inventory["Equipped"]["Weapon"] = selected.get_name()
+            self._damage = selected.get_stats()["Damage"]
+        if selected.get_itemType() == "Shields":
+            self._inventory["Equipped"]["Shield"] = selected.get_name()
+            self._defense = selected.get_stats()["Defense"]
+
     #returns formatted inventory representation
     def inventory_string(self):
         inventoryString = f"Equipped Items:\nSlot:\tName\t\tStats\n"
@@ -122,13 +140,17 @@ class Player:
             inventoryString += f"{item}:\t{self._inventory['equipped'][item]['name']}\t{self._inventory['equipped'][item]['stats']}"
         return inventoryString
     
-    #returns formatted string representation
-    def __str__(self):
-        if self._shieldDuration > 0:
-            return f"{self._name}\t{self._health}\t{self._mana}\t{self._inventory['equipped']['Weapon']['damage']} ({self._inventory['equipped']['Weapon']['name']}) = {self._damage + self._inventory['equipped']['Weapon']['damage']}\nShielded turns remaining: {self._shieldDuration}"
+    #returns formatted list representation
+    def list_stats(self):
+        if self._shieldDuration <= 0:
+            table = [["Name", "Health", "Mana", "Damage", "Shield"]]
+            return [self._name] + [self._health] + [self._mana] + [f"{self._inventory['Weapons'][self._inventory['Equipped']['Weapon']].get_stats()['Damage']} ({self._inventory['Weapons'][self._inventory['Equipped']['Weapon']].get_name()})"]
         else:
-            return f"{self._name}\t{self._health}\t{self._mana}\t{self._inventory['equipped']['Weapon']['damage']} ({self._inventory['equipped']['Weapon']['name']}) = {self._damage + self._inventory['equipped']['Weapon']['damage']}"
-
+            return [self._name] + [self._health] + [self._mana] + [f"{self._inventory['Weapons'][self._inventory['Equipped']['Weapon']].get_stats()['Damage']} ({self._inventory['Weapons'][self._inventory['Equipped']['Weapon']].get_name()})"] + [f"{self._shieldDuration} turns left"]
 x = Player()
 
-print(x.inventory_string())
+x.reader({"_name":"Player", "_health":100, "_mana":50, "_damage":1, "_defense":0, "_shield":0, "_inventory":{"Equipped":{"Weapon":"Fists", "Shield":"Wooden Shield"}, "Weapons":{"Fists":{"stats":{"Damage":1}, "quantity":2}, "Wooden Sword":{"stats":{"Damage":5}, "quantity":1}}, "Shields":{"Wooden Shield":{"stats":{"Defense":2}, "quantity":1}}, "Consumables":{"Burrito":{"stats":{"Health":15}, "quantity":3}}}})
+
+table = [["Name", "Health", "Mana", "Damage", "Shield"], x.list_stats()]
+
+print(tabulate(table, tablefmt='fancy_grid'))
