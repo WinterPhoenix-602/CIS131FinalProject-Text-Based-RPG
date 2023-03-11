@@ -7,7 +7,7 @@ import textwrap
 from CombatEncounterClass import CombatEncounter
 
 class Tile:
-    def __init__(self, name = "", description = "", combatEncounter = {"_name":"", "_startDescription":[""], "_enemies":{}, "_endDescription":[""]}):
+    def __init__(self, name = "", description = "", combatEncounter = {"_name":"", "_startDescription":[""], "_enemies":{}, "_endDescription":[""], "_triggerChance":[0, 0]}):
         self._name = name
         self._description = description
         self._combatEncounter = combatEncounter
@@ -16,7 +16,7 @@ class Tile:
     def get_name(self):
         return self._name
     def get_description(self):
-        return self._description
+        return "\n\n".join(self._description)
     def get_combatEncounter(self):
         return self._combatEncounter
 
@@ -36,7 +36,6 @@ class Tile:
                 if key == "_description":
                     for count, paragraph in enumerate(self._description):
                         self._description[count] = textwrap.fill(self._description[count], 100)
-                    self._description = "\n\n".join(self._description)
                 if key == "_combatEncounter":
                     a = CombatEncounter()
                     a.reader(self._combatEncounter)
