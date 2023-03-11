@@ -29,6 +29,8 @@ class CombatEncounter:
         return self._enemies_dict
     def get_endDescription(self):
         return self._endDescription
+    def get_complete(self):
+        return self._complete
     
     #setters
     def set_name(self, name):
@@ -41,6 +43,8 @@ class CombatEncounter:
         self._enemies_dict = enemies_dict
     def set_endDescription(self, endDescription):
         self._endDescription = endDescription
+    def set_complete(self, complete):
+        self._complete = complete
 
     #sets attributes from input dictionary
     def reader(self, input_dict):
@@ -173,8 +177,9 @@ class CombatEncounter:
                 print("") #adds newline after enemy turns
 
                 turn = self.passive_actions(turn, player) #triggers passive actions
+            print("\n\n".join(self._endDescription) + "\n") #prints long encounter end description
         self._complete = True
-        print("\n\n".join(self._endDescription) + "\n") #prints long encounter end description
+        
 
     #displays encountered enemies
     def encounterText(self):
