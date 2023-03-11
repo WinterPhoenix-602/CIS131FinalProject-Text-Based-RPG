@@ -82,7 +82,9 @@ class Player:
                 for item in self._inventory[itemType]:
                     self._inventory[itemType][item] = Item(itemType, item, self._inventory[itemType][item]["stats"], self._inventory[itemType][item]["quantity"])
         self._equippedWeapon = self._inventory["Weapon"][self._inventory["Equipped"]["Weapon"]]
+        self._damage = self._equippedWeapon.get_stats()["Damage"]
         self._equippedShield = self._inventory["Shield"][self._inventory["Equipped"]["Shield"]]
+        self._defense = self._equippedShield.get_stats()["Defense"]
     
     #adds/subtracts value to health, displays appropriate message
     def modify_health(self, change):
@@ -134,20 +136,27 @@ class Player:
     
     #equips selected item
     def equip_item(self, selected):            
-        if selected.get_itemType() == "Weapon":
-            if selected.get_name() != "Fists" and self._equippedWeapon.get_name() != "Fists":
-                print(f"You stow away your {self._equippedWeapon.get_name()} and equip your {selected.get_name()}.\n")
-            else:
-                print(f"You stow away your {self._equippedWeapon.get_name()}.\n")
-            self._equippedWeapon = selected
-            self._damage = selected.get_stats()["Damage"]
-        if selected.get_itemType() == "Shield":
-            if selected.get_name() != "Fists" and self._equippedShield.get_name() != "Fists":
-                print(f"You stow away your {self._equippedShield} and equip your {selected.get_name()}.\n")
-            else:
-                print(f"You stow away your {self._equippedShield}.\n")
-            self._equippedShield = selected
-            self._defense = selected.get_stats()["Defense"]
+        if selected != self._equippedWeapon and selected != self._equippedShield:
+            if selected.get_itemType() == "Weapon":
+                if selected.get_name() != "Fists"and self._equippedWeapon.get_name() != "Fists":
+                    print(f"You stow away your {self._equippedWeapon.get_name()} and equip your {selected.get_name()}.\n")
+                elif self._equippedWeapon.get_name() != "Fists":
+                    print(f"You stow away your {self._equippedWeapon.get_name()}.\n")
+                else:
+                    print(f"You equip your {selected.get_name()}.\n")
+                self._equippedWeapon = selected
+                self._damage = selected.get_stats()["Damage"]
+            if selected.get_itemType() == "Shield":
+                if selected.get_name() != "Fists" and self._equippedShield.get_name() != "Fists":
+                    print(f"You stow away your {self._equippedShield} and equip your {selected.get_name()}.\n")
+                elif self._equippedShield.get_name() != "Fists":
+                    print(f"You stow away your {self._equippedShield.get_name()}.\n")
+                else:
+                    print(f"You equip your {selected.get_name()}.\n")
+                self._equippedShield = selected
+                self._defense = selected.get_stats()["Defense"]
+        else:
+            print(f"You decided what you have is good enough for now.\n")
     
     #uses selected item
     def use_item(self, item):
