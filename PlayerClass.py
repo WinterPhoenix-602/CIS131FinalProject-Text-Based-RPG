@@ -6,6 +6,8 @@
 from ItemClass import Item
 from tabulate import tabulate
 
+invalidChoice = "I'm sorry, that is not a valid choice.\n"
+
 class Player:
     #initialization method
     def __init__(self, name = "Player", health = 100, maxHealth = 100, mana = 50, maxMana = 50, damage = 1, defense = 1, shieldDuration = 0, inventory = {}, equippedWeapon = "", equippedShield = ""):
@@ -165,6 +167,67 @@ class Player:
                 print(f"You pop the cork from the vial, and down the {item} within.\n")
             else:
                 print(f"You quickly scarf down the {item}.\n")
+
+    def openInventory(self):
+        while True:
+            print(self.get_inventory_table("Full"))
+            try:
+                inventoryChoice = int(input("\nWhat would you like to do?\n1: Equip Weapon\n2: Equip Shield\n3: Use Item\n4: Go Back\n? "))
+                print("")
+                match inventoryChoice:
+                    case 1:
+                        print("Which weapon would you like to equip?")
+                        print(self.get_inventory_table("Weapon"))
+                        try:
+                            weaponChoice = int(input("? "))
+                            print("")
+                            if weaponChoice > len(self.get_inventory()["Weapon"]):
+                                print(invalidChoice)
+                                continue
+                            for count, weapon in enumerate(self.get_inventory()["Weapon"]):
+                                if count + 1 == weaponChoice:
+                                    self.equip_item(self.get_inventory()["Weapon"][weapon])
+                                    continue
+                        except:
+                            print(invalidChoice)
+                            continue
+                    case 2:
+                        print("Which shield would you like to equip?")
+                        print(self.get_inventory_table("Shield"))
+                        try:
+                            shieldChoice = int(input("? "))
+                            print("")
+                            if shieldChoice > len(self.get_inventory()["Shield"]):
+                                print(invalidChoice)
+                                continue
+                            for count, shield in enumerate(self.get_inventory()["Shield"]):
+                                if count + 1 == shieldChoice:
+                                    self.equip_item(self.get_inventory()["Shield"][shield])
+                                    continue
+                        except:
+                            print(invalidChoice)
+                            continue
+                    case 3:
+                        print("Which item would you like to use?")
+                        print(self.get_inventory_table("Consumable"))
+                        try:
+                            itemChoice = int(input("? "))
+                            print("")
+                            if itemChoice > len(self.get_inventory()["Consumable"]):
+                                print(invalidChoice)
+                                continue
+                            for count, item in enumerate(self.get_inventory()["Consumable"]):
+                                if count + 1 == itemChoice:
+                                    self.use_item(item)
+                                    continue
+                        except:
+                            print(invalidChoice)
+                            continue
+                    case 4:
+                        break
+            except:
+                print(invalidChoice)
+                continue
 
     #returns formatted inventory table representation
     def get_inventory_table(self, invType):
