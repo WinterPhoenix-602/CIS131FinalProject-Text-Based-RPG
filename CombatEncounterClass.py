@@ -171,7 +171,7 @@ class CombatEncounter:
             print("") #adds newline after enemy turns
 
             turn = self.passive_actions(turn, player) #triggers passive actions
-        print("\n\n".join(self._endDescription)) #prints long encounter end description
+        print("\n\n".join(self._endDescription) + "\n") #prints long encounter end description
 
     #displays encountered enemies
     def encounterText(self):
