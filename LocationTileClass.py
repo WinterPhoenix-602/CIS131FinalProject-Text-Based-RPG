@@ -4,11 +4,10 @@
 #Final Project: Location Tile Class
 
 import textwrap
-from EnemyClass import Enemy
-from tabulate import tabulate
+from CombatEncounterClass import CombatEncounter
 
 class Tile:
-    def __init__(self, name = "", description = "", combatEncounter = {"enemyName":{"_health":0, "_damage":0, "_quantity":0}}):
+    def __init__(self, name = "", description = "", combatEncounter = {"_name":"", "_startDescription":[""], "_enemies":{}, "_endDescription":[""]}):
         self._name = name
         self._description = description
         self._combatEncounter = combatEncounter
@@ -38,10 +37,10 @@ class Tile:
                     for count, paragraph in enumerate(self._description):
                         self._description[count] = textwrap.fill(self._description[count], 100)
                     self._description = "\n\n".join(self._description)
+                if key == "_combatEncounter":
+                    a = CombatEncounter()
+                    a.reader(self._combatEncounter)
+                    self._combatEncounter = a
             except:
                 print("No such attribute, please consider adding it in init.")
                 continue
-        for enemy in self._combatEncounter:
-            for quantity in range(self._combatEncounter[enemy]["quantity"]):
-                self._combatEncounter_dict[enemy + str(quantity + 1)] = Enemy(f"{enemy} {quantity + 1}")
-                self._combatEncounter_dict[enemy + str(quantity + 1)].reader(self._combatEncounter[enemy])
