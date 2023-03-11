@@ -6,31 +6,32 @@ import textwrap
 from EnemyClass import Enemy
 from PlayerClass import Player
 from tabulate import tabulate
+from random import randint
 
 invalidChoice = "I'm sorry, that is not a valid choice.\n"
 
 class CombatEncounter:
-    def __init__(self, name = "", startDescription = "", enemies = {}, endDescription = "", complete = False):
+    def __init__(self, name = "", startDescription = [""], enemies = {}, endDescription = [""], triggerChance = [0, 0]):
         self._name = name
         self._startDescription = startDescription
         self._enemies = enemies
         self._enemies_dict = {}
         self._endDescription = endDescription
-        self._complete = complete
+        self._triggerChance = triggerChance
 
     #getters
     def get_name(self):
         return self._name
     def get_startDescription(self):
-        return self._startDescription
+        return "\n\n".join(self._startDescription)
     def get_enemies(self):
         return self._enemies
     def get_enemies_dict(self):
         return self._enemies_dict
     def get_endDescription(self):
-        return self._endDescription
-    def get_complete(self):
-        return self._complete
+        return "\n\n".join(self._endDescription)
+    def get_triggerChance(self):
+        return self._triggerChance
     
     #setters
     def set_name(self, name):
@@ -43,8 +44,8 @@ class CombatEncounter:
         self._enemies_dict = enemies_dict
     def set_endDescription(self, endDescription):
         self._endDescription = endDescription
-    def set_complete(self, complete):
-        self._complete = complete
+    def set_triggerChance(self, triggerChance):
+        self._triggerChance = triggerChance
 
     #sets attributes from input dictionary
     def reader(self, input_dict):
@@ -55,10 +56,10 @@ class CombatEncounter:
                     for count, paragraph in enumerate(self._startDescription):
                         self._startDescription[count] = textwrap.fill(self._startDescription[count], 100)
                 if key == "_enemies":
-                    for enemy in input_dict["_enemies"]:
-                        for quantity in range(input_dict["_enemies"][enemy]["quantity"]):
+                    for enemy in self._enemies:
+                        for quantity in range(self._enemies[enemy]["quantity"]):
                             a = Enemy(f"{enemy} {quantity + 1}")
-                            a.reader(input_dict["_enemies"][enemy])
+                            a.reader(self._enemies[enemy])
                             self._enemies_dict[f"{enemy} {quantity + 1}"] = a
                 if key == "_endDescription":
                     for count, paragraph in enumerate(self._endDescription):
@@ -66,8 +67,13 @@ class CombatEncounter:
             except:
                 print("No such attribute, please consider adding it in init.")
 
-    def start_encounter(self, player, turn):
-        if self._complete == False:
+    def start_encounter(self, player = Player(), turn = 0):
+        for enemy in self._enemies:
+            for quantity in range(self._enemies[enemy]["quantity"]):
+                a = Enemy(f"{enemy} {quantity + 1}")
+                a.reader(self._enemies[enemy])
+                self._enemies_dict[f"{enemy} {quantity + 1}"] = a
+        if randint(1, 100) <= self._triggerChance[0] and len(self._enemies_dict) > 0 and turn > 0:
             print("\n\n".join(self._startDescription) + "\n") #prints long encounter start description
             print(self.encounterText() + "\n") #prints simple encounter start description
             while len(self._enemies_dict) > 0:
@@ -178,7 +184,7 @@ class CombatEncounter:
 
                 turn = self.passive_actions(turn, player) #triggers passive actions
             print("\n\n".join(self._endDescription) + "\n") #prints long encounter end description
-        self._complete = True
+            self._triggerChance[0] = self._triggerChance[1] #sets trigger chance to what it should be after the first encounter
         
 
     #displays encountered enemies

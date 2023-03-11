@@ -22,9 +22,9 @@ def main():
     if type(player_dict) != dict:
         exit()
     while True:
-        if len(currentTile.get_combatEncounter().get_enemies_dict()) > 0:
+        if len(currentTile.get_combatEncounter().get_enemies()) > 0:
             currentTile.get_combatEncounter().start_encounter(player, turn)
-            tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])]["_combatEncounter"]["_complete"] = currentTile.get_combatEncounter().get_complete()
+            tiles_dict["tile" + str(tileCoords[0]) + str(tileCoords[1])]["_combatEncounter"]["_triggerChance"] = currentTile.get_combatEncounter().get_triggerChance()
         print(f"{currentTile.get_name()}\n\n{currentTile.get_description()}\n")        
         
         #displays tile menu
