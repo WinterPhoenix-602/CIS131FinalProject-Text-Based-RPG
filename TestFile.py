@@ -23,7 +23,7 @@ def main():
         exit()
     while True:
         turn, player, currentTile = combat(turn, player, currentTile)
-        print(f"{currentTile.get_name()}\n{currentTile.get_description()}")        
+        print(f"{currentTile.get_name()}\n{currentTile.get_description()}\n")        
         
         #displays tile menu
         turn, player, tileCoords, choice, save = tileMenu(turn, player, tileCoords)
