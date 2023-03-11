@@ -41,7 +41,8 @@ class Item:
             for stat in self._stats:
                 statString += f"{stat}: {self._stats[stat]} "
         else:
-            statString = f"{stat}: {self._stats[stat]}"
+            for stat in self._stats:
+                statString = f"{stat}: {self._stats[stat]}"
         itemTable.append(statString)
         itemTable.append(self._quantity)
         return tabulate([itemTable], tablefmt="fancy_grid")
