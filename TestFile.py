@@ -260,7 +260,7 @@ def combat(turn, player, currentTile):
 
     while len(currentTile.get_enemies_dict()) > 0:
         #prints list of enemies and relevant stats
-        currentTile.display_enemies()
+        print(currentTile.display_enemies())
 
         #print player status
         print(player)
@@ -292,7 +292,7 @@ def combat(turn, player, currentTile):
                     attackEnemy = 1
                 for count, enemy in enumerate(currentTile.get_enemies_dict()): #damages selected target
                     if count + 1 == attackEnemy:
-                        player.attack(currentTile.get_enemies_dict()[enemy], "melee")
+                        player.melee_attack(currentTile.get_enemies_dict()[enemy])
             case 2:
                 try:
                     spell = int(input("What would you like to cast?\nName\t\tMana Cost\tEffect\n1: Fireball\t5\t\tDeals 8 Damage to All Enemies\n2: Shield\t15\t\tHalves Incoming Damage for 3 Turns\n3: Heal\t\tVariable\tConverts 2x Mana Cost to Health\n? "))
@@ -302,7 +302,7 @@ def combat(turn, player, currentTile):
                             if player.get_mana() >= 5:
                                 player.modify_mana(-5)
                                 for count, enemy in enumerate(currentTile.get_enemies_dict()):
-                                    player.attack(currentTile.get_enemies_dict()[enemy], "fireball")
+                                    player.cast_fireball(currentTile.get_enemies_dict()[enemy])
                             else:
                                 print("Insufficient mana.\n")
                                 continue
