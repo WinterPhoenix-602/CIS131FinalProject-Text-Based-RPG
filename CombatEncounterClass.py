@@ -61,7 +61,7 @@ class CombatEncounter:
             except:
                 print("No such attribute, please consider adding it in init.")
 
-    def start_encounter(self, player):
+    def start_encounter(self, player, turn):
         print("\n\n".join(self._startDescription) + "\n") #prints long encounter start description
         print(self.encounterText() + "\n") #prints simple encounter start description
         while len(self._enemies_dict) > 0:
@@ -169,8 +169,9 @@ class CombatEncounter:
                     self._enemies_dict[enemy].attack(player)
                                 
             print("") #adds newline after enemy turns
-        print("\n\n".join(self._endDescription)) #prints long encounter end description
 
+            turn = self.passive_actions(turn, player) #triggers passive actions
+        print("\n\n".join(self._endDescription)) #prints long encounter end description
 
     #displays encountered enemies
     def encounterText(self):
@@ -217,6 +218,17 @@ class CombatEncounter:
                     else:
                         encounterText += f"and {self._enemies[enemy]['quantity']} {enemy}s!"
                         return encounterText
+                    
+    #passive actions
+    def passive_actions(self, turn, player):
+        turn += 1
+        if turn % 2 == 0:
+            player.modify_mana(5)
+        if player.get_shieldDuration() > 0:
+            player.modify_shieldDuration(-1)
+            if player.get_shieldDuration() == 0:
+                print("Your shield flickers and dies.")
+        return turn
 
     #returns formatted table representation
     def __str__(self):
@@ -225,9 +237,10 @@ class CombatEncounter:
             enemyTable.append([self._enemies_dict[enemy].get_name(), self._enemies_dict[enemy].get_health(), self._enemies_dict[enemy].get_damage()])
         return tabulate(enemyTable, tablefmt="fancy_grid")
 
-#Testing
-'''p = Player()
+'''#Testing
+p = Player()
 p.reader({"_name": "Newbie", "_health": 100, "_mana": 50, "_damage": 1, "_defense": 1, "_shield": 0, "_inventory": {"Equipped": {"Weapon": "Fists", "Shield": "Wooden Shield"}, "Weapon": {"Fists": {"stats": {"Damage": 1}, "quantity": 1}, "Wooden Sword": {"stats": {"Damage": 5}, "quantity": 1}}, "Shield": {"Fists": {"stats": {"Defense": 1}, "quantity": 1}, "Wooden Shield": {"stats": {"Defense": 2}, "quantity": 1}}, "Consumable": {"Burrito": {"stats": {"Health": 15}, "quantity": 3}}}})
 x = CombatEncounter()
 x.reader({"_name":"Ambush", "_startDescription":["As you make your way towards the village, your peaceful reverie is abruptly shattered by the sudden appearance of two goblins. They emerge from behind a nearby rock, their beady eyes fixed on you with a mixture of curiosity and hostility. The goblins are small, barely up to your waist, with green skin, pointy ears, and long, sharp teeth.", "As they step out of hiding, they brandish crude weapons made of wood and rusted metal, and let out a guttural snarl. You can see that they're clearly spoiling for a fight, their stance aggressive and threatening."], "_enemies": {"Goblin":{"_health": 20, "_maxHealth": 20, "_damage": 2, "_accuracy": 50, "quantity": 2}}, "_endDescription":["The goblins lie motionless on the ground, their weapons clattering to the earth beside them. You take a moment to catch your breath, your heart pounding with the adrenaline of the fight. You're glad to have emerged victorious, but you know that there may be more dangers ahead as you continue on your journey towards the village."]})
-x.start_encounter(p)'''
+t = 0
+x.start_encounter(p, t)'''
