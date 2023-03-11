@@ -65,7 +65,7 @@ class Enemy:
     #attacks input target
     def attack(self, target):
         if randint(1, 100) < self._accuracy:
-            target.modify_health(-self._damage - target.get_defense())
+            target.modify_health(-self._damage + target.get_defense())
             print(f"{self._name} hits you and deals {self._damage - target.get_defense()} damage!")
         else:
             print(f"{self._name} tries to hit you, but misses.")
