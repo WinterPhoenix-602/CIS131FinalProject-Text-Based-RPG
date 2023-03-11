@@ -56,7 +56,7 @@ class CombatEncounter:
                             a.reader(input_dict["_enemies"][enemy])
                             self._enemies_dict[f"{enemy} {quantity + 1}"] = a
                 if key == "_endDescription":
-                    for count, paragraph in enumerate(self._startDescription):
+                    for count, paragraph in enumerate(self._endDescription):
                         self._endDescription[count] = textwrap.fill(self._endDescription[count], 100)
             except:
                 print("No such attribute, please consider adding it in init.")
