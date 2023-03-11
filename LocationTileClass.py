@@ -7,7 +7,7 @@ from EnemyClass import Enemy
 from tabulate import tabulate
 
 class Tile:
-    def __init__(self, name = "", description = "", enemies = {"enemyName":{"health":0, "damage":0, "quantity":0}}):
+    def __init__(self, name = "", description = "", enemies = {"enemyName":{"_health":0, "_damage":0, "_quantity":0}}):
         self._name = name
         self._description = description
         self._enemies = enemies
@@ -43,7 +43,8 @@ class Tile:
                 continue
         for enemy in self._enemies:
             for quantity in range(self._enemies[enemy]["quantity"]):
-                self._enemies_dict[enemy + str(quantity + 1)] = Enemy(f"{enemy} {str(quantity + 1)}", self._enemies[enemy]["health"], self._enemies[enemy]["maxHealth"], self._enemies[enemy]["damage"])
+                self._enemies_dict[enemy + str(quantity + 1)] = Enemy(f"{enemy} {quantity + 1}")
+                self._enemies_dict[enemy + str(quantity + 1)].reader(self._enemies[enemy])
 
     #displays enemies present on the tile
     def display_enemies(self):
