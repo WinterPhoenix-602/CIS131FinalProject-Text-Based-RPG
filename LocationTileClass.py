@@ -49,5 +49,5 @@ class Tile:
     def display_enemies(self):
         table = [["Name", "Health", "Damage"]]
         for enemy in self._enemies_dict:
-            table.append(self._enemies_dict[enemy].list_stats())  
-        print(tabulate(table, tablefmt="fancy_grid"))
+            table.append(self._enemies_dict[enemy].get_stats_list())  
+        return (tabulate(table, tablefmt="fancy_grid"))
