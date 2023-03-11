@@ -10,12 +10,13 @@ from tabulate import tabulate
 invalidChoice = "I'm sorry, that is not a valid choice.\n"
 
 class CombatEncounter:
-    def __init__(self, name = "", startDescription = "", enemies = {}, endDescription = ""):
+    def __init__(self, name = "", startDescription = "", enemies = {}, endDescription = "", complete = False):
         self._name = name
         self._startDescription = startDescription
         self._enemies = enemies
         self._enemies_dict = {}
         self._endDescription = endDescription
+        self._complete = complete
 
     #getters
     def get_name(self):
@@ -62,115 +63,117 @@ class CombatEncounter:
                 print("No such attribute, please consider adding it in init.")
 
     def start_encounter(self, player, turn):
-        print("\n\n".join(self._startDescription) + "\n") #prints long encounter start description
-        print(self.encounterText() + "\n") #prints simple encounter start description
-        while len(self._enemies_dict) > 0:
-            print(f"{self.__str__()}\n") #displays enemy stats
+        if self._complete == False:
+            print("\n\n".join(self._startDescription) + "\n") #prints long encounter start description
+            print(self.encounterText() + "\n") #prints simple encounter start description
+            while len(self._enemies_dict) > 0:
+                print(f"{self.__str__()}\n") #displays enemy stats
 
-            print(player) #displays player stats
+                print(player) #displays player stats
 
-            #displays combat actions, gets choice of player
-            try:
-                choice = int(input("\nWhat would you like to do?\n1: Melee Attack\n2: Cast Magic\n3: Use Item\n? "))
-                print("")
-            except:
-                print(invalidChoice)
-                continue
+                #displays combat actions, gets choice of player
+                try:
+                    choice = int(input("\nWhat would you like to do?\n1: Melee Attack\n2: Cast Magic\n3: Use Item\n? "))
+                    print("")
+                except:
+                    print(invalidChoice)
+                    continue
 
-            #fulfills action chosen by player
-            match choice:
-                #case 1 is melee attack
-                case 1:
-                    if len(self._enemies_dict) > 1:
-                        #displays target selection
-                        print("Which enemy do you want to attack?") 
-                        for count, enemy in enumerate(self._enemies_dict):
-                            print(f"{count + 1}: {self._enemies_dict[enemy].get_name()}")
-                        #gets target selection from player
-                        try:
-                            attackEnemy = int(input("? "))
-                            print("")
-                            if attackEnemy > len(self._enemies_dict):
+                #fulfills action chosen by player
+                match choice:
+                    #case 1 is melee attack
+                    case 1:
+                        if len(self._enemies_dict) > 1:
+                            #displays target selection
+                            print("Which enemy do you want to attack?") 
+                            for count, enemy in enumerate(self._enemies_dict):
+                                print(f"{count + 1}: {self._enemies_dict[enemy].get_name()}")
+                            #gets target selection from player
+                            try:
+                                attackEnemy = int(input("? "))
+                                print("")
+                                if attackEnemy > len(self._enemies_dict):
+                                    print(invalidChoice)
+                                    continue
+                            except:
                                 print(invalidChoice)
                                 continue
+                        #if only one enemy is present, they are the target by default
+                        else:
+                            attackEnemy = 1
+                        #damages selected target
+                        for count, enemy in enumerate(self._enemies_dict):
+                            if count + 1 == attackEnemy:
+                                player.melee_attack(self._enemies_dict[enemy])
+                    #case 2 is casting magic
+                    case 2:
+                        #displays available spells, gets spell selection from player
+                        try:
+                            spell = int(input("What would you like to cast?\nName\t\tMana Cost\tEffect\n1: Fireball\t5\t\tDeals 8 Damage to All Enemies\n2: Shield\t15\t\tHalves Incoming Damage for 3 Turns\n3: Heal\t\tVariable\tConverts 2x Mana Cost to Health\n? "))
+                            print("")
                         except:
                             print(invalidChoice)
                             continue
-                    #if only one enemy is present, they are the target by default
-                    else:
-                        attackEnemy = 1
-                    #damages selected target
-                    for count, enemy in enumerate(self._enemies_dict):
-                        if count + 1 == attackEnemy:
-                            player.melee_attack(self._enemies_dict[enemy])
-                #case 2 is casting magic
-                case 2:
-                    #displays available spells, gets spell selection from player
-                    try:
-                        spell = int(input("What would you like to cast?\nName\t\tMana Cost\tEffect\n1: Fireball\t5\t\tDeals 8 Damage to All Enemies\n2: Shield\t15\t\tHalves Incoming Damage for 3 Turns\n3: Heal\t\tVariable\tConverts 2x Mana Cost to Health\n? "))
-                        print("")
-                    except:
+                        #casts spell chosen by player
+                        match spell:
+                            #case 1 is fireball
+                            case 1:
+                                if player.get_mana() >= 5:
+                                    player.modify_mana(-5)
+                                    for count, enemy in enumerate(self._enemies_dict):
+                                        player.cast_fireball(self._enemies_dict[enemy])
+                                else:
+                                    print("Insufficient mana.\n")
+                                    continue
+                            #case 2 is shield
+                            case 2:
+                                if player.get_mana() >= 15:
+                                    player.modify_mana(-15)
+                                    player.modify_shieldDuration(3)
+                                else:
+                                    print("Insufficient mana.\n")
+                                    continue
+                            #case 3 is heal
+                            case 3:
+                                #gets input mana from player
+                                try:
+                                    heal = int(input("How much mana will you expend? "))
+                                except:
+                                    print("Not a valid amount of mana.")
+                                    continue
+                                if heal <= player.get_mana() and heal > 0:
+                                    player.modify_mana(-heal)
+                                    player.modify_health(heal * 2)
+                                elif heal <= 0:
+                                    print("You can't expend less than 1 mana.")
+                                    continue
+                                else:
+                                    print("You don't have enough mana.")
+                                    continue
+                            case _:
+                                print(invalidChoice)
+                                continue
+                    #case 3 is using an item
+                    case 3:
+                        print("Not yet implemented.")
+                        continue
+                    case _:
                         print(invalidChoice)
                         continue
-                    #casts spell chosen by player
-                    match spell:
-                        #case 1 is fireball
-                        case 1:
-                            if player.get_mana() >= 5:
-                                player.modify_mana(-5)
-                                for count, enemy in enumerate(self._enemies_dict):
-                                    player.cast_fireball(self._enemies_dict[enemy])
-                            else:
-                                print("Insufficient mana.\n")
-                                continue
-                        #case 2 is shield
-                        case 2:
-                            if player.get_mana() >= 15:
-                                player.modify_mana(-15)
-                                player.modify_shieldDuration(3)
-                            else:
-                                print("Insufficient mana.\n")
-                                continue
-                        #case 3 is heal
-                        case 3:
-                            #gets input mana from player
-                            try:
-                                heal = int(input("How much mana will you expend? "))
-                            except:
-                                print("Not a valid amount of mana.")
-                                continue
-                            if heal <= player.get_mana() and heal > 0:
-                                player.modify_mana(-heal)
-                                player.modify_health(heal * 2)
-                            elif heal <= 0:
-                                print("You can't expend less than 1 mana.")
-                                continue
-                            else:
-                                print("You don't have enough mana.")
-                                continue
-                        case _:
-                            print(invalidChoice)
-                            continue
-                #case 3 is using an item
-                case 3:
-                    print("Not yet implemented.")
-                    continue
-                case _:
-                    print(invalidChoice)
-                    continue
-            
-            print("") #adds newline between player and enemy turn
+                
+                print("") #adds newline between player and enemy turn
 
-            #enemies take their turns
-            for enemy in list(self._enemies_dict.keys()):
-                if self._enemies_dict[enemy].get_health() <= 0:
-                    self._enemies_dict[enemy].death(self)
-                else:
-                    self._enemies_dict[enemy].attack(player)
-                                
-            print("") #adds newline after enemy turns
+                #enemies take their turns
+                for enemy in list(self._enemies_dict.keys()):
+                    if self._enemies_dict[enemy].get_health() <= 0:
+                        self._enemies_dict[enemy].death(self)
+                    else:
+                        self._enemies_dict[enemy].attack(player)
+                                    
+                print("") #adds newline after enemy turns
 
-            turn = self.passive_actions(turn, player) #triggers passive actions
+                turn = self.passive_actions(turn, player) #triggers passive actions
+        self._complete = True
         print("\n\n".join(self._endDescription) + "\n") #prints long encounter end description
 
     #displays encountered enemies
