@@ -38,6 +38,16 @@ class Enemy:
     def set_accuracy(self, accuracy):
         self._accuracy = accuracy
 
+    #sets attributes from input dictionary
+    def reader(self, input_dict):
+        for key in input_dict:
+            try:
+                if key != "quantity":
+                    setattr(self, key, input_dict[key])
+            except:
+                print("No such attribute, please consider adding it in init.")
+                continue
+    
     #adds/subtracts value to health, displays appropriate message
     def modify_health(self, change):
         if change >= 1 and self._health + change < self._maxHealth:
@@ -65,6 +75,6 @@ class Enemy:
         print(f"{self._name} falls on the floor, dead.")
     
     #returns formatted list representation
-    def list_stats(self):
+    def get_stats_list(self):
         table = [self._name, self._health, self._damage]
         return table
