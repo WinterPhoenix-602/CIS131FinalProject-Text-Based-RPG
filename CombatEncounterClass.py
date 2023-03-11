@@ -77,7 +77,7 @@ class CombatEncounter:
             print("\n\n".join(self._startDescription) + "\n") #prints long encounter start description
             print(self.encounterText() + "\n") #prints simple encounter start description
             while len(self._enemies_dict) > 0:
-                print(f"{self.__str__()}\n") #displays enemy stats
+                print(f"{self.__str__()}") #displays enemy stats
 
                 print(player) #displays player stats
 
