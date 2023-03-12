@@ -8,6 +8,7 @@ import os
 from PlayerClass import Player
 from LocationTileClass import Tile
 from datetime import datetime
+from tabulate import tabulate
 
 mainPath = os.path.dirname(__file__)
 newGamePath = os.path.join(mainPath, "SaveFiles\\NewGame.json")
@@ -45,7 +46,7 @@ def main():
 def mainMenu():
     while True:
         try:
-            choice = int(input("1: New Game\n2: Load Game\n3: Exit\n? "))
+            choice = int(input(tabulate([["1: New Game"], ["2: Load Game"], ["3: Exit"]], tablefmt="fancy_outline") + "\n? "))
             if choice < 1 or choice > 3:
                 print(invalidChoice)
                 continue
