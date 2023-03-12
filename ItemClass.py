@@ -45,4 +45,8 @@ class Item:
                 statString = f"{stat}: {self._stats[stat]}"
         itemTable.append(statString)
         itemTable.append(self._quantity)
-        return tabulate([itemTable], tablefmt="fancy_grid")
+        return tabulate([itemTable], tablefmt="fancy_outline")
+    
+'''#Testing
+a = Item("Bob", "Feesh", {"Gubible":100})
+print(a)'''

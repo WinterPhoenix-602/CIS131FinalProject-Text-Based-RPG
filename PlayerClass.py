@@ -253,19 +253,19 @@ class Player:
                     consumableTable.append([f"{itemType} Name", "Stats", "Amount"])
                     for item in self._inventory[itemType]:
                         consumableTable.append([item, f"{list(self._inventory[itemType][item].get_stats().keys())[0]}: {self._inventory[itemType][item].get_stats()[list(self._inventory[itemType][item].get_stats().keys())[0]]}", self._inventory[itemType][item].get_quantity()])
-            return f"{tabulate(equippedTable, tablefmt='fancy_grid')}\n{tabulate(weaponTable, tablefmt='fancy_grid')}\n{tabulate(shieldTable, tablefmt='fancy_grid')}\n{tabulate(consumableTable, tablefmt='fancy_grid')}"
+            return f"{tabulate(equippedTable, headers='firstrow', tablefmt='fancy_outline')}\n{tabulate(weaponTable, headers='firstrow', tablefmt='fancy_outline')}\n{tabulate(shieldTable, headers='firstrow', tablefmt='fancy_outline')}\n{tabulate(consumableTable, headers='firstrow', tablefmt='fancy_outline')}"
         elif invType == "Weapon":
             for count, item in enumerate(self._inventory[invType]):
                 weaponTable.append([f"{count + 1}: {item}", f"{list(self._inventory[invType][item].get_stats().keys())[0]}: {self._inventory[invType][item].get_stats()[list(self._inventory[invType][item].get_stats().keys())[0]]}"])
-            return tabulate(weaponTable, tablefmt="fancy_grid")
+            return tabulate(weaponTable, headers='firstrow', tablefmt="fancy_outline")
         elif invType == "Shield":
             for count, item in enumerate(self._inventory[invType]):
                 shieldTable.append([f"{count + 1}: {item}", f"{list(self._inventory[invType][item].get_stats().keys())[0]}: {self._inventory[invType][item].get_stats()[list(self._inventory[invType][item].get_stats().keys())[0]]}"])
-            return tabulate(shieldTable, tablefmt="fancy_grid")
+            return tabulate(shieldTable, headers='firstrow', tablefmt="fancy_outline")
         elif invType == "Consumable":
             for count, item in enumerate(self._inventory[invType]):
                 consumableTable.append([f"{count + 1}: {item}", f"{list(self._inventory[invType][item].get_stats().keys())[0]}: {self._inventory[invType][item].get_stats()[list(self._inventory[invType][item].get_stats().keys())[0]]}", self._inventory[invType][item].get_quantity()])
-            return tabulate(consumableTable, tablefmt="fancy_grid")
+            return tabulate(consumableTable, headers='firstrow', tablefmt="fancy_outline")
     
     #returns formatted list representation
     def __str__(self):
@@ -273,4 +273,4 @@ class Player:
         if self._shieldDuration > 0:
             table[0].append("Shield")
             table[1].append(f"{self._shieldDuration} turns left")
-        return tabulate(table, tablefmt="fancy_grid")
+        return tabulate(table, headers='firstrow', tablefmt="fancy_outline")
