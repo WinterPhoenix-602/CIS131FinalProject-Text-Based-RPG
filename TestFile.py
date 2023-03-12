@@ -13,7 +13,7 @@ from tabulate import tabulate
 mainPath = os.path.dirname(__file__)
 newGamePath = os.path.join(mainPath, "SaveFiles\\NewGame.json")
 saveFileInfoPath = os.path.join(mainPath, "SaveFiles\\SaveFileInfo.json")
-invalidChoice = "I'm sorry, that is not a valid choice.\n"
+invalidChoice = "\n" + tabulate([["I'm sorry, that is not a valid choice."]]) + "\n"
 
 #the main function
 def main():
@@ -73,10 +73,10 @@ def loadGame(menuChoice):
             player.reader(player_dict)
             while True:
                 player.set_name(input("Choose a name for your character (no more than seven characters long): "))
-                print("")
                 if len(player.get_name()) > 7:
                     print("I'm sorry, that name is too long.")
                     continue
+                print("")
                 break
             saveFilePath = newGamePath
             return player, player_dict, tiles_dict, currentTile, currentTileName, saveFilePath
@@ -86,14 +86,14 @@ def loadGame(menuChoice):
                     a=savesInfo.readlines()
                     savesInfo.close()
                 saveFiles_dict = json.loads(a[0])
-                print("Which game save would you like to load?")
+                loadMenuTable = [["Which game save would you like to load?"]]
                 for count, saveFile in enumerate(saveFiles_dict):
-                    print(f"{count + 1}: {saveFiles_dict[saveFile]['name']} {saveFiles_dict[saveFile]['info']}")
+                    loadMenuTable.append([f"{count + 1}: {saveFiles_dict[saveFile]['name']} {saveFiles_dict[saveFile]['info']}"])
                     if count + 1 == len(saveFiles_dict):
-                        print("6: Go Back")
+                        loadMenuTable.append(["6: Go Back"])
+                print(tabulate(loadMenuTable, headers="firstrow", tablefmt="fancy_outline"))
                 try:
                     saveChoice = int(input("? "))
-                    print("")
                 except:
                     print(invalidChoice)
                     continue
@@ -125,7 +125,7 @@ def loadGame(menuChoice):
                 player.reader(player_dict)
                 return player, player_dict, tiles_dict, currentTile, currentTileName, saveFilePath
             except FileNotFoundError:
-                print("I'm sorry, that save slot is empty.\n")
+                print(tabulate([["I'm sorry, that save slot is empty."]], tablefmt="fancy_outline"))
                 continue
         else:
             player_dict, tiles_dict, currentTile, currentTileName, saveFilePath = 0, 0, 0, 0, 0
@@ -163,7 +163,7 @@ def saveGame(player_dict, player, tiles_dict, currentTileName, currentTile, save
                     continue
                 while True:
                     if saveFiles_dict[saveFiles_keyList[saveChoice - 1]]["info"] != "(Empty)":
-                        surety = input(f"This will overwrite the current save for {saveFiles_dict[saveFiles_keyList[saveChoice - 1]]['name']}. Are you sure? (yes/no): ")
+                        surety = input(f"\nThis will overwrite the current save for {saveFiles_dict[saveFiles_keyList[saveChoice - 1]]['name']}. Are you sure? (yes/no): ")
                         if surety == "no":
                             break
                         elif surety == "yes":
@@ -205,6 +205,5 @@ def saveGame(player_dict, player, tiles_dict, currentTileName, currentTile, save
     with open(saveFilePath,"w") as saveFile:
         json.dump(currentGame_dict, saveFile)
         saveFile.close()
-    print("\nThank you for playing.\n")
-
+    print("\n" + tabulate([["Thank you for playing."]], tablefmt="fancy_outline") + "\n")
 main()

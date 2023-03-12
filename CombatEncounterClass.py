@@ -8,7 +8,7 @@ from PlayerClass import Player
 from tabulate import tabulate
 from random import randint
 
-invalidChoice = "I'm sorry, that is not a valid choice.\n"
+invalidChoice = "\n" + tabulate([["I'm sorry, that is not a valid choice."]]) + "\n"
 
 class CombatEncounter:
     def __init__(self, name = "", startDescription = [""], enemies = {}, endDescription = [""], triggerChance = [0, 0]):
@@ -74,8 +74,7 @@ class CombatEncounter:
                 a.reader(self._enemies[enemy])
                 self._enemies_dict[f"{enemy} {quantity + 1}"] = a
         if randint(1, 100) <= self._triggerChance[0] and len(self._enemies_dict) > 0 and turn > 0:
-            print(tabulate([["\n\n".join(self._startDescription)]], tablefmt="fancy_grid") + "\n") #prints long encounter start description
-            print(self.encounterText() + "\n") #prints simple encounter start description
+            print(tabulate([[self.encounterText()], ["\n\n".join(self._startDescription)]], tablefmt="fancy_grid") + "\n") #prints encounter start description
             while len(self._enemies_dict) > 0:
                 print(f"{self.__str__()}") #displays enemy stats
 
@@ -83,7 +82,7 @@ class CombatEncounter:
 
                 #displays combat actions, gets choice of player
                 try:
-                    choice = int(input(f"\nWhat would you like to do?\n{tabulate([['1: Melee Attack'], ['2: Cast Magic'], ['3: Use Item']], tablefmt='fancy_outline')}\n? "))
+                    choice = int(input(f"{tabulate([['What would you like to do?'], ['1: Melee Attack'], ['2: Cast Magic'], ['3: Use Item']], headers='firstrow', tablefmt='fancy_outline')}\n? "))
                     print("")
                 except:
                     print(invalidChoice)
@@ -95,11 +94,10 @@ class CombatEncounter:
                     case 1:
                         if len(self._enemies_dict) > 1:
                             #displays target selection
-                            print("Which enemy do you want to attack?") 
-                            enemyTable = []
+                            enemyTable = [["Which enemy do you want to attack?"]]
                             for count, enemy in enumerate(self._enemies_dict):
                                 enemyTable.append([f"{count + 1}: {self._enemies_dict[enemy].get_name()}"])
-                            print(tabulate(enemyTable, tablefmt="fancy_outline"))
+                            print(tabulate(enemyTable, headers="firstrow", tablefmt="fancy_outline"))
                             #gets target selection from player
                             try:
                                 attackEnemy = int(input("? "))
@@ -121,7 +119,7 @@ class CombatEncounter:
                     case 2:
                         #displays available spells, gets spell selection from player
                         try:
-                            spell = int(input("What would you like to cast?\n" + tabulate([["Name", "Mana Cost", "Effect"], ["1: Fireball", 5, "Deals 8 Damage to All Enemies"], ["2: Shield", 15, "Doubles Defense for 3 Turns"], ["3: Heal", "Variable", "Converts 2x Mana Cost to Health"]], headers="firstrow", tablefmt="fancy_outline") + "\n? "))
+                            spell = int(input(tabulate([["What would you like to cast?"]], tablefmt="fancy_outline") + "\n" + tabulate([["Name", "Mana Cost", "Effect"], ["1: Fireball", 5, "Deals 8 Damage to All Enemies"], ["2: Shield", 15, "Doubles Defense for 3 Turns"], ["3: Heal", "Variable", "Converts 2x Mana Cost to Health"]], headers="firstrow", tablefmt="fancy_outline") + "\n? "))
                             print("")
                         except:
                             print(invalidChoice)

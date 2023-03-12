@@ -8,7 +8,7 @@ from PlayerClass import Player
 from CombatEncounterClass import CombatEncounter
 from tabulate import tabulate
 
-invalidChoice = "I'm sorry, that is not a valid choice.\n"
+invalidChoice = "\n" + tabulate([["I'm sorry, that is not a valid choice."]]) + "\n"
 
 class Tile:
     def __init__(self, name = "", description = "", directions = {"north":"", "east":"", "south":"", "west":""}, combatEncounter = {"_name":"", "_startDescription":[""], "_enemies":{}, "_endDescription":[""], "_triggerChance":[0, 0]}):
@@ -59,11 +59,10 @@ class Tile:
         while True:
             print(tabulate([[self._name], ["\n\n".join(self._description)]], tablefmt="fancy_grid")) #print tile description
             print(player) #print player status
-            print("") #adds newline between player status and choice menu
 
             #displays choice menu, gets player choice
             try:
-                choice = int(input("What would you like to do?\n1: Go North\n2: Go East\n3: Go South\n4: Go West\n5: Open Inventory\n6: Exit Game\n? "))
+                choice = int(input(tabulate([["What would you like to do?"], ["1: Go North"], ["2: Go East"], ["3: Go South"], ["4: Go West"], ["5: Open Inventory"], ["6: Exit Game"]], headers="firstrow", tablefmt="fancy_outline")+ "\n? "))
                 print("")
                 match choice:
                     case 1:
@@ -109,7 +108,7 @@ class Tile:
                             elif save == "no":
                                 save = input("Are you sure? (yes/no): ")
                                 if save == "yes":
-                                    print("\nThank you for playing.\n")
+                                    print("\n" + tabulate([["Thank you for playing."]], tablefmt="fancy_outline") + "\n")
                                     save = "no"
                                     return turn, destinationTileName, choice, save
                                 elif save == "no":

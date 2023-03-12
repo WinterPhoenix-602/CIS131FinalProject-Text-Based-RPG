@@ -4,6 +4,7 @@
 #Final Project: Enemy Class
 
 from random import randint #enables use of random numbers
+from tabulate import tabulate
 
 class Enemy:
     #initialization method
@@ -52,27 +53,27 @@ class Enemy:
     def modify_health(self, change):
         if change >= 1 and self._health + change < self._maxHealth:
             self._health += change
-            print(f"{self._name} is healed for {change} health points.")
+            print(tabulate([[f"{self._name} is healed for {change} health points."]], tablefmt="fancy_outline"))
         elif change < 1:
             self._health += change
         elif self._health != self._maxHealth:
             if self._maxHealth - self._health == 1:
-                print(f"{self._name} is healed for {self._maxHealth - self._health} health point.")
+                print(tabulate([[f"{self._name} is healed for {self._maxHealth - self._health} health point."]], tablefmt="fancy_outline"))
             else:
-                print(f"{self._name} is healed for {self._maxHealth - self._health} health points.")
+                print(tabulate([[f"{self._name} is healed for {self._maxHealth - self._health} health points."]], tablefmt="fancy_outline"))
             self._health += (self._maxHealth - self._health)
 
     #attacks input target
     def attack(self, target):
         if randint(1, 100) <= self._accuracy:
             target.modify_health(-self._damage + target.get_defense())
-            print(f"{self._name} hits you and deals {self._damage - target.get_defense()} damage!")
+            print(tabulate([[f"{self._name} hits you and deals {self._damage - target.get_defense()} damage!"]], tablefmt="fancy_outline"))
         else:
-            print(f"{self._name} tries to hit you, but misses.")
+            print(tabulate([[f"{self._name} tries to hit you, but misses."]], tablefmt="fancy_outline"))
 
     #displays death message
     def death(self, encounter):
-        print(f"{self._name} falls on the floor, dead.")
+        print(tabulate([[f"{self._name} falls on the floor, dead."]], tablefmt="fancy_outline"))
         del encounter.get_enemies_dict()[self._name]
     
     #returns formatted list representation
