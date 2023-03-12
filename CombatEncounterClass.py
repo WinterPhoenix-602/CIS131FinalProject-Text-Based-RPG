@@ -74,7 +74,7 @@ class CombatEncounter:
                 a.reader(self._enemies[enemy])
                 self._enemies_dict[f"{enemy} {quantity + 1}"] = a
         if randint(1, 100) <= self._triggerChance[0] and len(self._enemies_dict) > 0 and turn > 0:
-            print("\n\n".join(self._startDescription) + "\n") #prints long encounter start description
+            print(tabulate([["\n\n".join(self._startDescription)]], tablefmt="fancy_grid") + "\n") #prints long encounter start description
             print(self.encounterText() + "\n") #prints simple encounter start description
             while len(self._enemies_dict) > 0:
                 print(f"{self.__str__()}") #displays enemy stats
@@ -183,10 +183,9 @@ class CombatEncounter:
                 print("") #adds newline after enemy turns
 
                 turn = self.passive_actions(turn, player) #triggers passive actions
-            print("\n\n".join(self._endDescription) + "\n") #prints long encounter end description
+            print(tabulate([["\n\n".join(self._startDescription)]], tablefmt="fancy_grid")) #prints long encounter end description
             self._triggerChance[0] = self._triggerChance[1] #sets trigger chance to what it should be after the first encounter
         
-
     #displays encountered enemies
     def encounterText(self):
         encounterText = ""
@@ -255,6 +254,6 @@ class CombatEncounter:
 p = Player()
 p.reader({"_name": "Newbie", "_health": 100, "_mana": 50, "_damage": 1, "_defense": 1, "_shield": 0, "_inventory": {"Equipped": {"Weapon": "Fists", "Shield": "Wooden Shield"}, "Weapon": {"Fists": {"stats": {"Damage": 1}, "quantity": 1}, "Wooden Sword": {"stats": {"Damage": 5}, "quantity": 1}}, "Shield": {"Fists": {"stats": {"Defense": 1}, "quantity": 1}, "Wooden Shield": {"stats": {"Defense": 2}, "quantity": 1}}, "Consumable": {"Burrito": {"stats": {"Health": 15}, "quantity": 3}}}})
 x = CombatEncounter()
-x.reader({"_name":"Ambush", "_startDescription":["As you make your way towards the village, your peaceful reverie is abruptly shattered by the sudden appearance of two goblins. They emerge from behind a nearby rock, their beady eyes fixed on you with a mixture of curiosity and hostility. The goblins are small, barely up to your waist, with green skin, pointy ears, and long, sharp teeth.", "As they step out of hiding, they brandish crude weapons made of wood and rusted metal, and let out a guttural snarl. You can see that they're clearly spoiling for a fight, their stance aggressive and threatening."], "_enemies": {"Goblin":{"_health": 20, "_maxHealth": 20, "_damage": 2, "_accuracy": 50, "quantity": 2}}, "_endDescription":["The goblins lie motionless on the ground, their weapons clattering to the earth beside them. You take a moment to catch your breath, your heart pounding with the adrenaline of the fight. You're glad to have emerged victorious, but you know that there may be more dangers ahead as you continue on your journey towards the village."]})
-t = 0
+x.reader({"_name":"Ambush", "_startDescription":["As you make your way towards the village, your peaceful reverie is abruptly shattered by the sudden appearance of two goblins. They emerge from behind a nearby rock, their beady eyes fixed on you with a mixture of curiosity and hostility. The goblins are small, barely up to your waist, with green skin, pointy ears, and long, sharp teeth.", "As they step out of hiding, they brandish crude weapons made of wood and rusted metal, and let out a guttural snarl. You can see that they're clearly spoiling for a fight, their stance aggressive and threatening."], "_enemies": {"Goblin":{"_health": 20, "_maxHealth": 20, "_damage": 2, "_accuracy": 50, "quantity": 2}}, "_endDescription":["The goblins lie motionless on the ground, their weapons clattering to the earth beside them. You take a moment to catch your breath, your heart pounding with the adrenaline of the fight. You're glad to have emerged victorious, but you know that there may be more dangers ahead as you continue on your journey towards the village."], "_triggerChance":[100, 10]})
+t = 1
 x.start_encounter(p, t)'''
