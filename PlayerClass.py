@@ -225,7 +225,7 @@ class Player:
                     if itemChoice > len(self._inventory["Consumable"]):
                         print(invalidChoice)
                         continue
-                    for count, item in enumerate(self._inventory["Consumable"]):
+                    for count, item in enumerate(list(self._inventory["Consumable"].keys())):
                         if count + 1 == itemChoice:
                             self.use_item(self._inventory["Consumable"][item])
                             continue
