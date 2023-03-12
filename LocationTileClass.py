@@ -55,7 +55,7 @@ class Tile:
 
     def tileMenu(self, turn = 0, player = Player(), destinationTileName = ""):
         save = ""
-        noGo = "You can't go that way."
+        noGo = tabulate([["You can't go that way."]], tablefmt="fancy_outline")
         while True:
             print(tabulate([[self._name], ["\n\n".join(self._description)]], tablefmt="fancy_grid")) #print tile description
             print(player) #print player status
