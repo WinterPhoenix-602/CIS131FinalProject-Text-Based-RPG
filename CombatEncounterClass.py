@@ -52,20 +52,21 @@ class CombatEncounter:
         for key in input_dict:
             try:
                 setattr(self, key, input_dict[key])
-                if key == "_startDescription":
-                    for count, paragraph in enumerate(self._startDescription):
-                        self._startDescription[count] = textwrap.fill(self._startDescription[count], 100)
-                if key == "_enemies":
-                    for enemy in self._enemies:
-                        for quantity in range(self._enemies[enemy]["quantity"]):
-                            a = Enemy(f"{enemy} {quantity + 1}")
-                            a.reader(self._enemies[enemy])
-                            self._enemies_dict[f"{enemy} {quantity + 1}"] = a
-                if key == "_endDescription":
-                    for count, paragraph in enumerate(self._endDescription):
-                        self._endDescription[count] = textwrap.fill(self._endDescription[count], 100)
             except:
                 print("No such attribute, please consider adding it in init.")
+                continue
+            if key == "_startDescription":
+                for count, paragraph in enumerate(self._startDescription):
+                    self._startDescription[count] = textwrap.fill(self._startDescription[count], 100)
+            if key == "_enemies":
+                for enemy in self._enemies:
+                    for quantity in range(self._enemies[enemy]["quantity"]):
+                        a = Enemy(f"{enemy} {quantity + 1}")
+                        a.reader(self._enemies[enemy])
+                        self._enemies_dict[f"{enemy} {quantity + 1}"] = a
+            if key == "_endDescription":
+                for count, paragraph in enumerate(self._endDescription):
+                    self._endDescription[count] = textwrap.fill(self._endDescription[count], 100)
 
     def start_encounter(self, player = Player(), turn = 0):
         for enemy in self._enemies:

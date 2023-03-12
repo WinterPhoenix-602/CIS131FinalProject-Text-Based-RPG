@@ -158,26 +158,26 @@ def saveGame(player_dict, player, tiles_dict, currentTileName, currentTile, save
                 print(f"{count + 1}: {saveFiles_dict[saveFile]['name']} {saveFiles_dict[saveFile]['info']}")
             try:
                 saveChoice = int(input("? "))
-                if saveChoice > len(saveFiles_dict):
-                    print(invalidChoice)
-                    continue
-                while True:
-                    if saveFiles_dict[saveFiles_keyList[saveChoice - 1]]["info"] != "(Empty)":
-                        surety = input(f"\nThis will overwrite the current save for {saveFiles_dict[saveFiles_keyList[saveChoice - 1]]['name']}. Are you sure? (yes/no): ")
-                        if surety == "no":
-                            break
-                        elif surety == "yes":
-                            break
-                        else:
-                            print(invalidChoice)
-                            continue
-                    else:
-                        surety = ""
-                        break
-                if surety == "no":
-                    continue
             except:
                 print(invalidChoice)
+                continue
+            if saveChoice > len(saveFiles_dict):
+                print(invalidChoice)
+                continue
+            while True:
+                if saveFiles_dict[saveFiles_keyList[saveChoice - 1]]["info"] != "(Empty)":
+                    surety = input(f"\nThis will overwrite the current save for {saveFiles_dict[saveFiles_keyList[saveChoice - 1]]['name']}. Are you sure? (yes/no): ")
+                    if surety == "no":
+                        break
+                    elif surety == "yes":
+                        break
+                    else:
+                        print(invalidChoice)
+                        continue
+                else:
+                    surety = ""
+                    break
+            if surety == "no":
                 continue
             match saveChoice:
                 case 1:
