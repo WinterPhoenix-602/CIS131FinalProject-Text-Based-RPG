@@ -161,12 +161,15 @@ class Player:
             print(tabulate([[f"You decided what you have is good enough for now."]], tablefmt="fancy_outline") + "\n")
     
     #uses selected item
-    def use_item(self, item):
-        if item in self._inventory["Consumable"]:
-            if "Potion" in item:
-                print(tabulate([[f"You pop the cork from the vial, and down the {item} within."]], tablefmt="fancy_outline") + "\n")
+    def use_item(self, item = Item()):
+        if item.get_name() in self._inventory["Consumable"]:
+            if "Potion" in item.get_name():
+                print(tabulate([[f"You pop the cork from the vial, and down the {item.get_name()} within."]], tablefmt="fancy_outline") + "\n")
             else:
-                print(tabulate([[f"You quickly scarf down the {item}."]], tablefmt="fancy_outline") + "\n")
+                print(tabulate([[f"You quickly scarf down the {item.get_name()}."]], tablefmt="fancy_outline") + "\n")
+            item.set_quantity(item.get_quantity() - 1)
+            if item.get_quantity() == 0:
+                del self._inventory["Consumable"][item.get_name()]
 
     def openInventory(self):
         while True:
@@ -174,60 +177,60 @@ class Player:
             try:
                 inventoryChoice = int(input(tabulate([["What would you like to do?"], ["1: Equip Weapon"], ["2: Equip Shield"], ["3: Use Item"], ["4: Go Back"]], headers="firstrow", tablefmt="fancy_outline") + "\n? "))
                 print("")
-                match inventoryChoice:
-                    case 1:
-                        print(tabulate([["Which weapon would you like to equip?"]], tablefmt="fancy_grid"))
-                        print(self.get_inventory_table("Weapon"))
-                        try:
-                            weaponChoice = int(input("? "))
-                            print("")
-                            if weaponChoice > len(self.get_inventory()["Weapon"]):
-                                print(invalidChoice)
-                                continue
-                            for count, weapon in enumerate(self.get_inventory()["Weapon"]):
-                                if count + 1 == weaponChoice:
-                                    self.equip_item(self.get_inventory()["Weapon"][weapon])
-                                    continue
-                        except:
-                            print(invalidChoice)
-                            continue
-                    case 2:
-                        print(tabulate([["Which shield would you like to equip?"]], tablefmt="fancy_grid"))
-                        print(self.get_inventory_table("Shield"))
-                        try:
-                            shieldChoice = int(input("? "))
-                            print("")
-                            if shieldChoice > len(self.get_inventory()["Shield"]):
-                                print(invalidChoice)
-                                continue
-                            for count, shield in enumerate(self.get_inventory()["Shield"]):
-                                if count + 1 == shieldChoice:
-                                    self.equip_item(self.get_inventory()["Shield"][shield])
-                                    continue
-                        except:
-                            print(invalidChoice)
-                            continue
-                    case 3:
-                        print(tabulate([["Which item would you like to use?"]], tablefmt="fancy_grid"))
-                        print(self.get_inventory_table("Consumable"))
-                        try:
-                            itemChoice = int(input("? "))
-                            print("")
-                            if itemChoice > len(self.get_inventory()["Consumable"]):
-                                print(invalidChoice)
-                                continue
-                            for count, item in enumerate(self.get_inventory()["Consumable"]):
-                                if count + 1 == itemChoice:
-                                    self.use_item(item)
-                                    continue
-                        except:
-                            print(invalidChoice)
-                            continue
-                    case 4:
-                        break
             except:
                 print(invalidChoice)
                 continue
+            match inventoryChoice:
+                case 1:
+                    print(tabulate([["Which weapon would you like to equip?"]], tablefmt="fancy_grid"))
+                    print(self.get_inventory_table("Weapon"))
+                    try:
+                        weaponChoice = int(input("? "))
+                        print("")
+                    except:
+                        print(invalidChoice)
+                        continue
+                    if weaponChoice > len(self._inventory["Weapon"]):
+                        print(invalidChoice)
+                        continue
+                    for count, weapon in enumerate(self._inventory["Weapon"]):
+                        if count + 1 == weaponChoice:
+                            self.equip_item(self._inventory["Weapon"][weapon])
+                            continue
+                case 2:
+                    print(tabulate([["Which shield would you like to equip?"]], tablefmt="fancy_grid"))
+                    print(self.get_inventory_table("Shield"))
+                    try:
+                        shieldChoice = int(input("? "))
+                        print("")
+                    except:
+                        print(invalidChoice)
+                        continue
+                    if shieldChoice > len(self._inventory["Shield"]):
+                        print(invalidChoice)
+                        continue
+                    for count, shield in enumerate(self._inventory["Shield"]):
+                        if count + 1 == shieldChoice:
+                            self.equip_item(self._inventory["Shield"][shield])
+                            continue
+                case 3:
+                    print(tabulate([["Which item would you like to use?"]], tablefmt="fancy_grid"))
+                    print(self.get_inventory_table("Consumable"))
+                    try:
+                        itemChoice = int(input("? "))
+                        print("")
+                    except:
+                        print(invalidChoice)
+                        continue
+                    if itemChoice > len(self._inventory["Consumable"]):
+                        print(invalidChoice)
+                        continue
+                    for count, item in enumerate(self._inventory["Consumable"]):
+                        if count + 1 == itemChoice:
+                            self.use_item(self._inventory["Consumable"][item])
+                            continue
+                case 4:
+                    break
 
     #returns formatted inventory table representation
     def get_inventory_table(self, invType):
