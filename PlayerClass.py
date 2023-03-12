@@ -242,18 +242,18 @@ class Player:
                     equippedTable.append(["Weapon", self._equippedWeapon.get_name(), f"Damage: {self._equippedWeapon.get_stats()['Damage']}"])
                     equippedTable.append(["Shield", self._equippedShield.get_name(), f"Defense: {self._equippedShield.get_stats()['Defense']}"])
                 elif itemType == "Weapon":
-                    weaponTable.append([f"{itemType} Name", "Stats"])
+                    weaponTable.append([f"{itemType} Name", "Stats", "Amount"])
                     for item in self._inventory[itemType]:
-                        weaponTable.append([item, f"{list(self._inventory[itemType][item].get_stats().keys())[0]}: {self._inventory[itemType][item].get_stats()[list(self._inventory[itemType][item].get_stats().keys())[0]]}"])
+                        weaponTable.append([item, f"{list(self._inventory[itemType][item].get_stats().keys())[0]}: {self._inventory[itemType][item].get_stats()[list(self._inventory[itemType][item].get_stats().keys())[0]]}", self._inventory[itemType][item].get_quantity()])
                 elif itemType == "Shield":
-                    shieldTable.append([f"{itemType} Name", "Stats"])
+                    shieldTable.append([f"{itemType} Name", "Stats", "Amount"])
                     for item in self._inventory[itemType]:
-                        shieldTable.append([item, f"{list(self._inventory[itemType][item].get_stats().keys())[0]}: {self._inventory[itemType][item].get_stats()[list(self._inventory[itemType][item].get_stats().keys())[0]]}"])
+                        shieldTable.append([item, f"{list(self._inventory[itemType][item].get_stats().keys())[0]}: {self._inventory[itemType][item].get_stats()[list(self._inventory[itemType][item].get_stats().keys())[0]]}", self._inventory[itemType][item].get_quantity()])
                 elif itemType == "Consumable":
                     consumableTable.append([f"{itemType} Name", "Stats", "Amount"])
                     for item in self._inventory[itemType]:
                         consumableTable.append([item, f"{list(self._inventory[itemType][item].get_stats().keys())[0]}: {self._inventory[itemType][item].get_stats()[list(self._inventory[itemType][item].get_stats().keys())[0]]}", self._inventory[itemType][item].get_quantity()])
-            return f"{tabulate(equippedTable, headers='firstrow', tablefmt='fancy_outline')}\n{tabulate(weaponTable, headers='firstrow', tablefmt='fancy_outline')}\n{tabulate(shieldTable, headers='firstrow', tablefmt='fancy_outline')}\n{tabulate(consumableTable, headers='firstrow', tablefmt='fancy_outline')}"
+            return f"{tabulate(equippedTable, headers='firstrow', tablefmt='fancy_outline', colalign=('right', 'center', 'left'))}\n{tabulate(weaponTable, headers='firstrow', tablefmt='fancy_outline', colalign=('right', 'center', 'left'))}\n{tabulate(shieldTable, headers='firstrow', tablefmt='fancy_outline', colalign=('right', 'center', 'left'))}\n{tabulate(consumableTable, headers='firstrow', tablefmt='fancy_outline', colalign=('right', 'center', 'left'))}"
         elif invType == "Weapon":
             for count, item in enumerate(self._inventory[invType]):
                 weaponTable.append([f"{count + 1}: {item}", f"{list(self._inventory[invType][item].get_stats().keys())[0]}: {self._inventory[invType][item].get_stats()[list(self._inventory[invType][item].get_stats().keys())[0]]}"])
