@@ -1,39 +1,47 @@
-#Caiden Wilson
-#3/9/2023
-#CIS131
-#Final Project: Item Class
+# Caiden Wilson
+# 3/9/2023
+# CIS131
+# Final Project: Item Class
 
 from tabulate import tabulate
 
 class Item:
-    #initialization method
+    # initialization method
     def __init__(self, itemType = "", name = "", stats = {}, quantity = 0):
         self._itemType = itemType
         self._name = name
         self._stats = stats
         self._quantity = quantity
 
-    #getters
-    def get_itemType(self):
+    # getters
+    @property
+    def itemType(self):
         return self._itemType
-    def get_name(self):
+    @property
+    def name(self):
         return self._name
-    def get_stats(self):
+    @property
+    def stats(self):
         return self._stats
-    def get_quantity(self):
+    @property
+    def quantity(self):
         return self._quantity
     
-    #setters
-    def set_itemType(self, itemType):
+    # setters
+    @itemType.setter
+    def itemType(self, itemType):
         self._itemType = itemType
-    def set_name(self, name):
+    @name.setter
+    def name(self, name):
         self._name = name
-    def set_stats(self, stats):
+    @stats.setter
+    def stats(self, stats):
         self._stats = stats
-    def set_quantity(self, quantity):
+    @quantity.setter
+    def quantity(self, quantity):
         self._quantity = quantity
 
-    #returns formatted string representation
+    # returns formatted string representation
     def __str__(self):
         itemTable = [self._name]
         statString = ""
@@ -47,6 +55,6 @@ class Item:
         itemTable.append(self._quantity)
         return tabulate([itemTable], tablefmt="fancy_outline")
     
-'''#Testing
+'''# Testing
 a = Item("Bob", "Feesh", {"Gubible":100})
 print(a)'''

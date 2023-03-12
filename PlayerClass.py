@@ -1,7 +1,7 @@
-#Caiden Wilson
-#3/2/2023
-#CIS131
-#Final Project: Player Class
+# Caiden Wilson
+# 3/2/2023
+# CIS131
+# Final Project: Player Class
 
 from ItemClass import Item
 from tabulate import tabulate
@@ -9,7 +9,7 @@ from tabulate import tabulate
 invalidChoice = "\n" + tabulate([["I'm sorry, that is not a valid choice."]]) + "\n"
 
 class Player:
-    #initialization method
+    # initialization method
     def __init__(self, name = "Player", level = 1, levelProgress = 0, nextLevel = 100, health = 100, maxHealth = 100, mana = 50, maxMana = 50, damage = 5, defense = 2, shieldDuration = 0, inventory = {"itemType":{"itemName":Item()}}, equippedWeapon = Item(), equippedShield = Item()):
         self._name = name
         self._level = level
@@ -26,59 +26,83 @@ class Player:
         self._equippedWeapon = equippedWeapon
         self._equippedShield = equippedShield
 
-    #getters
-    def get_name(self):
+    # getters
+    @property
+    def name(self):
         return self._name
-    def get_level(self):
+    @property
+    def level(self):
         return self._level
-    def get_health(self):
+    @property
+    def health(self):
         return self._health
-    def get_maxHealth(self):
+    @property
+    def maxHealth(self):
         return self._maxHealth
-    def get_mana(self):
+    @property
+    def mana(self):
         return self._mana
-    def get_maxMana(self):
+    @property
+    def maxMana(self):
         return self._maxMana
-    def get_damage(self):
+    @property
+    def damage(self):
         return self._damage
-    def get_defense(self):
+    @property
+    def defense(self):
         return self._defense
-    def get_shieldDuration(self):
+    @property
+    def shieldDuration(self):
         return self._shieldDuration
-    def get_inventory(self):
+    @property
+    def inventory(self):
         return self._inventory
-    def get_equippedWeapon(self):
+    @property
+    def equippedWeapon(self):
         return self._equippedWeapon
-    def get_equippedShield(self):
+    @property
+    def equippedShield(self):
         return self._equippedShield
     
-    #setters
-    def set_name(self, name):
+    # setters
+    @name.setter
+    def name(self, name):
         self._name = name
-    def set_level(self, level):
+    @level.setter
+    def level(self, level):
         self._level = level
-    def set_health(self, health):
+    @health.setter
+    def health(self, health):
         self._health = health
-    def set_maxHealth(self, maxHealth):
+    @maxHealth.setter
+    def maxHealth(self, maxHealth):
         self._maxHealth = maxHealth
-    def set_mana(self, mana):
+    @mana.setter
+    def mana(self, mana):
         self._mana = mana
-    def set_maxMana(self, maxMana):
+    @maxMana.setter
+    def maxMana(self, maxMana):
         self._maxMana = maxMana
-    def set_damage(self, damage):
+    @damage.setter
+    def damage(self, damage):
         self._damage = damage
-    def set_defense(self, defense):
+    @defense.setter
+    def defense(self, defense):
         self._defense = defense
-    def set_shieldDuration(self, shieldDuration):
+    @shieldDuration.setter
+    def shieldDuration(self, shieldDuration):
         self._shieldDuration = shieldDuration
-    def set_inventory(self, inventory):
+    @inventory.setter
+    def inventory(self, inventory):
         self._inventory = inventory
-    def set_equippedWeapon(self, equippedWeapon):
+    @equippedWeapon.setter
+    def equippedWeapon(self, equippedWeapon):
         self._equippedWeapon = equippedWeapon
-    def set_equippedShield(self, equippedShield):
+    @equippedShield.setter
+    def equippedShield(self, equippedShield):
         self._equippedShield = equippedShield
 
-    #calculates stats based on level
+    # calculates stats based on level
     def level_up(self, exp = 0):
         if exp > 0:
             print(tabulate([[f"You gained {exp} experience."]], tablefmt="fancy_outline"))
@@ -96,7 +120,7 @@ class Player:
         self._damage = 5 + (5 * (self._level - 1))
         self._defense = 2 + (2 * (self._level - 1))
 
-    #sets attributes from input dictionary, initializes inventory with item objects
+    # sets attributes from input dictionary, initializes inventory with item objects
     def reader(self, input_dict):
         for key in input_dict:
             try:
@@ -111,7 +135,7 @@ class Player:
         self._equippedWeapon = self._inventory["Weapon"][self._inventory["Equipped"]["Weapon"]]
         self._equippedShield = self._inventory["Shield"][self._inventory["Equipped"]["Shield"]]
     
-    #adds/subtracts value to health, displays appropriate message
+    # adds/subtracts value to health, displays appropriate message
     def modify_health(self, change):
         if change >= 1 and self._health + change <= self._maxHealth:
             self._health += change
@@ -125,7 +149,7 @@ class Player:
                 print(tabulate([[f"You are healed for {self._maxHealth - self._health} health points. Overspent a bit there."]], tablefmt="fancy_outline"))
             self._health += (self._maxHealth - self._health)
 
-    #adds/subtracts value to mana, displays appropriate message
+    # adds/subtracts value to mana, displays appropriate message
     def modify_mana(self, change):
         if change > 1 and self._mana + change < 50:
             self._mana += change
@@ -137,17 +161,17 @@ class Player:
             print(tabulate([[f"Your mana regenerates {50 - self._mana} points."]], tablefmt="fancy_outline") + "\n")
             self._mana += (50 - self._mana)
 
-    #uses a melee attack on input target
+    # uses a melee attack on input target
     def melee_attack(self, target):
-        target.modify_health(-(self._damage + self._equippedWeapon.get_stats['Damage']))
-        print(tabulate([[f"You hit {target.get_name()} and deal {self._damage + self._equippedWeapon.get_stats['Damage']} damage!"]], tablefmt="fancy_outline"))
+        target.modify_health(-(self._damage + self._equippedWeapon.stats['Damage']))
+        print(tabulate([[f"You hit {target.name} and deal {self._damage + self._equippedWeapon.stats['Damage']} damage!"]], tablefmt="fancy_outline"))
     
-    #casts fireball on input target
+    # casts fireball on input target
     def cast_fireball(self, target):
         target.modify_health(-8)
-        print(tabulate([[f"The fire engulfs {target.get_name()} and deals 8 damage!"]], tablefmt="fancy_outline"))
+        print(tabulate([[f"The fire engulfs {target.name} and deals 8 damage!"]], tablefmt="fancy_outline"))
 
-    #adds/subtracts turns to shield duration
+    # adds/subtracts turns to shield duration
     def modify_shieldDuration(self, turns):
         if turns > 0 and self._shieldDuration > 0:
             print(tabulate([["Your mana flows out to reinforce your protection."]], tablefmt="fancy_outline"))
@@ -159,44 +183,44 @@ class Player:
             print(tabulate([["Your shield flickers and dies."]], tablefmt="fancy_outline"))
             self._defense = self._defense / 2
     
-    #equips selected item
+    # equips selected item
     def equip_item(self, selected = Item()):            
         if selected != self._equippedWeapon and selected != self._equippedShield:
-            if selected.get_itemType() == "Weapon":
-                if selected.get_name() != "Fists"and self._equippedWeapon.get_name() != "Fists":
-                    print(tabulate([[f"You stow away your {self._equippedWeapon.get_name()} and equip your {selected.get_name()}."]], tablefmt='fancy_outline') +"\n")
-                elif self._equippedWeapon.get_name() != "Fists":
-                    print(tabulate([[f"You stow away your {self._equippedWeapon.get_name()}."]], tablefmt="fancy_outline") + "\n")
+            if selected.itemType == "Weapon":
+                if selected.name != "Fists"and self._equippedWeapon.name != "Fists":
+                    print(tabulate([[f"You stow away your {self._equippedWeapon.name} and equip your {selected.name}."]], tablefmt='fancy_outline') +"\n")
+                elif self._equippedWeapon.name != "Fists":
+                    print(tabulate([[f"You stow away your {self._equippedWeapon.name}."]], tablefmt="fancy_outline") + "\n")
                 else:
-                    print(tabulate([[f"You equip your {selected.get_name()}."]], tablefmt="fancy_outline") + "\n")
+                    print(tabulate([[f"You equip your {selected.name}."]], tablefmt="fancy_outline") + "\n")
                 self._equippedWeapon = selected
-                self._damage = selected.get_stats()["Damage"]
-            if selected.get_itemType() == "Shield":
-                if selected.get_name() != "Fists" and self._equippedShield.get_name() != "Fists":
-                    print(tabulate([[f"You stow away your {self._equippedShield} and equip your {selected.get_name()}."]], tablefmt="fancy_outline") + "\n")
-                elif self._equippedShield.get_name() != "Fists":
-                    print(tabulate([[f"You stow away your {self._equippedShield.get_name()}."]], tablefmt="fancy_outline") + "\n")
+                self._damage = selected.stats["Damage"]
+            if selected.itemType == "Shield":
+                if selected.name != "Fists" and self._equippedShield.name != "Fists":
+                    print(tabulate([[f"You stow away your {self._equippedShield} and equip your {selected.name}."]], tablefmt="fancy_outline") + "\n")
+                elif self._equippedShield.name != "Fists":
+                    print(tabulate([[f"You stow away your {self._equippedShield.name}."]], tablefmt="fancy_outline") + "\n")
                 else:
-                    print(tabulate([[f"You equip your {selected.get_name()}."]], tablefmt="fancy_outline") + "\n")
+                    print(tabulate([[f"You equip your {selected.name}."]], tablefmt="fancy_outline") + "\n")
                 self._equippedShield = selected
-                self._defense = selected.get_stats()["Defense"]
+                self._defense = selected.stats["Defense"]
         else:
             print(tabulate([[f"You decided what you have is good enough for now."]], tablefmt="fancy_outline") + "\n")
     
-    #uses selected item
+    # uses selected item
     def use_item(self, item = Item()):
-        if item.get_name() in self._inventory["Consumable"]:
-            if "Potion" in item.get_name():
-                print(tabulate([[f"You pop the cork from the vial, and down the {item.get_name()} within."]], tablefmt="fancy_outline") + "\n")
+        if item.name in self._inventory["Consumable"]:
+            if "Potion" in item.name:
+                print(tabulate([[f"You pop the cork from the vial, and down the {item.name} within."]], tablefmt="fancy_outline") + "\n")
             else:
-                print(tabulate([[f"You quickly scarf down the {item.get_name()}."]], tablefmt="fancy_outline") + "\n")
-            item.set_quantity(item.get_quantity() - 1)
-            if item.get_quantity() == 0:
-                del self._inventory["Consumable"][item.get_name()]
+                print(tabulate([[f"You quickly scarf down the {item.name}."]], tablefmt="fancy_outline") + "\n")
+            item.quantity = item.quantity - 1
+            if item.quantity == 0:
+                del self._inventory["Consumable"][item.name]
 
     def openInventory(self):
         while True:
-            print(self.get_inventory_table("Full"))
+            print(self.inventory_table("Full"))
             try:
                 inventoryChoice = int(input(tabulate([["What would you like to do?"], ["1: Equip Weapon"], ["2: Equip Shield"], ["3: Use Item"], ["4: Go Back"]], headers="firstrow", tablefmt="fancy_outline") + "\n? "))
                 print("")
@@ -206,7 +230,7 @@ class Player:
             match inventoryChoice:
                 case 1:
                     print(tabulate([["Which weapon would you like to equip?"]], tablefmt="fancy_grid"))
-                    print(self.get_inventory_table("Weapon"))
+                    print(self.inventory_table("Weapon"))
                     try:
                         weaponChoice = int(input("? "))
                         print("")
@@ -222,7 +246,7 @@ class Player:
                             continue
                 case 2:
                     print(tabulate([["Which shield would you like to equip?"]], tablefmt="fancy_grid"))
-                    print(self.get_inventory_table("Shield"))
+                    print(self.inventory_table("Shield"))
                     try:
                         shieldChoice = int(input("? "))
                         print("")
@@ -238,7 +262,7 @@ class Player:
                             continue
                 case 3:
                     print(tabulate([["Which item would you like to use?"]], tablefmt="fancy_grid"))
-                    print(self.get_inventory_table("Consumable"))
+                    print(self.inventory_table("Consumable"))
                     try:
                         itemChoice = int(input("? "))
                         print("")
@@ -255,8 +279,8 @@ class Player:
                 case 4:
                     break
 
-    #returns formatted inventory table representation
-    def get_inventory_table(self, invType):
+    # returns formatted inventory table representation
+    def inventory_table(self, invType):
         equippedTable = []
         weaponTable = []
         shieldTable = []
@@ -265,51 +289,51 @@ class Player:
             for itemType in self._inventory:
                 if itemType == "Equipped":
                     equippedTable.append([f"Equipment Slot", "Name", "Stats"])
-                    equippedTable.append(["Weapon", self._equippedWeapon.get_name(), f"+{self._equippedWeapon.get_stats()['Damage']} Damage"])
-                    equippedTable.append(["Shield", self._equippedShield.get_name(), f"+{self._equippedShield.get_stats()['Defense']} Defense"])
+                    equippedTable.append(["Weapon", self._equippedWeapon.name, f"+{self._equippedWeapon.stats['Damage']} Damage"])
+                    equippedTable.append(["Shield", self._equippedShield.name, f"+{self._equippedShield.stats['Defense']} Defense"])
                 elif itemType == "Weapon":
                     weaponTable.append([f"{itemType} Name", "Stats", "Amount"])
                     for item in self._inventory[itemType]:
-                        if self._inventory[itemType][item].get_quantity() > 0:
-                            weaponTable.append([item, f"+{self._inventory[itemType][item].get_stats()[list(self._inventory[itemType][item].get_stats().keys())[0]]} {list(self._inventory[itemType][item].get_stats().keys())[0]}", self._inventory[itemType][item].get_quantity()])
+                        if self._inventory[itemType][item].quantity > 0:
+                            weaponTable.append([item, f"+{self._inventory[itemType][item].stats[list(self._inventory[itemType][item].stats.keys())[0]]} {list(self._inventory[itemType][item].stats.keys())[0]}", self._inventory[itemType][item].quantity])
                 elif itemType == "Shield":
                     shieldTable.append([f"{itemType} Name", "Stats", "Amount"])
                     for item in self._inventory[itemType]:
-                        if self._inventory[itemType][item].get_quantity() > 0:
-                            shieldTable.append([item, f"+{self._inventory[itemType][item].get_stats()[list(self._inventory[itemType][item].get_stats().keys())[0]]} {list(self._inventory[itemType][item].get_stats().keys())[0]}", self._inventory[itemType][item].get_quantity()])
+                        if self._inventory[itemType][item].quantity > 0:
+                            shieldTable.append([item, f"+{self._inventory[itemType][item].stats[list(self._inventory[itemType][item].stats.keys())[0]]} {list(self._inventory[itemType][item].stats.keys())[0]}", self._inventory[itemType][item].quantity])
                 elif itemType == "Consumable":
                     consumableTable.append([f"{itemType} Name", "Effect", "Amount"])
                     for item in self._inventory[itemType]:
-                        if self._inventory[itemType][item].get_quantity() > 0:
-                            consumableTable.append([item, f"+{self._inventory[itemType][item].get_stats()[list(self._inventory[itemType][item].get_stats().keys())[0]]} {list(self._inventory[itemType][item].get_stats().keys())[0]}", self._inventory[itemType][item].get_quantity()])
+                        if self._inventory[itemType][item].quantity > 0:
+                            consumableTable.append([item, f"+{self._inventory[itemType][item].stats[list(self._inventory[itemType][item].stats.keys())[0]]} {list(self._inventory[itemType][item].stats.keys())[0]}", self._inventory[itemType][item].quantity])
             return f"{tabulate(equippedTable, headers='firstrow', tablefmt='fancy_outline', colalign=('right', 'center', 'left'))}\n{tabulate(weaponTable, headers='firstrow', tablefmt='fancy_outline', colalign=('right', 'center', 'left'))}\n{tabulate(shieldTable, headers='firstrow', tablefmt='fancy_outline', colalign=('right', 'center', 'left'))}\n{tabulate(consumableTable, headers='firstrow', tablefmt='fancy_outline', colalign=('right', 'center', 'left'))}"
         elif invType == "Weapon":
             for count, item in enumerate(self._inventory[invType]):
-                if self._inventory[invType][item].get_quantity() > 0:
-                    weaponTable.append([f"{count + 1}: {item}", f"{list(self._inventory[invType][item].get_stats().keys())[0]}: {self._inventory[invType][item].get_stats()[list(self._inventory[invType][item].get_stats().keys())[0]]}"])
+                if self._inventory[invType][item].quantity > 0:
+                    weaponTable.append([f"{count + 1}: {item}", f"{list(self._inventory[invType][item].stats.keys())[0]}: {self._inventory[invType][item].stats[list(self._inventory[invType][item].stats.keys())[0]]}"])
             return tabulate(weaponTable, tablefmt="fancy_outline")
         elif invType == "Shield":
             for count, item in enumerate(self._inventory[invType]):
-                if self._inventory[invType][item].get_quantity() > 0:
-                    shieldTable.append([f"{count + 1}: {item}", f"{list(self._inventory[invType][item].get_stats().keys())[0]}: {self._inventory[invType][item].get_stats()[list(self._inventory[invType][item].get_stats().keys())[0]]}"])
+                if self._inventory[invType][item].quantity > 0:
+                    shieldTable.append([f"{count + 1}: {item}", f"{list(self._inventory[invType][item].stats.keys())[0]}: {self._inventory[invType][item].stats[list(self._inventory[invType][item].stats.keys())[0]]}"])
             return tabulate(shieldTable, tablefmt="fancy_outline")
         elif invType == "Consumable":
             for count, item in enumerate(self._inventory[invType]):
-                if self._inventory[invType][item].get_quantity() > 0:
-                    consumableTable.append([f"{count + 1}: {item}", f"{list(self._inventory[invType][item].get_stats().keys())[0]}: {self._inventory[invType][item].get_stats()[list(self._inventory[invType][item].get_stats().keys())[0]]}", self._inventory[invType][item].get_quantity()])
+                if self._inventory[invType][item].quantity > 0:
+                    consumableTable.append([f"{count + 1}: {item}", f"{list(self._inventory[invType][item].stats.keys())[0]}: {self._inventory[invType][item].stats[list(self._inventory[invType][item].stats.keys())[0]]}", self._inventory[invType][item].quantity])
             return tabulate(consumableTable, tablefmt="fancy_outline")
     
-    #returns formatted list representation
+    # returns formatted list representation
     def __str__(self):
-        table = [["Name", "Level", "Health", "Mana", "Damage", "Defense"], [self._name, f"{self._level} {self._levelProgress}/{self._nextLevel}", f"{self._health}/{self._maxHealth}", f"{self._mana}/{self._maxMana}", f"{self._damage} + {self._equippedWeapon.get_stats()['Damage']} ({self._equippedWeapon.get_name()})", f"{self._defense} + {self._equippedShield.get_stats()['Defense']} ({self._equippedShield.get_name()})"]]
+        table = [["Name", "Level", "Health", "Mana", "Damage", "Defense"], [self._name, f"{self._level} {self._levelProgress}/{self._nextLevel}", f"{self._health}/{self._maxHealth}", f"{self._mana}/{self._maxMana}", f"{self._damage} + {self._equippedWeapon.stats['Damage']} ({self._equippedWeapon.name})", f"{self._defense} + {self._equippedShield.stats['Defense']} ({self._equippedShield.name})"]]
         if self._shieldDuration > 0:
             table[0].append("Enhance Shield")
             table[1].append(f"{self._shieldDuration} turns left")
-            table[1][4] = f"{self._equippedShield.get_stats()['Defense'] * 2} ({self._equippedShield.get_name()} * 2)"
+            table[1][4] = f"{self._equippedShield.stats['Defense'] * 2} ({self._equippedShield.name} * 2)"
         return tabulate(table, headers='firstrow', tablefmt="fancy_outline", colalign=["left", "center"])
 
-#Testing
-'''a = Player()
+# Testing
+'''a = Player
 a.reader({"_name": "Newbie", "_level": 1, "_levelProgress":0, "_nextLevel":100, "_health": 100, "_mana": 50, "_damage": 5, "_defense": 2, "_shield": 0, "_inventory": {"Equipped": {"Weapon": "Fists", "Shield": "Fists"}, "Weapon": {"Fists": {"stats": {"Damage": 0}, "quantity": 1}, "Wooden Sword": {"stats": {"Damage": 5}, "quantity": 1}}, "Shield": {"Fists": {"stats": {"Defense": 0}, "quantity": 1}, "Wooden Shield": {"stats": {"Defense": 2}, "quantity": 1}}, "Consumable": {"Burrito": {"stats": {"Health": 15}, "quantity": 3}, "Block of Cheese": {"stats": {"Health": 5}, "quantity": 1}}}})
 print(a)
 a.level_up(1042)

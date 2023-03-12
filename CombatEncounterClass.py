@@ -1,6 +1,6 @@
-#Caiden Wilson
-#3/10/2023
-#Final Project: Combat Encounter Class
+# Caiden Wilson
+# 3/10/2023
+# Final Project: Combat Encounter Class
 
 import textwrap
 from EnemyClass import Enemy
@@ -19,35 +19,47 @@ class CombatEncounter:
         self._endDescription = endDescription
         self._triggerChance = triggerChance
 
-    #getters
-    def get_name(self):
+    # getters
+    @property
+    def name(self):
         return self._name
-    def get_startDescription(self):
+    @property
+    def startDescription(self):
         return "\n\n".join(self._startDescription)
-    def get_enemies(self):
+    @property
+    def enemies(self):
         return self._enemies
-    def get_enemies_dict(self):
+    @property
+    def enemies_dict(self):
         return self._enemies_dict
-    def get_endDescription(self):
+    @property
+    def endDescription(self):
         return "\n\n".join(self._endDescription)
-    def get_triggerChance(self):
+    @property
+    def triggerChance(self):
         return self._triggerChance
-    
-    #setters
-    def set_name(self, name):
+
+    # setters
+    @name.setter
+    def name(self, name):
         self._name = name
-    def set_startDescription(self, startDescription):
+    @startDescription.setter
+    def startDescription(self, startDescription):
         self._startDescription = startDescription
-    def set_enemies(self, enemies):
+    @enemies.setter
+    def enemies(self, enemies):
         self._enemies = enemies
-    def set_enemies_dict(self, enemies_dict):
+    @enemies_dict.setter
+    def enemies_dict(self, enemies_dict):
         self._enemies_dict = enemies_dict
-    def set_endDescription(self, endDescription):
+    @endDescription.setter
+    def endDescription(self, endDescription):
         self._endDescription = endDescription
-    def set_triggerChance(self, triggerChance):
+    @triggerChance.setter
+    def triggerChance(self, triggerChance):
         self._triggerChance = triggerChance
 
-    #sets attributes from input dictionary
+    # sets attributes from input dictionary
     def reader(self, input_dict):
         for key in input_dict:
             try:
@@ -75,13 +87,13 @@ class CombatEncounter:
                 a.reader(self._enemies[enemy])
                 self._enemies_dict[f"{enemy} {quantity + 1}"] = a
         if randint(1, 100) <= self._triggerChance[0] and len(self._enemies_dict) > 0 and turn > 0:
-            print(tabulate([[self.encounterText()], ["\n\n".join(self._startDescription)]], tablefmt="fancy_grid") + "\n") #prints encounter start description
+            print(tabulate([[self.encounterText()], ["\n\n".join(self._startDescription)]], tablefmt="fancy_grid") + "\n") # prints encounter start description
             while len(self._enemies_dict) > 0:
-                print(f"{self.__str__()}") #displays enemy stats
+                print(f"{self.__str__()}") # displays enemy stats
 
-                print(player) #displays player stats
+                print(player) # displays player stats
 
-                #displays combat actions, gets choice of player
+                # displays combat actions, gets choice of player
                 try:
                     choice = int(input(f"{tabulate([['What would you like to do?'], ['1: Melee Attack'], ['2: Cast Magic'], ['3: Use Item']], headers='firstrow', tablefmt='fancy_outline')}\n? "))
                     print("")
@@ -89,17 +101,17 @@ class CombatEncounter:
                     print(invalidChoice)
                     continue
 
-                #fulfills action chosen by player
+                # fulfills action chosen by player
                 match choice:
-                    #case 1 is melee attack
+                    # case 1 is melee attack
                     case 1:
                         if len(self._enemies_dict) > 1:
-                            #displays target selection
+                            # displays target selection
                             enemyTable = [["Which enemy do you want to attack?"]]
                             for count, enemy in enumerate(self._enemies_dict):
-                                enemyTable.append([f"{count + 1}: {self._enemies_dict[enemy].get_name()}"])
+                                enemyTable.append([f"{count + 1}: {self._enemies_dict[enemy].name}"])
                             print(tabulate(enemyTable, headers="firstrow", tablefmt="fancy_outline"))
-                            #gets target selection from player
+                            # gets target selection from player
                             try:
                                 attackEnemy = int(input("? "))
                                 print("")
@@ -109,50 +121,50 @@ class CombatEncounter:
                             except:
                                 print(invalidChoice)
                                 continue
-                        #if only one enemy is present, they are the target by default
+                        # if only one enemy is present, they are the target by default
                         else:
                             attackEnemy = 1
-                        #damages selected target
+                        # damages selected target
                         for count, enemy in enumerate(self._enemies_dict):
                             if count + 1 == attackEnemy:
                                 player.melee_attack(self._enemies_dict[enemy])
-                    #case 2 is casting magic
+                    # case 2 is casting magic
                     case 2:
-                        #displays available spells, gets spell selection from player
+                        # displays available spells, gets spell selection from player
                         try:
                             spell = int(input(tabulate([["What would you like to cast?"]], tablefmt="fancy_outline") + "\n" + tabulate([["Name", "Mana Cost", "Effect"], ["1: Fireball", 5, "Deals 8 Damage to All Enemies"], ["2: Enhance Shield", 15, "Doubles Defense for 3 Turns"], ["3: Heal", "Variable", "Converts 2x Mana Cost to Health"]], headers="firstrow", tablefmt="fancy_outline") + "\n? "))
                             print("")
                         except:
                             print(invalidChoice)
                             continue
-                        #casts spell chosen by player
+                        # casts spell chosen by player
                         match spell:
-                            #case 1 is fireball
+                            # case 1 is fireball
                             case 1:
-                                if player.get_mana() >= 5:
+                                if player.mana >= 5:
                                     player.modify_mana(-5)
                                     for count, enemy in enumerate(self._enemies_dict):
                                         player.cast_fireball(self._enemies_dict[enemy])
                                 else:
                                     print("Insufficient mana.\n")
                                     continue
-                            #case 2 is shield
+                            # case 2 is shield
                             case 2:
-                                if player.get_mana() >= 15:
+                                if player.mana >= 15:
                                     player.modify_mana(-15)
                                     player.modify_shieldDuration(3)
                                 else:
                                     print("Insufficient mana.\n")
                                     continue
-                            #case 3 is heal
+                            # case 3 is heal
                             case 3:
-                                #gets input mana from player
+                                # gets input mana from player
                                 try:
                                     heal = int(input("How much mana will you expend? "))
                                 except:
                                     print("Not a valid amount of mana.")
                                     continue
-                                if heal <= player.get_mana() and heal > 0:
+                                if heal <= player.mana and heal > 0:
                                     player.modify_mana(-heal)
                                     player.modify_health(heal * 2)
                                 elif heal <= 0:
@@ -164,7 +176,7 @@ class CombatEncounter:
                             case _:
                                 print(invalidChoice)
                                 continue
-                    #case 3 is using an item
+                    # case 3 is using an item
                     case 3:
                         print("Not yet implemented.")
                         continue
@@ -172,22 +184,22 @@ class CombatEncounter:
                         print(invalidChoice)
                         continue
                 
-                print("") #adds newline between player and enemy turn
+                print("") # adds newline between player and enemy turn
 
-                #enemies take their turns
+                # enemies take their turns
                 for enemy in list(self._enemies_dict.keys()):
-                    if self._enemies_dict[enemy].get_health() <= 0:
+                    if self._enemies_dict[enemy].health <= 0:
                         self._enemies_dict[enemy].death(self)
                     else:
                         self._enemies_dict[enemy].attack(player)
                                     
-                print("") #adds newline after enemy turns
+                print("") # adds newline after enemy turns
 
-                turn = self.passive_actions(turn, player) #triggers passive actions
-            print(tabulate([["\n\n".join(self._endDescription)]], tablefmt="fancy_grid")) #prints long encounter end description
-            self._triggerChance[0] = self._triggerChance[1] #sets trigger chance to what it should be after the first encounter
+                turn = self.passive_actions(turn, player) # triggers passive actions
+            print(tabulate([["\n\n".join(self._endDescription)]], tablefmt="fancy_grid")) # prints long encounter end description
+            self._triggerChance[0] = self._triggerChance[1] # sets trigger chance to what it should be after the first encounter
         
-    #displays encountered enemies
+    # displays encountered enemies
     def encounterText(self):
         encounterText = ""
         if len(self._enemies_dict) == 1:
@@ -233,23 +245,23 @@ class CombatEncounter:
                         encounterText += f"and {self._enemies[enemy]['quantity']} {enemy}s!"
                         return encounterText
                     
-    #passive actions
-    def passive_actions(self, turn, player):
+    # passive actions
+    def passive_actions(self, turn, player = Player()):
         turn += 1
         if turn % 2 == 0:
             player.modify_mana(5)
-        if player.get_shieldDuration() > 0:
+        if player.shieldDuration() > 0:
             player.modify_shieldDuration(-1)
         return turn
 
-    #returns formatted table representation
+    # returns formatted table representation
     def __str__(self):
         enemyTable = [["Enemy Name", "Health", "Damage"]]
         for enemy in self._enemies_dict:
-            enemyTable.append([self._enemies_dict[enemy].get_name(), self._enemies_dict[enemy].get_health(), self._enemies_dict[enemy].get_damage()])
+            enemyTable.append([self._enemies_dict[enemy].name, self._enemies_dict[enemy].health, self._enemies_dict[enemy].damage()])
         return tabulate(enemyTable, headers="firstrow", tablefmt="fancy_outline")
 
-'''#Testing
+'''# Testing
 p = Player()
 p.reader({"_name": "Newbie", "_health": 100, "_mana": 50, "_damage": 1, "_defense": 1, "_shield": 0, "_inventory": {"Equipped": {"Weapon": "Fists", "Shield": "Wooden Shield"}, "Weapon": {"Fists": {"stats": {"Damage": 1}, "quantity": 1}, "Wooden Sword": {"stats": {"Damage": 5}, "quantity": 1}}, "Shield": {"Fists": {"stats": {"Defense": 1}, "quantity": 1}, "Wooden Shield": {"stats": {"Defense": 2}, "quantity": 1}}, "Consumable": {"Burrito": {"stats": {"Health": 15}, "quantity": 3}}}})
 x = CombatEncounter()

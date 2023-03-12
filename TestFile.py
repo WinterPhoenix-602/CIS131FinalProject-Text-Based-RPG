@@ -1,7 +1,7 @@
-#Caiden Wilson
-#3/2/2023
-#CIS131
-#Final Project: Testing
+# Caiden Wilson
+# 3/2/2023
+# CIS131
+# Final Project: Testing
 
 import json
 import os
@@ -15,34 +15,34 @@ newGamePath = os.path.join(mainPath, "SaveFiles\\NewGame.json")
 saveFileInfoPath = os.path.join(mainPath, "SaveFiles\\SaveFileInfo.json")
 invalidChoice = "\n" + tabulate([["I'm sorry, that is not a valid choice."]]) + "\n"
 
-#the main function
+# the main function
 def main():
     player, player_dict, tiles_dict, currentTile, currentTileName, saveFilePath = loadGame(mainMenu())
     turn = 0
     if type(player_dict) != dict:
         exit()
     while True:
-        if len(currentTile.get_combatEncounter().get_enemies()) > 0:
-            currentTile.get_combatEncounter().start_encounter(player, turn)
-            tiles_dict[currentTileName]["_combatEncounter"]["_triggerChance"] = currentTile.get_combatEncounter().get_triggerChance()
+        if len(currentTile.combatEncounter.enemies) > 0:
+            currentTile.combatEncounter.start_encounter(player, turn)
+            tiles_dict[currentTileName]["_combatEncounter"]["_triggerChance"] = currentTile.combatEncounter.triggerChance
 
-        #displays tile menu
+        # displays tile menu
         turn, currentTileName, choice, save = currentTile.tileMenu(turn, player, currentTileName)
 
         if choice == 6:
             if save == "yes":
-                saveGame(player_dict, player, tiles_dict, currentTileName, currentTile, saveFilePath)
+                saveGame(player_dict, tiles_dict, currentTileName, saveFilePath, player, currentTile)
             player, player_dict, tiles_dict, currentTile, currentTileName, saveFilePath = loadGame(mainMenu())
             if type(player_dict) != dict:
                 exit()
         
         try:
             currentTile.reader(tiles_dict[currentTileName])
-            #triggers passive actions
+            # triggers passive actions
         except KeyError:
             print("You can't go that way.\n__________________________________________________")
 
-#displays main menu, choose between new game, loading save, or ending program
+# displays main menu, choose between new game, loading save, or ending program
 def mainMenu():
     while True:
         try:
@@ -55,9 +55,9 @@ def mainMenu():
             continue
         return choice
 
-#loads saved game
+# loads saved game
 def loadGame(menuChoice):
-    #loads chosen save file
+    # loads chosen save file
     currentTile = Tile()
     player = Player()
     while True:
@@ -72,8 +72,8 @@ def loadGame(menuChoice):
             currentTile.reader(tiles_dict[currentTileName])
             player.reader(player_dict)
             while True:
-                player.set_name(input("Choose a name for your character (no more than seven characters long): "))
-                if len(player.get_name()) > 7:
+                player.name = (input("Choose a name for your character (no more than seven characters long): "))
+                if len(player.name) > 7:
                     print("I'm sorry, that name is too long.")
                     continue
                 print("")
@@ -131,16 +131,16 @@ def loadGame(menuChoice):
             player_dict, tiles_dict, currentTile, currentTileName, saveFilePath = 0, 0, 0, 0, 0
             return player, player_dict, tiles_dict, currentTile, currentTileName, saveFilePath
 
-#saves current game
-def saveGame(player_dict, player, tiles_dict, currentTileName, currentTile, saveFilePath):
+# saves current game
+def saveGame(player_dict, tiles_dict, currentTileName, saveFilePath, player = Player, currentTile = Tile()):
     currentGame_dict = {}
-    player_dict["_name"] = player.get_name()
-    player_dict["_health"] = player.get_health()
-    player_dict["_mana"] = player.get_mana()
-    for itemType in player.get_inventory():
+    player_dict["_name"] = player.name
+    player_dict["_health"] = player.health
+    player_dict["_mana"] = player.mana
+    for itemType in player.inventory:
         if itemType != "Equipped":
-            for item in player.get_inventory()[itemType]:
-                player_dict["_inventory"][itemType][item] = {"stats":player.get_inventory()[itemType][item].get_stats(), "quantity":player.get_inventory()[itemType][item].get_quantity()}
+            for item in player.inventory[itemType]:
+                player_dict["_inventory"][itemType][item] = {"stats":player.inventory[itemType][item].stats, "quantity":player.inventory[itemType][item].quantity}
     currentGame_dict["player"] = player_dict
     currentGame_dict["tiles"] = tiles_dict
     currentGame_dict["location"] = currentTileName
@@ -196,7 +196,7 @@ def saveGame(player_dict, player, tiles_dict, currentTileName, currentTile, save
             break
         
         saveFiles_dict["Save" + str(saveChoice)]["name"] = player_dict["_name"]
-        saveFiles_dict["Save" + str(saveChoice)]["info"] = f"(Last Saved: {datetime.now().replace(microsecond = 0).isoformat(' ')} Location: {currentTile.get_name()})"
+        saveFiles_dict["Save" + str(saveChoice)]["info"] = f"(Last Saved: {datetime.now().replace(microsecond = 0).isoformat(' ')} Location: {currentTile.name})"
 
     with open(saveFileInfoPath,"w") as saveInfo:
         json.dump(saveFiles_dict, saveInfo)

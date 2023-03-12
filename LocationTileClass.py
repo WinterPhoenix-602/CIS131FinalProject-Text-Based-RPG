@@ -1,7 +1,7 @@
-#Caiden Wilson
-#3/2/2023
-#CIS131
-#Final Project: Location Tile Class
+# Caiden Wilson
+# 3/2/2023
+# CIS131
+# Final Project: Location Tile Class
 
 import textwrap
 from PlayerClass import Player
@@ -11,33 +11,41 @@ from tabulate import tabulate
 invalidChoice = "\n" + tabulate([["I'm sorry, that is not a valid choice."]]) + "\n"
 
 class Tile:
-    def __init__(self, name = "", description = "", directions = {"north":"", "east":"", "south":"", "west":""}, combatEncounter = {"_name":"", "_startDescription":[""], "_enemies":{}, "_endDescription":[""], "_triggerChance":[0, 0]}):
+    def __init__(self, name = "", description = "", directions = {"north":"", "east":"", "south":"", "west":""}, combatEncounter = CombatEncounter()):
         self._name = name
         self._description = description
         self._directions = directions
         self._combatEncounter = combatEncounter
         
-    #getters
-    def get_name(self):
+    # getters
+    @property
+    def name(self):
         return self._name
-    def get_description(self):
+    @property
+    def description(self):
         return "\n\n".join(self._description)
-    def get_directions(self):
+    @property
+    def directions(self):
         return self._directions
-    def get_combatEncounter(self):
+    @property
+    def combatEncounter(self):
         return self._combatEncounter
 
-    #setters
-    def set_name(self, name):
+    # setters
+    @name.setter
+    def name(self, name):
         self._name = name
-    def set_description(self, description):
+    @description.setter
+    def description(self, description):
         self._description = description
-    def set_directions(self, directions):
+    @directions.setter
+    def directions(self, directions):
         self._directions = directions
-    def set_combatEncounter(self, enemies):
-        self._combatEncounter = enemies
+    @combatEncounter.setter
+    def combatEncounter(self, combatEncounter):
+        self._combatEncounter = combatEncounter
 
-    #sets attributes from input dictionary
+    # sets attributes from input dictionary
     def reader(self, input_dict):
         for key in input_dict:
             try:
@@ -58,10 +66,10 @@ class Tile:
         save = ""
         noGo = tabulate([["You can't go that way."]], tablefmt="fancy_outline")
         while True:
-            print(tabulate([[self._name], ["\n\n".join(self._description)]], tablefmt="fancy_grid")) #print tile description
-            print(player) #print player status
+            print(tabulate([[self._name], ["\n\n".join(self._description)]], tablefmt="fancy_grid")) # print tile description
+            print(player) # print player status
 
-            #displays choice menu, gets player choice
+            # displays choice menu, gets player choice
             try:
                 choice = int(input(tabulate([["What would you like to do?"], ["1: Go North"], ["2: Go East"], ["3: Go South"], ["4: Go West"], ["5: Open Inventory"], ["6: Exit Game"]], headers="firstrow", tablefmt="fancy_outline")+ "\n? "))
                 print("")
