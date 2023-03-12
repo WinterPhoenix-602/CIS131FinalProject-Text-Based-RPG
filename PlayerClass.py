@@ -10,7 +10,7 @@ invalidChoice = "\n" + tabulate([["I'm sorry, that is not a valid choice."]]) + 
 
 class Player:
     #initialization method
-    def __init__(self, name = "Player", health = 100, maxHealth = 100, mana = 50, maxMana = 50, damage = 1, defense = 1, shieldDuration = 0, inventory = {}, equippedWeapon = Item(), equippedShield = Item()):
+    def __init__(self, name = "Player", health = 100, maxHealth = 100, mana = 50, maxMana = 50, damage = 1, defense = 1, shieldDuration = 0, inventory = {"itemType":{"itemName":Item()}}, equippedWeapon = Item(), equippedShield = Item()):
         self._name = name
         self._health = health
         self._maxHealth = maxHealth
@@ -244,27 +244,33 @@ class Player:
                 elif itemType == "Weapon":
                     weaponTable.append([f"{itemType} Name", "Stats", "Amount"])
                     for item in self._inventory[itemType]:
-                        weaponTable.append([item, f"{list(self._inventory[itemType][item].get_stats().keys())[0]}: {self._inventory[itemType][item].get_stats()[list(self._inventory[itemType][item].get_stats().keys())[0]]}", self._inventory[itemType][item].get_quantity()])
+                        if self._inventory[itemType][item].get_quantity() > 0:
+                            weaponTable.append([item, f"{list(self._inventory[itemType][item].get_stats().keys())[0]}: {self._inventory[itemType][item].get_stats()[list(self._inventory[itemType][item].get_stats().keys())[0]]}", self._inventory[itemType][item].get_quantity()])
                 elif itemType == "Shield":
                     shieldTable.append([f"{itemType} Name", "Stats", "Amount"])
                     for item in self._inventory[itemType]:
-                        shieldTable.append([item, f"{list(self._inventory[itemType][item].get_stats().keys())[0]}: {self._inventory[itemType][item].get_stats()[list(self._inventory[itemType][item].get_stats().keys())[0]]}", self._inventory[itemType][item].get_quantity()])
+                        if self._inventory[itemType][item].get_quantity() > 0:
+                            shieldTable.append([item, f"{list(self._inventory[itemType][item].get_stats().keys())[0]}: {self._inventory[itemType][item].get_stats()[list(self._inventory[itemType][item].get_stats().keys())[0]]}", self._inventory[itemType][item].get_quantity()])
                 elif itemType == "Consumable":
                     consumableTable.append([f"{itemType} Name", "Stats", "Amount"])
                     for item in self._inventory[itemType]:
-                        consumableTable.append([item, f"{list(self._inventory[itemType][item].get_stats().keys())[0]}: {self._inventory[itemType][item].get_stats()[list(self._inventory[itemType][item].get_stats().keys())[0]]}", self._inventory[itemType][item].get_quantity()])
+                        if self._inventory[itemType][item].get_quantity() > 0:
+                            consumableTable.append([item, f"{list(self._inventory[itemType][item].get_stats().keys())[0]}: {self._inventory[itemType][item].get_stats()[list(self._inventory[itemType][item].get_stats().keys())[0]]}", self._inventory[itemType][item].get_quantity()])
             return f"{tabulate(equippedTable, headers='firstrow', tablefmt='fancy_outline', colalign=('right', 'center', 'left'))}\n{tabulate(weaponTable, headers='firstrow', tablefmt='fancy_outline', colalign=('right', 'center', 'left'))}\n{tabulate(shieldTable, headers='firstrow', tablefmt='fancy_outline', colalign=('right', 'center', 'left'))}\n{tabulate(consumableTable, headers='firstrow', tablefmt='fancy_outline', colalign=('right', 'center', 'left'))}"
         elif invType == "Weapon":
             for count, item in enumerate(self._inventory[invType]):
-                weaponTable.append([f"{count + 1}: {item}", f"{list(self._inventory[invType][item].get_stats().keys())[0]}: {self._inventory[invType][item].get_stats()[list(self._inventory[invType][item].get_stats().keys())[0]]}"])
+                if self._inventory[invType][item].get_quantity() > 0:
+                    weaponTable.append([f"{count + 1}: {item}", f"{list(self._inventory[invType][item].get_stats().keys())[0]}: {self._inventory[invType][item].get_stats()[list(self._inventory[invType][item].get_stats().keys())[0]]}"])
             return tabulate(weaponTable, tablefmt="fancy_outline")
         elif invType == "Shield":
             for count, item in enumerate(self._inventory[invType]):
-                shieldTable.append([f"{count + 1}: {item}", f"{list(self._inventory[invType][item].get_stats().keys())[0]}: {self._inventory[invType][item].get_stats()[list(self._inventory[invType][item].get_stats().keys())[0]]}"])
+                if self._inventory[invType][item].get_quantity() > 0:
+                    shieldTable.append([f"{count + 1}: {item}", f"{list(self._inventory[invType][item].get_stats().keys())[0]}: {self._inventory[invType][item].get_stats()[list(self._inventory[invType][item].get_stats().keys())[0]]}"])
             return tabulate(shieldTable, tablefmt="fancy_outline")
         elif invType == "Consumable":
             for count, item in enumerate(self._inventory[invType]):
-                consumableTable.append([f"{count + 1}: {item}", f"{list(self._inventory[invType][item].get_stats().keys())[0]}: {self._inventory[invType][item].get_stats()[list(self._inventory[invType][item].get_stats().keys())[0]]}", self._inventory[invType][item].get_quantity()])
+                if self._inventory[invType][item].get_quantity() > 0:
+                    consumableTable.append([f"{count + 1}: {item}", f"{list(self._inventory[invType][item].get_stats().keys())[0]}: {self._inventory[invType][item].get_stats()[list(self._inventory[invType][item].get_stats().keys())[0]]}", self._inventory[invType][item].get_quantity()])
             return tabulate(consumableTable, tablefmt="fancy_outline")
     
     #returns formatted list representation
