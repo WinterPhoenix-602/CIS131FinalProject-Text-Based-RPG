@@ -4,6 +4,7 @@
 #Final Project: Enemy Class
 
 from random import randint #enables use of random numbers
+from PlayerClass import Player
 from tabulate import tabulate
 
 class Enemy:
@@ -64,12 +65,15 @@ class Enemy:
             self._health += (self._maxHealth - self._health)
 
     #attacks input target
-    def attack(self, target):
-        if randint(1, 100) <= self._accuracy:
+    def attack(self, target = Player()):
+        attempt = randint(1, 100)
+        if attempt <= self._accuracy and (self._damage - target.get_defense()) > 0:
             target.modify_health(-self._damage + target.get_defense())
             print(tabulate([[f"{self._name} hits you and deals {self._damage - target.get_defense()} damage!"]], tablefmt="fancy_outline"))
+        elif attempt <= self._accuracy:
+            print(tabulate([[f"{self._name} attacks, and you deflect the blow with your {target.get_equippedShield().get_name()}!"]], tablefmt="fancy_outline"))
         else:
-            print(tabulate([[f"{self._name} tries to hit you, but misses."]], tablefmt="fancy_outline"))
+            print(tabulate([[f"{self._name} tries to attack you, but misses."]], tablefmt="fancy_outline"))
 
     #displays death message
     def death(self, encounter):

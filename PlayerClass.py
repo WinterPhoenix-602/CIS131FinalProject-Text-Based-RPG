@@ -66,9 +66,9 @@ class Player:
         self._shieldDuration = shieldDuration
     def set_inventory(self, inventory):
         self._inventory = inventory
-    def get_equippedWeapon(self, equippedWeapon):
+    def set_equippedWeapon(self, equippedWeapon):
         self._equippedWeapon = equippedWeapon
-    def get_equippedShield(self, equippedShield):
+    def set_equippedShield(self, equippedShield):
         self._equippedShield = equippedShield
 
     #sets attributes from input dictionary, initializes inventory with item objects
@@ -127,9 +127,9 @@ class Player:
     #adds/subtracts turns to shield duration
     def modify_shieldDuration(self, turns):
         if turns > 0 and self._shieldDuration > 0:
-            print(tabulate([["Your mana flows out to reinforce your protection."]], tablefmt="fancy_outline"))
+            print(tabulate([["Your mana flows out to reinforce your enhancement."]], tablefmt="fancy_outline"))
         elif turns > 0:
-            print(tabulate([["Your mana surges out into a shining shield, protecting you from harm."]], tablefmt="fancy_outline"))
+            print(tabulate([["Your mana surges out into your shield, helping to protect you from harm."]], tablefmt="fancy_outline"))
             self._defense = self._equippedShield.get_stats()["Defense"] * 2
         self._shieldDuration += turns
         if self._shieldDuration == 0:
@@ -271,6 +271,7 @@ class Player:
     def __str__(self):
         table = [["Name", "Health", "Mana", "Damage", "Defense"], [self._name, self._health, self._mana, f"{self._equippedWeapon.get_stats()['Damage']} ({self._equippedWeapon.get_name()})", f"{self._equippedShield.get_stats()['Defense']} ({self._equippedShield.get_name()})"]]
         if self._shieldDuration > 0:
-            table[0].append("Shield")
+            table[0].append("Enhance Shield")
             table[1].append(f"{self._shieldDuration} turns left")
+            table[1][4] = f"{self._equippedShield.get_stats()['Defense'] * 2} ({self._equippedShield.get_name()} * 2)"
         return tabulate(table, headers='firstrow', tablefmt="fancy_outline")

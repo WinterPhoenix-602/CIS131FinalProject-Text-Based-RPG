@@ -119,7 +119,7 @@ class CombatEncounter:
                     case 2:
                         #displays available spells, gets spell selection from player
                         try:
-                            spell = int(input(tabulate([["What would you like to cast?"]], tablefmt="fancy_outline") + "\n" + tabulate([["Name", "Mana Cost", "Effect"], ["1: Fireball", 5, "Deals 8 Damage to All Enemies"], ["2: Shield", 15, "Doubles Defense for 3 Turns"], ["3: Heal", "Variable", "Converts 2x Mana Cost to Health"]], headers="firstrow", tablefmt="fancy_outline") + "\n? "))
+                            spell = int(input(tabulate([["What would you like to cast?"]], tablefmt="fancy_outline") + "\n" + tabulate([["Name", "Mana Cost", "Effect"], ["1: Fireball", 5, "Deals 8 Damage to All Enemies"], ["2: Enhance Shield", 15, "Doubles Defense for 3 Turns"], ["3: Heal", "Variable", "Converts 2x Mana Cost to Health"]], headers="firstrow", tablefmt="fancy_outline") + "\n? "))
                             print("")
                         except:
                             print(invalidChoice)
