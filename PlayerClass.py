@@ -130,11 +130,11 @@ class Player:
             print(tabulate([["Your mana flows out to reinforce your protection."]], tablefmt="fancy_outline"))
         elif turns > 0:
             print(tabulate([["Your mana surges out into a shining shield, protecting you from harm."]], tablefmt="fancy_outline"))
+            self._defense = self._equippedShield.get_stats()["Defense"] * 2
         self._shieldDuration += turns
-        if self._shieldDuration > 0:
-            self._defense = 2
-        else:
-            self._defense = 1
+        if self._shieldDuration == 0:
+            print(tabulate([["Your shield flickers and dies."]], tablefmt="fancy_outline"))
+            self._defense = self._equippedShield.get_stats()["Defense"]
     
     #equips selected item
     def equip_item(self, selected = Item()):            

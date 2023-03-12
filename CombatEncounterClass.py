@@ -239,8 +239,6 @@ class CombatEncounter:
             player.modify_mana(5)
         if player.get_shieldDuration() > 0:
             player.modify_shieldDuration(-1)
-            if player.get_shieldDuration() == 0:
-                print(tabulate([["Your shield flickers and dies."]], tablefmt="fancy_outline"))
         return turn
 
     #returns formatted table representation
