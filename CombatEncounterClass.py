@@ -83,7 +83,7 @@ class CombatEncounter:
 
                 #displays combat actions, gets choice of player
                 try:
-                    choice = int(input("\nWhat would you like to do?\n1: Melee Attack\n2: Cast Magic\n3: Use Item\n? "))
+                    choice = int(input(f"\nWhat would you like to do?\n{tabulate([['1: Melee Attack'], ['2: Cast Magic'], ['3: Use Item']], tablefmt='fancy_outline')}\n? "))
                     print("")
                 except:
                     print(invalidChoice)
@@ -96,8 +96,10 @@ class CombatEncounter:
                         if len(self._enemies_dict) > 1:
                             #displays target selection
                             print("Which enemy do you want to attack?") 
+                            enemyTable = []
                             for count, enemy in enumerate(self._enemies_dict):
-                                print(f"{count + 1}: {self._enemies_dict[enemy].get_name()}")
+                                enemyTable.append([f"{count + 1}: {self._enemies_dict[enemy].get_name()}"])
+                            print(tabulate(enemyTable, tablefmt="fancy_outline"))
                             #gets target selection from player
                             try:
                                 attackEnemy = int(input("? "))
@@ -119,7 +121,7 @@ class CombatEncounter:
                     case 2:
                         #displays available spells, gets spell selection from player
                         try:
-                            spell = int(input("What would you like to cast?\nName\t\tMana Cost\tEffect\n1: Fireball\t5\t\tDeals 8 Damage to All Enemies\n2: Shield\t15\t\tHalves Incoming Damage for 3 Turns\n3: Heal\t\tVariable\tConverts 2x Mana Cost to Health\n? "))
+                            spell = int(input("What would you like to cast?\n" + tabulate([["Name", "Mana Cost", "Effect"], ["1: Fireball", 5, "Deals 8 Damage to All Enemies"], ["2: Shield", 15, "Doubles Defense for 3 Turns"], ["3: Heal", "Variable", "Converts 2x Mana Cost to Health"]], headers="firstrow", tablefmt="fancy_outline") + "\n? "))
                             print("")
                         except:
                             print(invalidChoice)
@@ -183,7 +185,7 @@ class CombatEncounter:
                 print("") #adds newline after enemy turns
 
                 turn = self.passive_actions(turn, player) #triggers passive actions
-            print(tabulate([["\n\n".join(self._startDescription)]], tablefmt="fancy_grid")) #prints long encounter end description
+            print(tabulate([["\n\n".join(self._endDescription)]], tablefmt="fancy_grid")) #prints long encounter end description
             self._triggerChance[0] = self._triggerChance[1] #sets trigger chance to what it should be after the first encounter
         
     #displays encountered enemies
@@ -248,7 +250,7 @@ class CombatEncounter:
         enemyTable = [["Enemy Name", "Health", "Damage"]]
         for enemy in self._enemies_dict:
             enemyTable.append([self._enemies_dict[enemy].get_name(), self._enemies_dict[enemy].get_health(), self._enemies_dict[enemy].get_damage()])
-        return tabulate(enemyTable, tablefmt="fancy_grid")
+        return tabulate(enemyTable, headers="firstrow", tablefmt="fancy_outline")
 
 '''#Testing
 p = Player()
