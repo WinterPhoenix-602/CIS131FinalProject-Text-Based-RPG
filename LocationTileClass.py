@@ -7,6 +7,7 @@ import textwrap
 from EntityClasses import Player
 from CombatEncounterClass import CombatEncounter
 from tabulate import tabulate
+from SlowPrint import slowLinePrint
 
 invalidChoice = "\n" + \
     tabulate([["I'm sorry, that is not a valid choice."]],
@@ -76,17 +77,18 @@ class Tile:
         noGo = tabulate([["You can't go that way."]], tablefmt="fancy_outline")
         while True:
             # print tile description
-            print(tabulate(
+            slowLinePrint(tabulate(
                 [[self._name], ["\n\n".join(self._description)]], tablefmt="fancy_grid"))
-            print(player)  # print player status
+            slowLinePrint(player.__str__())  # print player status
 
             # displays choice menu, gets player choice
             try:
-                choice = int(input(tabulate([["What would you like to do?"], ["1: Go North"], ["2: Go East"], ["3: Go South"], [
-                             "4: Go West"], ["5: Open Inventory"], ["6: Exit Game"]], headers="firstrow", tablefmt="fancy_outline") + "\n? "))
+                slowLinePrint(tabulate([["What would you like to do?"], ["1: Go North"], ["2: Go East"], ["3: Go South"], [
+                    "4: Go West"], ["5: Open Inventory"], ["6: Exit Game"]], headers="firstrow", tablefmt="fancy_outline"))
+                choice = int(input("? "))
                 print("")
             except:
-                print(invalidChoice)
+                slowLinePrint(invalidChoice)
                 continue
             match choice:
                 case 1:
@@ -96,7 +98,7 @@ class Tile:
                             turn, player)
                         break
                     else:
-                        print(noGo)
+                        slowLinePrint(noGo)
                         continue
                 case 2:
                     if self._directions["east"] != "":
@@ -105,7 +107,7 @@ class Tile:
                             turn, player)
                         break
                     else:
-                        print(noGo)
+                        slowLinePrint(noGo)
                         continue
                 case 3:
                     if self._directions["south"] != "":
@@ -114,7 +116,7 @@ class Tile:
                             turn, player)
                         break
                     else:
-                        print(noGo)
+                        slowLinePrint(noGo)
                         continue
                 case 4:
                     if self._directions["west"] != "":
@@ -123,7 +125,7 @@ class Tile:
                             turn, player)
                         break
                     else:
-                        print(noGo)
+                        slowLinePrint(noGo)
                         continue
                 case 5:
                     player.openInventory()
@@ -137,18 +139,18 @@ class Tile:
                         elif save == "no":
                             save = input("Are you sure? (yes/no): ")
                             if save == "yes":
-                                print(
+                                slowLinePrint(
                                     "\n" + tabulate([["Thank you for playing."]], tablefmt="fancy_outline") + "\n")
                                 save = "no"
                                 return turn, destinationTileName, choice, save
                             elif save == "no":
                                 continue
                             else:
-                                print(invalidChoice)
+                                slowLinePrint(invalidChoice)
                         else:
-                            print(invalidChoice)
+                            slowLinePrint(invalidChoice)
                     break
                 case _:
-                    print(invalidChoice)
+                    slowLinePrint(invalidChoice)
                     continue
         return turn, destinationTileName, choice, save
