@@ -9,7 +9,8 @@ from CombatEncounterClass import CombatEncounter
 from tabulate import tabulate
 
 invalidChoice = "\n" + \
-    tabulate([["I'm sorry, that is not a valid choice."]]) + "\n"
+    tabulate([["I'm sorry, that is not a valid choice."]],
+             tablefmt="fancy_outline") + "\n"
 
 
 class Tile:
