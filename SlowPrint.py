@@ -1,3 +1,8 @@
+# Caiden Wilson
+# 3/9/2023
+# CIS131
+# Final Project: Slow Printing Module
+
 import time
 import termcolor
 from termcolor import colored
