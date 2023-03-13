@@ -13,6 +13,8 @@ def slowTablePrint(string=tabulate([["Testing"], [1], [2]], tablefmt="fancy_outl
     for line in string.splitlines():
         print(colored(line, color))
         time.sleep(delay)
-for color in termcolor.COLORS:
+
+# Testing
+"""for color in termcolor.COLORS:
     slowLinePrint(color, color=color)
-    slowTablePrint(color, color=color)
+    slowTablePrint(color, color=color)"""
