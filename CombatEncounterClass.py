@@ -3,8 +3,8 @@
 # Final Project: Combat Encounter Class
 
 import textwrap
-from EnemyClass import Enemy
-from PlayerClass import Player
+from EntityClasses import Enemy
+from EntityClasses import Player
 from tabulate import tabulate
 from random import randint
 
@@ -13,12 +13,13 @@ invalidChoice = "\n" + \
 
 
 class CombatEncounter:
-    def __init__(self, name="", startDescription=[""], enemies={}, endDescription=[""], triggerChance=[0, 0]):
+    def __init__(self, name="", startDescription=[""], enemies={}, endDescription=[""], expReward=0, triggerChance=[0, 0]):
         self._name = name
         self._startDescription = startDescription
         self._enemies = enemies
         self._enemies_dict = {}
         self._endDescription = endDescription
+        self._expReward = expReward
         self._triggerChance = triggerChance
 
     # getters
@@ -41,6 +42,10 @@ class CombatEncounter:
     @property
     def endDescription(self):
         return "\n\n".join(self._endDescription)
+    
+    @property
+    def expReward(self):
+        return self._expReward
 
     @property
     def triggerChance(self):
@@ -67,6 +72,10 @@ class CombatEncounter:
     def endDescription(self, endDescription):
         self._endDescription = endDescription
 
+    @expReward.setter
+    def expReward(self, expReward):
+        self._expReward = expReward
+
     @triggerChance.setter
     def triggerChance(self, triggerChance):
         self._triggerChance = triggerChance
@@ -83,17 +92,12 @@ class CombatEncounter:
                 for count, paragraph in enumerate(self._startDescription):
                     self._startDescription[count] = textwrap.fill(
                         self._startDescription[count], 100)
-            if key == "_enemies":
-                for enemy in self._enemies:
-                    for quantity in range(self._enemies[enemy]["quantity"]):
-                        a = Enemy(f"{enemy} {quantity + 1}")
-                        a.reader(self._enemies[enemy])
-                        self._enemies_dict[f"{enemy} {quantity + 1}"] = a
             if key == "_endDescription":
                 for count, paragraph in enumerate(self._endDescription):
                     self._endDescription[count] = textwrap.fill(
                         self._endDescription[count], 100)
 
+    # runs combat encounter
     def start_encounter(self, player=Player(), turn=0):
         for enemy in self._enemies:
             for quantity in range(self._enemies[enemy]["quantity"]):
@@ -101,6 +105,8 @@ class CombatEncounter:
                 a.reader(self._enemies[enemy])
                 self._enemies_dict[f"{enemy} {quantity + 1}"] = a
         if randint(1, 100) <= self._triggerChance[0] and len(self._enemies_dict) > 0 and turn > 0:
+            for enemy in self._enemies_dict:
+                self._expReward += randint(self._enemies_dict[enemy].maxHealth // 4, self._enemies_dict[enemy].maxHealth // 2) + self._enemies_dict[enemy].damage + self._enemies_dict[enemy].defense + self._enemies_dict[enemy].equippedWeapon.stats["Damage"] + self._enemies_dict[enemy].equippedShield.stats["Defense"]
             print(tabulate([[self.encounterText()], ["\n\n".join(self._startDescription)]],
                   tablefmt="fancy_grid") + "\n")  # prints encounter start description
             while len(self._enemies_dict) > 0:
@@ -152,7 +158,7 @@ class CombatEncounter:
                         # displays available spells, gets spell selection from player
                         try:
                             spell = int(input(tabulate([["What would you like to cast?"]], tablefmt="fancy_outline") + "\n" + tabulate([["Name", "Mana Cost", "Effect"], ["1: Fireball", 5, "Deals 75% Base Damage to All Enemies"], [
-                                        "2: Enhance Shield", 15, "Doubles Defense for 3 Turns"], ["3: Heal", "Variable", "Converts 2x Mana Cost to Health"]], headers="firstrow", tablefmt="fancy_outline") + "\n? "))
+                                        "2: Force Shield", 15, "Doubles Defense for 3 Turns"], ["3: Heal", "Variable", "Converts 2x Mana Cost to Health"]], headers="firstrow", tablefmt="fancy_outline") + "\n? "))
                             print("")
                         except:
                             print(invalidChoice)
@@ -162,7 +168,7 @@ class CombatEncounter:
                             # case 1 is fireball
                             case 1:
                                 if player.mana >= 5:
-                                    player.modify_mana(-5)
+                                    player.modify_attribute("mana", -5)
                                     for count, enemy in enumerate(self._enemies_dict):
                                         player.cast_fireball(
                                             self._enemies_dict[enemy])
@@ -172,7 +178,7 @@ class CombatEncounter:
                             # case 2 is shield
                             case 2:
                                 if player.mana >= 15:
-                                    player.modify_mana(-15)
+                                    player.modify_attribute("mana", -15)
                                     player.modify_shieldDuration(3)
                                 else:
                                     print("Insufficient mana.\n")
@@ -213,7 +219,7 @@ class CombatEncounter:
                     if self._enemies_dict[enemy].health <= 0:
                         self._enemies_dict[enemy].death(self)
                     else:
-                        self._enemies_dict[enemy].attack(player)
+                        self._enemies_dict[enemy].melee_attack(player)
 
                 print("")  # adds newline after enemy turns
 
@@ -222,6 +228,7 @@ class CombatEncounter:
             # prints long encounter end description
             print(
                 tabulate([["\n\n".join(self._endDescription)]], tablefmt="fancy_grid"))
+            player.level_up(self._expReward)
             # sets trigger chance to what it should be after the first encounter
             self._triggerChance[0] = self._triggerChance[1]
 
@@ -275,17 +282,16 @@ class CombatEncounter:
     def passive_actions(self, turn, player=Player()):
         turn += 1
         if turn % 2 == 0:
-            player.modify_mana(5)
-        if player.shieldDuration() > 0:
+            player.modify_attribute("mana", 5)
+        if player.shieldDuration > 0:
             player.modify_shieldDuration(-1)
         return turn
 
     # returns formatted table representation
     def __str__(self):
-        enemyTable = [["Enemy Name", "Health", "Damage"]]
+        enemyTable = [["Enemy Name", "Level", "Health", "Mana", "Damage", "Defense"]]
         for enemy in self._enemies_dict:
-            enemyTable.append([self._enemies_dict[enemy].name,
-                              self._enemies_dict[enemy].health, self._enemies_dict[enemy].damage()])
+            enemyTable.append(self._enemies_dict[enemy].get_stats_list())
         return tabulate(enemyTable, headers="firstrow", tablefmt="fancy_outline")
 
 
