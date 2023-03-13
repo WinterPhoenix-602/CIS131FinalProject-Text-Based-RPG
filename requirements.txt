@@ -1,5 +1,4 @@
 #required packages to be installed by pip
-python         == 3.10.10
 autopep8       == 2.0.2
 pip            == 23.0.1
 pycodestyle    == 2.10.0
