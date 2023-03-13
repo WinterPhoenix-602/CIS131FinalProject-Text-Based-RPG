@@ -5,7 +5,7 @@
 
 import json
 import os
-from PlayerClass import Player
+from EntityClasses import Player
 from LocationTileClass import Tile
 from datetime import datetime
 from tabulate import tabulate
@@ -86,9 +86,10 @@ def loadGame(menuChoice):
             player.reader(player_dict)
             while True:
                 player.name = (
-                    input("Choose a name for your character (no more than seven characters long): "))
-                if len(player.name) > 7:
-                    print("I'm sorry, that name is too long.")
+                    input("Choose a name for your character (no more than 25 characters long): "))
+                if len(player.name) > 25:
+                    print(
+                        tabulate([["I'm sorry, that name is too long."]], tablefmt="fancy_outline"))
                     continue
                 print("")
                 break
@@ -160,6 +161,8 @@ def loadGame(menuChoice):
 def saveGame(player_dict, tiles_dict, currentTileName, saveFilePath, player=Player, currentTile=Tile()):
     currentGame_dict = {}
     player_dict["_name"] = player.name
+    player_dict["_level"] = player.level
+    player_dict["_levelProgress"] = player.levelProgress
     player_dict["_health"] = player.health
     player_dict["_mana"] = player.mana
     for itemType in player.inventory:
@@ -167,6 +170,14 @@ def saveGame(player_dict, tiles_dict, currentTileName, saveFilePath, player=Play
             for item in player.inventory[itemType]:
                 player_dict["_inventory"][itemType][item] = {
                     "stats": player.inventory[itemType][item].stats, "quantity": player.inventory[itemType][item].quantity}
+    for tile in tiles_dict:
+        if tile != "template":
+            for enemy in tiles_dict[tile]["_combatEncounter"]["_enemies"]:
+                for itemType in tiles_dict[tile]["_combatEncounter"]["_enemies"][enemy]["_inventory"]:
+                    if itemType != "Equipped":
+                        for item in tiles_dict[tile]["_combatEncounter"]["_enemies"][enemy]["_inventory"][itemType]:
+                            tiles_dict[tile]["_combatEncounter"]["_enemies"][enemy]["_inventory"][itemType][item] = {
+                                "stats": tiles_dict[tile]["_combatEncounter"]["_enemies"][enemy]["_inventory"][itemType][item].stats, "quantity": tiles_dict[tile]["_combatEncounter"]["_enemies"][enemy]["_inventory"][itemType][item].quantity}
     currentGame_dict["player"] = player_dict
     currentGame_dict["tiles"] = tiles_dict
     currentGame_dict["location"] = currentTileName
