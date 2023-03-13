@@ -9,11 +9,13 @@ from ItemClass import Item
 from tabulate import tabulate
 
 invalidChoice = "\n" + \
-    tabulate([["I'm sorry, that is not a valid choice."]]) + "\n"
+    tabulate([["I'm sorry, that is not a valid choice."]], tablefmt="fancy_outline") + "\n"
 
 # abstract base class
+
+
 class Entity(abc.ABC):
-    def __init__(self, name="", level=0, levelProgress=0, nextLevel=0, levelTable=[0, 0, 0, 0, 0, 0, 0, 0], health=0, maxHealth=0, mana=0, maxMana=0, damage=0, defense=0, accuracy=0, inventory = {}, equippedWeapon=Item(), equippedShield=Item()):
+    def __init__(self, name="", level=0, levelProgress=0, nextLevel=0, levelTable=[0, 0, 0, 0, 0, 0, 0, 0], health=0, maxHealth=0, mana=0, maxMana=0, damage=0, defense=0, accuracy=0, inventory={}, equippedWeapon=Item(), equippedShield=Item()):
         self._name = name
         self._level = level
         self._levelProgress = levelProgress
@@ -66,7 +68,7 @@ class Entity(abc.ABC):
     @property
     def maxMana(self):
         return self._maxMana
-    
+
     @property
     def damage(self):
         return self._damage
@@ -78,7 +80,7 @@ class Entity(abc.ABC):
     @property
     def accuracy(self):
         return self._accuracy
-    
+
     @property
     def inventory(self):
         return self._inventory
@@ -160,13 +162,14 @@ class Entity(abc.ABC):
                     setattr(self, key, input_dict[key])
             except:
                 print("No such attribute, please consider adding it in init.")
-                continue    
+                continue
         self.level_up(level=self.level)
         for itemType in self._inventory:
             if itemType != "Equipped":
                 for item in self._inventory[itemType]:
                     if type(self._inventory[itemType][item]) != Item:
-                        self._inventory[itemType][item] = Item(itemType, item, self._inventory[itemType][item]["stats"], self._inventory[itemType][item]["quantity"])
+                        self._inventory[itemType][item] = Item(
+                            itemType, item, self._inventory[itemType][item]["stats"], self._inventory[itemType][item]["quantity"])
         self._equippedWeapon = self._inventory["Weapon"][self._inventory["Equipped"]["Weapon"]]
         self._equippedShield = self._inventory["Shield"][self._inventory["Equipped"]["Shield"]]
 
@@ -342,11 +345,11 @@ class Player(Entity):
         else:
             print(tabulate(
                 [[f"You decided what you have is good enough for now."]], tablefmt="fancy_outline") + "\n")
-    
+
     # opens player inventory
     def openInventory(self):
         while True:
-            print(self.inventory_table("Full")) # displays full inventory
+            print(self.inventory_table("Full"))  # displays full inventory
             try:
                 # displays player options
                 inventoryChoice = int(input(tabulate([["What would you like to do?"], ["1: Equip Weapon"], ["2: Equip Shield"], [
@@ -356,18 +359,19 @@ class Player(Entity):
                 print(invalidChoice)
                 continue
             match inventoryChoice:
-                case 1: # case 1 is equip weapon
+                case 1:  # case 1 is equip weapon
                     # prints available weapons
                     print(
                         tabulate([["Which weapon would you like to equip?"]], tablefmt="fancy_grid"))
-                    print(self.inventory_table("Weapon")) 
+                    print(self.inventory_table("Weapon"))
                     try:
-                        weaponChoice = int(input("? ")) # gets player selection
+                        # gets player selection
+                        weaponChoice = int(input("? "))
                         print("")
                     except:
                         print(invalidChoice)
                         continue
-                    if weaponChoice > len(self._inventory["Weapon"]):
+                    if weaponChoice > len(self._inventory["Weapon"]) + 1:
                         print(invalidChoice)
                         continue
                     # equips selected weapon
@@ -375,18 +379,21 @@ class Player(Entity):
                         if count + 1 == weaponChoice:
                             self.equip_item(self._inventory["Weapon"][weapon])
                             continue
-                case 2: # case 2 is equip shield
+                    print(tabulate(
+                        [[f"You decided what you have is good enough for now."]], tablefmt="fancy_outline") + "\n")
+                case 2:  # case 2 is equip shield
                     # prints available shields
                     print(
                         tabulate([["Which shield would you like to equip?"]], tablefmt="fancy_grid"))
                     print(self.inventory_table("Shield"))
                     try:
-                        shieldChoice = int(input("? ")) # gets player selection
+                        # gets player selection
+                        shieldChoice = int(input("? "))
                         print("")
                     except:
                         print(invalidChoice)
                         continue
-                    if shieldChoice > len(self._inventory["Shield"]):
+                    if shieldChoice > len(self._inventory["Shield"]) + 1:
                         print(invalidChoice)
                         continue
                     # equips selected shield
@@ -394,18 +401,20 @@ class Player(Entity):
                         if count + 1 == shieldChoice:
                             self.equip_item(self._inventory["Shield"][shield])
                             continue
-                case 3: # case 3 is use item
+                    print(tabulate(
+                        [[f"You decided what you have is good enough for now."]], tablefmt="fancy_outline") + "\n")
+                case 3:  # case 3 is use item
                     # prints available items
                     print(
                         tabulate([["Which item would you like to use?"]], tablefmt="fancy_grid"))
                     print(self.inventory_table("Consumable"))
                     try:
-                        itemChoice = int(input("? ")) # gets player selection
+                        itemChoice = int(input("? "))  # gets player selection
                         print("")
                     except:
                         print(invalidChoice)
                         continue
-                    if itemChoice > len(self._inventory["Consumable"]):
+                    if itemChoice > len(self._inventory["Consumable"]) + 1:
                         print(invalidChoice)
                         continue
                     # uses selected item
@@ -413,6 +422,8 @@ class Player(Entity):
                         if count + 1 == itemChoice:
                             self.use_item(self._inventory["Consumable"][item])
                             continue
+                    print(
+                        tabulate([["You decided against using anything."]], tablefmt="fancy_outline"))
                 case 4:
                     break
 
@@ -428,7 +439,7 @@ class Player(Entity):
             item.quantity = item.quantity - 1
             if item.quantity == 0:
                 del self._inventory["Consumable"][item.name]
-    
+
     # returns formatted inventory table representation
     def inventory_table(self, invType):
         equippedTable = []
@@ -468,20 +479,26 @@ class Player(Entity):
                 if self._inventory[invType][item].quantity > 0:
                     weaponTable.append(
                         [f"{count + 1}: {item}", f"{list(self._inventory[invType][item].stats.keys())[0]}: {self._inventory[invType][item].stats[list(self._inventory[invType][item].stats.keys())[0]]}"])
+                if count + 1 == len(self._inventory[invType]):
+                    weaponTable.append([f"{count + 2}: Go Back"])
             return tabulate(weaponTable, tablefmt="fancy_outline")
         elif invType == "Shield":
             for count, item in enumerate(self._inventory[invType]):
                 if self._inventory[invType][item].quantity > 0:
                     shieldTable.append(
                         [f"{count + 1}: {item}", f"{list(self._inventory[invType][item].stats.keys())[0]}: {self._inventory[invType][item].stats[list(self._inventory[invType][item].stats.keys())[0]]}"])
+                if count + 1 == len(self._inventory[invType]):
+                    shieldTable.append([f"{count + 2}: Go Back"])
             return tabulate(shieldTable, tablefmt="fancy_outline")
         elif invType == "Consumable":
             for count, item in enumerate(self._inventory[invType]):
                 if self._inventory[invType][item].quantity > 0:
                     consumableTable.append(
                         [f"{count + 1}: {item}", f"{list(self._inventory[invType][item].stats.keys())[0]}: {self._inventory[invType][item].stats[list(self._inventory[invType][item].stats.keys())[0]]}", self._inventory[invType][item].quantity])
+                if count + 1 == len(self._inventory[invType]):
+                    consumableTable.append([f"{count + 2}: Go Back"])
             return tabulate(consumableTable, tablefmt="fancy_outline")
-    
+
     # returns formatted list representation
     def __str__(self):
         table = [["Name", "Level", "Health", "Mana", "Damage", "Defense"], [self._name, f"{self._level} {self._levelProgress}/{self._nextLevel}", f"{self._health}/{self._maxHealth}", f"{self._mana}/{self._maxMana}",
@@ -495,10 +512,10 @@ class Player(Entity):
 
 # enemy class
 class Enemy(Entity):
-    def __init__(self, name="", level=0, levelProgress=0, nextLevel=0, levelTable=[0, 0, 0, 0, 0, 0, 0, 0], health=0, maxHealth=0, mana=0, maxMana=0, damage=0, defense=0, accuracy=0, inventory = {}, equippedWeapon=Item(), equippedShield=Item()):
+    def __init__(self, name="", level=0, levelProgress=0, nextLevel=0, levelTable=[0, 0, 0, 0, 0, 0, 0, 0], health=0, maxHealth=0, mana=0, maxMana=0, damage=0, defense=0, accuracy=0, inventory={}, equippedWeapon=Item(), equippedShield=Item()):
         super().__init__(name, level, levelProgress, nextLevel, levelTable, health,
                          maxHealth, mana, maxMana, damage, defense, accuracy, inventory, equippedWeapon, equippedShield)
-        
+
     def level_up(self, exp=0, level=0):
         super().level_up(exp, level)
         self._health = self._maxHealth
@@ -541,7 +558,7 @@ class Enemy(Entity):
         else:
             print(tabulate(
                 [[f"{self._name} tries to attack you, but misses."]], tablefmt="fancy_outline"))
-    
+
     # displays death message, delete self from encounter
     def death(self, encounter):
         print(tabulate(
@@ -550,7 +567,8 @@ class Enemy(Entity):
 
     # returns formatted list representation
     def get_stats_list(self):
-        table = [self._name, self._level, f"{self._health}/{self._maxHealth}", f"{self._mana}/{self._maxMana}", f"{self._damage} + {self._equippedWeapon.stats['Damage']} ({self._equippedWeapon.name})", f"{self._defense} + {self._equippedShield.stats['Defense']} ({self._equippedShield.name})"]
+        table = [self._name, self._level, f"{self._health}/{self._maxHealth}", f"{self._mana}/{self._maxMana}",
+                 f"{self._damage} + {self._equippedWeapon.stats['Damage']} ({self._equippedWeapon.name})", f"{self._defense} + {self._equippedShield.stats['Defense']} ({self._equippedShield.name})"]
         return table
 
 
