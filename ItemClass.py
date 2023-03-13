@@ -5,9 +5,10 @@
 
 from tabulate import tabulate
 
+
 class Item:
     # initialization method
-    def __init__(self, itemType = "", name = "", stats = {}, quantity = 0):
+    def __init__(self, itemType="", name="", stats={}, quantity=0):
         self._itemType = itemType
         self._name = name
         self._stats = stats
@@ -17,26 +18,32 @@ class Item:
     @property
     def itemType(self):
         return self._itemType
+
     @property
     def name(self):
         return self._name
+
     @property
     def stats(self):
         return self._stats
+
     @property
     def quantity(self):
         return self._quantity
-    
+
     # setters
     @itemType.setter
     def itemType(self, itemType):
         self._itemType = itemType
+
     @name.setter
     def name(self, name):
         self._name = name
+
     @stats.setter
     def stats(self, stats):
         self._stats = stats
+
     @quantity.setter
     def quantity(self, quantity):
         self._quantity = quantity
@@ -54,7 +61,8 @@ class Item:
         itemTable.append(statString)
         itemTable.append(self._quantity)
         return tabulate([itemTable], tablefmt="fancy_outline")
-    
+
+
 '''# Testing
 a = Item("Bob", "Feesh", {"Gubible":100})
 print(a)'''
