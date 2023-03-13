@@ -9,7 +9,7 @@ from tabulate import tabulate
 from random import randint
 
 invalidChoice = "\n" + \
-    tabulate([["I'm sorry, that is not a valid choice."]]) + "\n"
+    tabulate([["I'm sorry, that is not a valid choice."]], tablefmt="fancy_outline") + "\n"
 
 
 class CombatEncounter:
@@ -42,7 +42,7 @@ class CombatEncounter:
     @property
     def endDescription(self):
         return "\n\n".join(self._endDescription)
-    
+
     @property
     def expReward(self):
         return self._expReward
@@ -106,7 +106,9 @@ class CombatEncounter:
                 self._enemies_dict[f"{enemy} {quantity + 1}"] = a
         if randint(1, 100) <= self._triggerChance[0] and len(self._enemies_dict) > 0 and turn > 0:
             for enemy in self._enemies_dict:
-                self._expReward += randint(self._enemies_dict[enemy].maxHealth // 4, self._enemies_dict[enemy].maxHealth // 2) + self._enemies_dict[enemy].damage + self._enemies_dict[enemy].defense + self._enemies_dict[enemy].equippedWeapon.stats["Damage"] + self._enemies_dict[enemy].equippedShield.stats["Defense"]
+                self._expReward += randint(self._enemies_dict[enemy].maxHealth // 4, self._enemies_dict[enemy].maxHealth // 2) + self._enemies_dict[enemy].damage + \
+                    self._enemies_dict[enemy].defense + self._enemies_dict[enemy].equippedWeapon.stats["Damage"] + \
+                    self._enemies_dict[enemy].equippedShield.stats["Defense"]
             print(tabulate([[self.encounterText()], ["\n\n".join(self._startDescription)]],
                   tablefmt="fancy_grid") + "\n")  # prints encounter start description
             while len(self._enemies_dict) > 0:
@@ -206,8 +208,28 @@ class CombatEncounter:
                                 continue
                     # case 3 is using an item
                     case 3:
-                        print("Not yet implemented.")
-                        continue
+                        # prints available items
+                        print(
+                            tabulate([["Which item would you like to use?"]], tablefmt="fancy_grid"))
+                        print(player.inventory_table("Consumable"))
+                        try:
+                            # gets player selection
+                            itemChoice = int(input("? "))
+                            print("")
+                        except:
+                            print(invalidChoice)
+                            continue
+                        if itemChoice > len(player.inventory["Consumable"]) + 1:
+                            print(invalidChoice)
+                            continue
+                        # uses selected item
+                        for count, item in enumerate(list(player.inventory["Consumable"].keys())):
+                            if count + 1 == itemChoice:
+                                player.use_item(
+                                    player.inventory["Consumable"][item])
+                                continue
+                            print(
+                                tabulate([["You decided against using anything."]], tablefmt="fancy_outline"))
                     case _:
                         print(invalidChoice)
                         continue
@@ -289,7 +311,8 @@ class CombatEncounter:
 
     # returns formatted table representation
     def __str__(self):
-        enemyTable = [["Enemy Name", "Level", "Health", "Mana", "Damage", "Defense"]]
+        enemyTable = [["Enemy Name", "Level",
+                       "Health", "Mana", "Damage", "Defense"]]
         for enemy in self._enemies_dict:
             enemyTable.append(self._enemies_dict[enemy].get_stats_list())
         return tabulate(enemyTable, headers="firstrow", tablefmt="fancy_outline")
