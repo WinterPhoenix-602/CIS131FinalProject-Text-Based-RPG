@@ -163,7 +163,8 @@ class Entity(abc.ABC):
                 if key != "quantity":
                     setattr(self, key, input_dict[key])
             except:
-                slowLinePrint("No such attribute, please consider adding it in init.")
+                slowLinePrint(
+                    "No such attribute, please consider adding it in init.")
                 continue
         self.level_up(level=self.level)
         for itemType in self._inventory:
@@ -316,7 +317,7 @@ class Player(Entity):
         self._shieldDuration += turns
         if self._shieldDuration == 0:
             slowLinePrint(tabulate([["Your shield flickers and dies."]],
-                  tablefmt="fancy_outline"))
+                                   tablefmt="fancy_outline"))
             self._defense = self._defense / 2
 
     # equips selected item
@@ -351,7 +352,8 @@ class Player(Entity):
     # opens player inventory
     def openInventory(self):
         while True:
-            slowLinePrint(self.inventory_table("Full"))  # displays full inventory
+            # displays full inventory
+            slowLinePrint(self.inventory_table("Full"))
             try:
                 # displays player options
                 slowLinePrint(tabulate([["What would you like to do?"], ["1: Equip Weapon"], ["2: Equip Shield"], [
@@ -509,7 +511,7 @@ class Player(Entity):
         if self._shieldDuration > 0:
             table[0].append("Enhance Shield")
             table[1].append(f"{self._shieldDuration} turns left")
-            table[1][4] = f"{self._equippedShield.stats['Defense'] * 2} ({self._equippedShield.name} * 2)"
+            table[1][5] = f"{self._equippedShield.stats['Defense'] * 2} ({self._equippedShield.name} * 2)"
         return tabulate(table, headers='firstrow', tablefmt="fancy_outline", colalign=["left", "center"])
 
 
@@ -554,7 +556,8 @@ class Enemy(Entity):
     def melee_attack(self, target):
         attempt, damage = super().melee_attack(target)
         if attempt <= self._accuracy and damage > 0:
-            slowLinePrint(tabulate([[f"{self._name} hits you and deals {((self._damage + self._equippedWeapon.stats['Damage']) - (target.defense + target._equippedShield.stats['Defense']))} damage!"]], tablefmt="fancy_outline"))
+            slowLinePrint(tabulate(
+                [[f"{self._name} hits you and deals {((self._damage + self._equippedWeapon.stats['Damage']) - (target.defense + target._equippedShield.stats['Defense']))} damage!"]], tablefmt="fancy_outline"))
         elif attempt <= self._accuracy and ((self._damage + self._equippedWeapon.stats["Damage"]) - target.defense) > 0:
             slowLinePrint(tabulate(
                 [[f"{self._name} attempts to attack with its {self._equippedWeapon.name}, but you deflect it with your {target.equippedShield.name}!"]], tablefmt="fancy_outline"))
