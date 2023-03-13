@@ -264,10 +264,12 @@ class Player:
             if item.quantity == 0:
                 del self._inventory["Consumable"][item.name]
 
+    # opens player inventory
     def openInventory(self):
         while True:
-            print(self.inventory_table("Full"))
+            print(self.inventory_table("Full")) # displays full inventory
             try:
+                # displays player options
                 inventoryChoice = int(input(tabulate([["What would you like to do?"], ["1: Equip Weapon"], ["2: Equip Shield"], [
                                       "3: Use Item"], ["4: Go Back"]], headers="firstrow", tablefmt="fancy_outline") + "\n? "))
                 print("")
@@ -275,12 +277,13 @@ class Player:
                 print(invalidChoice)
                 continue
             match inventoryChoice:
-                case 1:
+                case 1: # case 1 is equip weapon
+                    # prints available weapons
                     print(
                         tabulate([["Which weapon would you like to equip?"]], tablefmt="fancy_grid"))
-                    print(self.inventory_table("Weapon"))
+                    print(self.inventory_table("Weapon")) 
                     try:
-                        weaponChoice = int(input("? "))
+                        weaponChoice = int(input("? ")) # gets player selection
                         print("")
                     except:
                         print(invalidChoice)
@@ -288,16 +291,18 @@ class Player:
                     if weaponChoice > len(self._inventory["Weapon"]):
                         print(invalidChoice)
                         continue
+                    # equips selected weapon
                     for count, weapon in enumerate(self._inventory["Weapon"]):
                         if count + 1 == weaponChoice:
                             self.equip_item(self._inventory["Weapon"][weapon])
                             continue
-                case 2:
+                case 2: # case 2 is equip shield
+                    # prints available shields
                     print(
                         tabulate([["Which shield would you like to equip?"]], tablefmt="fancy_grid"))
                     print(self.inventory_table("Shield"))
                     try:
-                        shieldChoice = int(input("? "))
+                        shieldChoice = int(input("? ")) # gets player selection
                         print("")
                     except:
                         print(invalidChoice)
@@ -305,16 +310,18 @@ class Player:
                     if shieldChoice > len(self._inventory["Shield"]):
                         print(invalidChoice)
                         continue
+                    # equips selected shield
                     for count, shield in enumerate(self._inventory["Shield"]):
                         if count + 1 == shieldChoice:
                             self.equip_item(self._inventory["Shield"][shield])
                             continue
-                case 3:
+                case 3: # case 3 is use item
+                    # prints available items
                     print(
                         tabulate([["Which item would you like to use?"]], tablefmt="fancy_grid"))
                     print(self.inventory_table("Consumable"))
                     try:
-                        itemChoice = int(input("? "))
+                        itemChoice = int(input("? ")) # gets player selection
                         print("")
                     except:
                         print(invalidChoice)
@@ -322,6 +329,7 @@ class Player:
                     if itemChoice > len(self._inventory["Consumable"]):
                         print(invalidChoice)
                         continue
+                    # uses selected item
                     for count, item in enumerate(list(self._inventory["Consumable"].keys())):
                         if count + 1 == itemChoice:
                             self.use_item(self._inventory["Consumable"][item])
