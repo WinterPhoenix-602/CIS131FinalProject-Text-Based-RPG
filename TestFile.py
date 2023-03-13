@@ -14,7 +14,8 @@ mainPath = os.path.dirname(__file__)
 newGamePath = os.path.join(mainPath, "SaveFiles\\NewGame.json")
 saveFileInfoPath = os.path.join(mainPath, "SaveFiles\\SaveFileInfo.json")
 invalidChoice = "\n" + \
-    tabulate([["I'm sorry, that is not a valid choice."]]) + "\n"
+    tabulate([["I'm sorry, that is not a valid choice."]],
+             tablefmt="fancy_outline") + "\n"
 
 # the main function
 
