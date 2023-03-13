@@ -1,29 +1,31 @@
 # Caiden Wilson
-# 3/2/2023
+# 3/12/2023
 # CIS131
-# Final Project: Player Class
+# Final Project: Entity classes (Player, Enemy)
 
+import abc
+from random import randint
 from ItemClass import Item
 from tabulate import tabulate
 
 invalidChoice = "\n" + \
     tabulate([["I'm sorry, that is not a valid choice."]]) + "\n"
 
-
-class Player:
-    # initialization method
-    def __init__(self, name="Player", level=1, levelProgress=0, nextLevel=100, health=100, maxHealth=100, mana=50, maxMana=50, damage=5, defense=2, shieldDuration=0, inventory={"itemType": {"itemName": Item()}}, equippedWeapon=Item(), equippedShield=Item()):
+# abstract base class
+class Entity(abc.ABC):
+    def __init__(self, name="", level=0, levelProgress=0, nextLevel=0, levelTable=[0, 0, 0, 0, 0, 0, 0, 0], health=0, maxHealth=0, mana=0, maxMana=0, damage=0, defense=0, accuracy=0, inventory = {}, equippedWeapon=Item(), equippedShield=Item()):
         self._name = name
         self._level = level
         self._levelProgress = levelProgress
         self._nextLevel = nextLevel
+        self._levelTable = levelTable
         self._health = health
         self._maxHealth = maxHealth
         self._mana = mana
         self._maxMana = maxMana
         self._damage = damage
         self._defense = defense
-        self._shieldDuration = shieldDuration
+        self._accuracy = accuracy
         self._inventory = inventory
         self._equippedWeapon = equippedWeapon
         self._equippedShield = equippedShield
@@ -36,6 +38,18 @@ class Player:
     @property
     def level(self):
         return self._level
+
+    @property
+    def levelProgress(self):
+        return self._levelProgress
+
+    @property
+    def nextLevel(self):
+        return self._nextLevel
+
+    @property
+    def levelTable(self):
+        return self._levelTable
 
     @property
     def health(self):
@@ -52,7 +66,7 @@ class Player:
     @property
     def maxMana(self):
         return self._maxMana
-
+    
     @property
     def damage(self):
         return self._damage
@@ -62,9 +76,9 @@ class Player:
         return self._defense
 
     @property
-    def shieldDuration(self):
-        return self._shieldDuration
-
+    def accuracy(self):
+        return self._accuracy
+    
     @property
     def inventory(self):
         return self._inventory
@@ -79,27 +93,39 @@ class Player:
 
     # setters
     @name.setter
-    def name(self, name):
+    def name(self, name=""):
         self._name = name
 
     @level.setter
-    def level(self, level):
+    def level(self, level=0):
         self._level = level
 
+    @levelProgress.setter
+    def levelProgress(self, levelProgress=0):
+        self._levelProgress = levelProgress
+
+    @nextLevel.setter
+    def nextLevel(self, nextLevel=0):
+        self._nextLevel = nextLevel
+
+    @levelTable.setter
+    def levelTable(self, levelTable=[]):
+        self._levelTable = levelTable
+
     @health.setter
-    def health(self, health):
+    def health(self, health=0):
         self._health = health
 
     @maxHealth.setter
-    def maxHealth(self, maxHealth):
+    def maxHealth(self, maxHealth=0):
         self._maxHealth = maxHealth
 
     @mana.setter
-    def mana(self, mana):
+    def mana(self, mana=0):
         self._mana = mana
 
     @maxMana.setter
-    def maxMana(self, maxMana):
+    def maxMana(self, maxMana=0):
         self._maxMana = maxMana
 
     @damage.setter
@@ -107,8 +133,112 @@ class Player:
         self._damage = damage
 
     @defense.setter
-    def defense(self, defense):
+    def defense(self, defense=0):
         self._defense = defense
+
+    @accuracy.setter
+    def accuracy(self, accuracy=0):
+        self._accuracy = accuracy
+
+    @inventory.setter
+    def inventory(self, inventory={}):
+        self._inventory = inventory
+
+    @equippedWeapon.setter
+    def equippedWeapon(self, equippedWeapon=Item()):
+        self._equippedWeapon = equippedWeapon
+
+    @equippedShield.setter
+    def equippedShield(self, equippedShield=Item()):
+        self._equippedShield = equippedShield
+
+    # sets attributes from input dictionary
+    def reader(self, input_dict={}):
+        for key in input_dict:
+            try:
+                if key != "quantity":
+                    setattr(self, key, input_dict[key])
+            except:
+                print("No such attribute, please consider adding it in init.")
+                continue    
+        self.level_up(level=self.level)
+        for itemType in self._inventory:
+            if itemType != "Equipped":
+                for item in self._inventory[itemType]:
+                    if type(self._inventory[itemType][item]) != Item:
+                        self._inventory[itemType][item] = Item(itemType, item, self._inventory[itemType][item]["stats"], self._inventory[itemType][item]["quantity"])
+        self._equippedWeapon = self._inventory["Weapon"][self._inventory["Equipped"]["Weapon"]]
+        self._equippedShield = self._inventory["Shield"][self._inventory["Equipped"]["Shield"]]
+
+    # sets stats based on level
+    def level_up(self, exp=0, level=0):
+        levelChange = 0
+        if level > 0:
+            exp = 25 * ((level + self._level) - 1) * (level - self._level)
+        if exp > 0:
+            self._levelProgress += exp
+            while self._levelProgress >= self._nextLevel:
+                self._levelProgress = self._levelProgress - self._nextLevel
+                self._level += 1
+                levelChange += 1
+        self._nextLevel = self._level * 50
+        self._maxHealth = self._levelTable[0] + \
+            (self._levelTable[1] * (self._level - 1))
+        self._maxMana = self._levelTable[2] + \
+            (self._levelTable[3] * (self._level - 1))
+        self._damage = self._levelTable[4] + \
+            (self._levelTable[5] * (self._level - 1))
+        self._defense = self._levelTable[6] + \
+            (self._levelTable[7] * (self._level - 1))
+        return exp, levelChange
+
+    # modify specified attribute by adding/subtracting given value
+    def modify_attribute(self, attribute="", change=0):
+        if attribute == "health":
+            if change >= 1 and self._health + change <= self._maxHealth:
+                self._health += change
+            elif change < 1:
+                self._health += change
+            elif self._health + change > self._maxHealth:
+                self._health += (self._maxHealth - self._health)
+        if attribute == "mana":
+            if change > 1 and self._mana + change <= self._maxMana:
+                self._mana += change
+            elif change < 1:
+                self._mana += change
+            elif self._mana != 50:
+                self._mana += (50 - self._mana)
+
+    # uses a melee attack on input target
+    def melee_attack(self, target):
+        attempt = randint(1, 100)
+        damage = self.compute_damage(target)
+        if attempt <= self._accuracy and damage > 0:
+            target.modify_attribute("health", -damage)
+        return attempt, damage
+
+    # finds damage done by an attack
+    def compute_damage(self, target):
+        damage = self._damage + self._equippedWeapon.stats["Damage"]
+        defense = target.defense + target._equippedShield.stats["Defense"]
+        return max(damage - defense, 0)
+
+
+# player class
+class Player(Entity):
+    def __init__(self, name="Newbie", level=0, levelProgress=0, nextLevel=0, levelTable=[100, 50, 50, 25, 5, 5, 2, 2], health=100, maxHealth=100, mana=50, maxMana=50, damage=5, defense=2, accuracy=100, equippedWeapon=Item(), equippedShield=Item(), shieldDuration=0, inventory={}):
+        super().__init__(name, level, levelProgress, nextLevel, levelTable, health,
+                         maxHealth, mana, maxMana, damage, defense, accuracy, equippedWeapon, equippedShield)
+        self._shieldDuration = shieldDuration
+        self._inventory = inventory
+
+    @property
+    def shieldDuration(self):
+        return self._shieldDuration
+
+    @property
+    def inventory(self):
+        return self._inventory
 
     @shieldDuration.setter
     def shieldDuration(self, shieldDuration):
@@ -118,94 +248,56 @@ class Player:
     def inventory(self, inventory):
         self._inventory = inventory
 
-    @equippedWeapon.setter
-    def equippedWeapon(self, equippedWeapon):
-        self._equippedWeapon = equippedWeapon
-
-    @equippedShield.setter
-    def equippedShield(self, equippedShield):
-        self._equippedShield = equippedShield
-
-    # sets stats based on level
-    def level_up(self, exp=0):
+    def level_up(self, exp=0, level=0):
+        exp, levelChange = super().level_up(exp, level)
         if exp > 0:
             print(
                 tabulate([[f"You gained {exp} experience."]], tablefmt="fancy_outline"))
-            self._levelProgress += exp
-            levelChange = 0
-            while self._levelProgress >= self._nextLevel:
-                self._levelProgress = self._levelProgress - self._nextLevel
-                self._level += 1
-                levelChange += 1
-                self._nextLevel = self._level * 100
             if levelChange > 0:
                 print(tabulate(
                     [[f"You leveled up! {self._level - levelChange} -> {self._level}"]], tablefmt="fancy_outline"))
-        self._maxHealth = 100 + (50 * (self._level - 1))
-        self._maxMana = 50 + (25 * (self._level - 1))
-        self._damage = 5 + (5 * (self._level - 1))
-        self._defense = 2 + (2 * (self._level - 1))
 
-    # sets attributes from input dictionary, initializes inventory with item objects
-    def reader(self, input_dict):
-        for key in input_dict:
-            try:
-                setattr(self, key, input_dict[key])
-            except:
-                print("No such attribute, please consider adding it in init.")
-                continue
-        for itemType in self._inventory:
-            if itemType != "Equipped":
-                for item in self._inventory[itemType]:
-                    self._inventory[itemType][item] = Item(
-                        itemType, item, self._inventory[itemType][item]["stats"], self._inventory[itemType][item]["quantity"])
-        self._equippedWeapon = self._inventory["Weapon"][self._inventory["Equipped"]["Weapon"]]
-        self._equippedShield = self._inventory["Shield"][self._inventory["Equipped"]["Shield"]]
-
-    # adds/subtracts value to health, displays appropriate message
-    def modify_health(self, change):
-        if change >= 1 and self._health + change <= self._maxHealth:
-            self._health += change
-            print(tabulate(
-                [[f"You are healed for {change} health points."]], tablefmt="fancy_outline"))
-        elif change < 1:
-            self._health += change
-        elif self._health + change > self._maxHealth:
-            if self._maxHealth - self._health == 1:
+    # modify specified attribute by adding/subtracting given value
+    def modify_attribute(self, attribute, change):
+        super().modify_attribute(attribute, change)
+        # displays appropriate messages
+        if attribute == "health":
+            if change >= 1 and self._health + change <= self._maxHealth:
                 print(tabulate(
-                    [[f"You are healed for {self._maxHealth - self._health} health point. Overspent a bit there."]], tablefmt="fancy_outline"))
-            else:
+                    [[f"You are healed for {change} health points."]], tablefmt="fancy_outline"))
+            elif self._health + change > self._maxHealth:
+                if self._maxHealth - self._health == 1:
+                    print(tabulate(
+                        [[f"You are healed for {self._maxHealth - self._health} health point. Overspent a bit there."]], tablefmt="fancy_outline"))
+                else:
+                    print(tabulate(
+                        [[f"You are healed for {self._maxHealth - self._health} health points. Overspent a bit there."]], tablefmt="fancy_outline"))
+        if attribute == "mana":
+            if change > 1 and self._mana + change <= self._maxMana:
                 print(tabulate(
-                    [[f"You are healed for {self._maxHealth - self._health} health points. Overspent a bit there."]], tablefmt="fancy_outline"))
-            self._health += (self._maxHealth - self._health)
+                    [[f"Your mana regenerates {change} points.\n"]], tablefmt="fancy_outline"))
+            elif change < 1:
+                print(
+                    tabulate([[f"You expend {change} mana."]], tablefmt="fancy_outline"))
+            elif self._mana != 50:
+                print(tabulate(
+                    [[f"Your mana regenerates {50 - self._mana} points."]], tablefmt="fancy_outline") + "\n")
 
-    # adds/subtracts value to mana, displays appropriate message
-    def modify_mana(self, change):
-        if change > 1 and self._mana + change <= self._maxMana:
-            self._mana += change
-            print(tabulate(
-                [[f"Your mana regenerates {change} points.\n"]], tablefmt="fancy_outline"))
-        elif change < 1:
-            self._mana += change
-            print(
-                tabulate([[f"You expend {change} mana."]], tablefmt="fancy_outline"))
-        elif self._mana != 50:
-            print(tabulate(
-                [[f"Your mana regenerates {50 - self._mana} points."]], tablefmt="fancy_outline") + "\n")
-            self._mana += (50 - self._mana)
-
-    # uses a melee attack on input target
+    # displays appropriate message
     def melee_attack(self, target):
-        target.modify_health(-(self._damage +
-                             self._equippedWeapon.stats['Damage']))
-        print(tabulate(
-            [[f"You hit {target.name} and deal {self._damage + self._equippedWeapon.stats['Damage']} damage!"]], tablefmt="fancy_outline"))
+        attempt, damage = super().melee_attack(target)
+        if attempt <= self._accuracy and damage > 0:
+            print(tabulate(
+                [[f"You hit {target.name} and deal {damage} damage!"]], tablefmt="fancy_outline"))
+        elif attempt <= self._accuracy and (damage - target.defense) > 0:
+            print(tabulate(
+                [[f"You attempt to attack with your {self._equippedWeapon.name}, but it glances off of their {target.equippedShield.name}!"]], tablefmt="fancy_outline"))
 
     # casts fireball on input target
     def cast_fireball(self, target):
-        target.modify_health(-8)
+        target.modify_attribute("health", -int((self._damage * 0.75) // 1))
         print(tabulate(
-            [[f"The fire engulfs {target.name} and deals 8 damage!"]], tablefmt="fancy_outline"))
+            [[f"The fire engulfs {target.name} and deals {int((self._damage * 0.75) // 1)} damage!"]], tablefmt="fancy_outline"))
 
     # adds/subtracts turns to shield duration
     def modify_shieldDuration(self, turns):
@@ -250,20 +342,7 @@ class Player:
         else:
             print(tabulate(
                 [[f"You decided what you have is good enough for now."]], tablefmt="fancy_outline") + "\n")
-
-    # uses selected item
-    def use_item(self, item=Item()):
-        if item.name in self._inventory["Consumable"]:
-            if "Potion" in item.name:
-                print(tabulate(
-                    [[f"You pop the cork from the vial, and down the {item.name} within."]], tablefmt="fancy_outline") + "\n")
-            else:
-                print(tabulate(
-                    [[f"You quickly scarf down the {item.name}."]], tablefmt="fancy_outline") + "\n")
-            item.quantity = item.quantity - 1
-            if item.quantity == 0:
-                del self._inventory["Consumable"][item.name]
-
+    
     # opens player inventory
     def openInventory(self):
         while True:
@@ -337,6 +416,19 @@ class Player:
                 case 4:
                     break
 
+    # uses selected item
+    def use_item(self, item=Item()):
+        if item.name in self._inventory["Consumable"]:
+            if "Potion" in item.name:
+                print(tabulate(
+                    [[f"You pop the cork from the vial, and down the {item.name} within."]], tablefmt="fancy_outline") + "\n")
+            else:
+                print(tabulate(
+                    [[f"You quickly scarf down the {item.name}."]], tablefmt="fancy_outline") + "\n")
+            item.quantity = item.quantity - 1
+            if item.quantity == 0:
+                del self._inventory["Consumable"][item.name]
+    
     # returns formatted inventory table representation
     def inventory_table(self, invType):
         equippedTable = []
@@ -389,7 +481,7 @@ class Player:
                     consumableTable.append(
                         [f"{count + 1}: {item}", f"{list(self._inventory[invType][item].stats.keys())[0]}: {self._inventory[invType][item].stats[list(self._inventory[invType][item].stats.keys())[0]]}", self._inventory[invType][item].quantity])
             return tabulate(consumableTable, tablefmt="fancy_outline")
-
+    
     # returns formatted list representation
     def __str__(self):
         table = [["Name", "Level", "Health", "Mana", "Damage", "Defense"], [self._name, f"{self._level} {self._levelProgress}/{self._nextLevel}", f"{self._health}/{self._maxHealth}", f"{self._mana}/{self._maxMana}",
@@ -401,9 +493,74 @@ class Player:
         return tabulate(table, headers='firstrow', tablefmt="fancy_outline", colalign=["left", "center"])
 
 
-# Testing
-'''a = Player
-a.reader({"_name": "Newbie", "_level": 1, "_levelProgress":0, "_nextLevel":100, "_health": 100, "_mana": 50, "_damage": 5, "_defense": 2, "_shield": 0, "_inventory": {"Equipped": {"Weapon": "Fists", "Shield": "Fists"}, "Weapon": {"Fists": {"stats": {"Damage": 0}, "quantity": 1}, "Wooden Sword": {"stats": {"Damage": 5}, "quantity": 1}}, "Shield": {"Fists": {"stats": {"Defense": 0}, "quantity": 1}, "Wooden Shield": {"stats": {"Defense": 2}, "quantity": 1}}, "Consumable": {"Burrito": {"stats": {"Health": 15}, "quantity": 3}, "Block of Cheese": {"stats": {"Health": 5}, "quantity": 1}}}})
+# enemy class
+class Enemy(Entity):
+    def __init__(self, name="", level=0, levelProgress=0, nextLevel=0, levelTable=[0, 0, 0, 0, 0, 0, 0, 0], health=0, maxHealth=0, mana=0, maxMana=0, damage=0, defense=0, accuracy=0, inventory = {}, equippedWeapon=Item(), equippedShield=Item()):
+        super().__init__(name, level, levelProgress, nextLevel, levelTable, health,
+                         maxHealth, mana, maxMana, damage, defense, accuracy, inventory, equippedWeapon, equippedShield)
+        
+    def level_up(self, exp=0, level=0):
+        super().level_up(exp, level)
+        self._health = self._maxHealth
+        self._mana = self._maxMana
+
+    # modify specified attribute by adding/subtracting given value
+    def modify_attribute(self, attribute, change):
+        super().modify_attribute(attribute, change)
+        # displays appropriate messages
+        if attribute == "health":
+            if change >= 1 and self._health + change < self._maxHealth:
+                print(tabulate(
+                    [[f"{self._name} is healed for {change} health points."]], tablefmt="fancy_outline"))
+            elif change >= 1 and self._health != self._maxHealth:
+                if self._maxHealth - self._health == 1:
+                    print(tabulate(
+                        [[f"{self._name} is healed for {self._maxHealth - self._health} health point."]], tablefmt="fancy_outline"))
+                else:
+                    print(tabulate(
+                        [[f"{self._name} is healed for {self._maxHealth - self._health} health points."]], tablefmt="fancy_outline"))
+        if attribute == "mana":
+            if change > 1 and self._mana + change <= self._maxMana:
+                print(tabulate(
+                    [[f"{self._name}'s mana regenerates {change} points.\n"]], tablefmt="fancy_outline"))
+            elif change < 1:
+                print(tabulate(
+                    [[f"{self._name}'s expends {change} mana."]], tablefmt="fancy_outline"))
+            elif self._mana != 50:
+                print(tabulate(
+                    [[f"{self._name}'s mana regenerates {50 - self._mana} points."]], tablefmt="fancy_outline") + "\n")
+
+    # displays appropriate message
+    def melee_attack(self, target):
+        attempt, damage = super().melee_attack(target)
+        if attempt <= self._accuracy and damage > 0:
+            print(tabulate([[f"{self._name} hits you and deals {((self._damage + self._equippedWeapon.stats['Damage']) - (target.defense + target._equippedShield.stats['Defense']))} damage!"]], tablefmt="fancy_outline"))
+        elif attempt <= self._accuracy and ((self._damage + self._equippedWeapon.stats["Damage"]) - target.defense) > 0:
+            print(tabulate(
+                [[f"{self._name} attempts to attack with its {self._equippedWeapon.name}, but you deflect it with your {target.equippedShield.name}!"]], tablefmt="fancy_outline"))
+        else:
+            print(tabulate(
+                [[f"{self._name} tries to attack you, but misses."]], tablefmt="fancy_outline"))
+    
+    # displays death message, delete self from encounter
+    def death(self, encounter):
+        print(tabulate(
+            [[f"{self._name} falls on the floor, dead."]], tablefmt="fancy_outline"))
+        del encounter.enemies_dict[self._name]
+
+    # returns formatted list representation
+    def get_stats_list(self):
+        table = [self._name, self._level, f"{self._health}/{self._maxHealth}", f"{self._mana}/{self._maxMana}", f"{self._damage} + {self._equippedWeapon.stats['Damage']} ({self._equippedWeapon.name})", f"{self._defense} + {self._equippedShield.stats['Defense']} ({self._equippedShield.name})"]
+        return table
+
+
+"""# Testing
+a = Player("Bobert")
+a.reader({"_name": "Newbie", "_level": 5, "_levelProgress":0, "_nextLevel":100, "_health": 100, "_mana": 50, "_damage": 5, "_defense": 2, "_shield": 0, "_inventory": {"Equipped": {"Weapon": "Fists", "Shield": "Fists"}, "Weapon": {"Fists": {"stats": {"Damage": 0}, "quantity": 1}, "Wooden Sword": {"stats": {"Damage": 5}, "quantity": 1}}, "Shield": {"Fists": {"stats": {"Defense": 0}, "quantity": 1}, "Wooden Shield": {"stats": {"Defense": 2}, "quantity": 1}}, "Consumable": {"Burrito": {"stats": {"Health": 15}, "quantity": 3}, "Block of Cheese": {"stats": {"Health": 5}, "quantity": 1}}}})
+b = Enemy("Gobbo")
+c = Enemy("Reman")
+b.reader({"_level":1, "_levelProgress":0, "_nextLevel":0, "_levelTable":[20, 10, 0, 0, 3, 3, 1, 1], "_health": 0, "_maxHealth": 0, "_mana":0, "_maxMana":0, "_damage": 0, "_accuracy": 0, "_inventory": {"Equipped": {"Weapon": "Fists", "Shield": "Fists"}, "Weapon": {"Fists": {"stats": {"Damage": 0}, "quantity": 1}, "Wooden Sword": {"stats": {"Damage": 5}, "quantity": 1}}, "Shield": {"Fists": {"stats": {"Defense": 0}, "quantity": 1}, "Wooden Shield": {"stats": {"Defense": 2}, "quantity": 1}}}, "quantity": 0})
+c.reader({"_level":3, "_levelProgress":0, "_nextLevel":0, "_levelTable":[20, 10, 0, 0, 3, 3, 1, 1], "_health": 0, "_maxHealth": 0, "_mana":0, "_maxMana":0, "_damage": 0, "_accuracy": 0, "_inventory": {"Equipped": {"Weapon": "Fists", "Shield": "Fists"}, "Weapon": {"Fists": {"stats": {"Damage": 0}, "quantity": 1}, "Wooden Sword": {"stats": {"Damage": 5}, "quantity": 1}}, "Shield": {"Fists": {"stats": {"Defense": 0}, "quantity": 1}, "Wooden Shield": {"stats": {"Defense": 2}, "quantity": 1}}}, "quantity": 0})
+
 print(a)
-a.level_up(1042)
-print(a)'''
+print(tabulate([["Name", "Level", "Health", "Mana", "Damage", "Defense"], b.get_stats_list(), c.get_stats_list()], headers="firstrow", tablefmt="fancy_outline"))"""
