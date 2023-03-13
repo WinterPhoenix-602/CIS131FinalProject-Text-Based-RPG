@@ -9,7 +9,7 @@ from EntityClasses import Player
 from LocationTileClass import Tile
 from datetime import datetime
 from tabulate import tabulate
-from SlowPrint import slowLinePrint
+from SlowPrint import slowTablePrint
 
 mainPath = os.path.dirname(__file__)
 newGamePath = os.path.join(mainPath, "SaveFiles\\NewGame.json")
@@ -49,7 +49,7 @@ def main():
             currentTile.reader(tiles_dict[currentTileName])
             # triggers passive actions
         except KeyError:
-            slowLinePrint(
+            slowTablePrint(
                 "You can't go that way.\n__________________________________________________")
 
 # displays main menu, choose between new game, loading save, or ending program
@@ -57,15 +57,15 @@ def main():
 
 def mainMenu():
     while True:
-        slowLinePrint(tabulate([["1: New Game"], ["2: Load Game"], [
+        slowTablePrint(tabulate([["1: New Game"], ["2: Load Game"], [
             "3: Exit"]], tablefmt="fancy_outline"))
         try:
             choice = int(input("? "))
             if choice < 1 or choice > 3:
-                slowLinePrint(invalidChoice)
+                slowTablePrint(invalidChoice)
                 continue
         except:
-            slowLinePrint(invalidChoice)
+            slowTablePrint(invalidChoice)
             continue
         return choice
 
@@ -91,7 +91,7 @@ def loadGame(menuChoice):
                 player.name = (
                     input("Choose a name for your character (no more than 25 characters long): "))
                 if len(player.name) > 25:
-                    slowLinePrint(
+                    slowTablePrint(
                         tabulate([["I'm sorry, that name is too long."]], tablefmt="fancy_outline"))
                     continue
                 print("")
@@ -110,12 +110,12 @@ def loadGame(menuChoice):
                         [f"{count + 1}: {saveFiles_dict[saveFile]['name']} {saveFiles_dict[saveFile]['info']}"])
                     if count + 1 == len(saveFiles_dict):
                         loadMenuTable.append(["6: Go Back"])
-                slowLinePrint(tabulate(loadMenuTable, headers="firstrow",
+                slowTablePrint(tabulate(loadMenuTable, headers="firstrow",
                                        tablefmt="fancy_outline"))
                 try:
                     saveChoice = int(input("? "))
                 except:
-                    slowLinePrint(invalidChoice)
+                    slowTablePrint(invalidChoice)
                     continue
                 match saveChoice:
                     case 1:
@@ -138,7 +138,7 @@ def loadGame(menuChoice):
                             mainMenu())
                         return player, player_dict, tiles_dict, currentTile, currentTileName, saveFilePath
                     case _:
-                        slowLinePrint(invalidChoice)
+                        slowTablePrint(invalidChoice)
                         continue
                 with open(saveFilePath, "r") as saveFile:
                     b = saveFile.readlines()
@@ -151,7 +151,7 @@ def loadGame(menuChoice):
                 player.reader(player_dict)
                 return player, player_dict, tiles_dict, currentTile, currentTileName, saveFilePath
             except FileNotFoundError:
-                slowLinePrint(
+                slowTablePrint(
                     tabulate([["I'm sorry, that save slot is empty."]], tablefmt="fancy_outline"))
                 continue
         else:
@@ -193,18 +193,18 @@ def saveGame(player_dict, tiles_dict, currentTileName, saveFilePath, player=Play
 
     if saveFilePath == newGamePath:
         while True:
-            slowLinePrint(
+            slowTablePrint(
                 "Which slot would you like to save your progress in?")
             for count, saveFile in enumerate(saveFiles_dict):
-                slowLinePrint(
+                slowTablePrint(
                     f"{count + 1}: {saveFiles_dict[saveFile]['name']} {saveFiles_dict[saveFile]['info']}")
             try:
                 saveChoice = int(input("? "))
             except:
-                slowLinePrint(invalidChoice)
+                slowTablePrint(invalidChoice)
                 continue
             if saveChoice > len(saveFiles_dict):
-                slowLinePrint(invalidChoice)
+                slowTablePrint(invalidChoice)
                 continue
             while True:
                 if saveFiles_dict[saveFiles_keyList[saveChoice - 1]]["info"] != "(Empty)":
@@ -215,7 +215,7 @@ def saveGame(player_dict, tiles_dict, currentTileName, saveFilePath, player=Play
                     elif surety == "yes":
                         break
                     else:
-                        slowLinePrint(invalidChoice)
+                        slowTablePrint(invalidChoice)
                         continue
                 else:
                     surety = ""
@@ -239,7 +239,7 @@ def saveGame(player_dict, tiles_dict, currentTileName, saveFilePath, player=Play
                     saveFilePath = os.path.join(
                         mainPath, "SaveFiles\\Save5.json")
                 case _:
-                    slowLinePrint(invalidChoice)
+                    slowTablePrint(invalidChoice)
                     continue
             break
 
@@ -254,7 +254,7 @@ def saveGame(player_dict, tiles_dict, currentTileName, saveFilePath, player=Play
     with open(saveFilePath, "w") as saveFile:
         json.dump(currentGame_dict, saveFile)
         saveFile.close()
-    slowLinePrint("\n" + tabulate([["Thank you for playing."]],
+    slowTablePrint("\n" + tabulate([["Thank you for playing."]],
                                   tablefmt="fancy_outline") + "\n")
 
 

@@ -7,7 +7,7 @@ import abc
 from random import randint
 from ItemClass import Item
 from tabulate import tabulate
-from SlowPrint import slowLinePrint
+from SlowPrint import slowTablePrint
 
 invalidChoice = "\n" + \
     tabulate([["I'm sorry, that is not a valid choice."]],
@@ -163,7 +163,7 @@ class Entity(abc.ABC):
                 if key != "quantity":
                     setattr(self, key, input_dict[key])
             except:
-                slowLinePrint(
+                slowTablePrint(
                     "No such attribute, please consider adding it in init.")
                 continue
         self.level_up(level=self.level)
@@ -257,10 +257,10 @@ class Player(Entity):
     def level_up(self, exp=0, level=0):
         exp, levelChange = super().level_up(exp, level)
         if exp > 0:
-            slowLinePrint(
+            slowTablePrint(
                 tabulate([[f"You gained {exp} experience."]], tablefmt="fancy_outline"))
             if levelChange > 0:
-                slowLinePrint(tabulate(
+                slowTablePrint(tabulate(
                     [[f"You leveled up! {self._level - levelChange} -> {self._level}"]], tablefmt="fancy_outline"))
 
     # modify specified attribute by adding/subtracting given value
@@ -269,54 +269,54 @@ class Player(Entity):
         # displays appropriate messages
         if attribute == "health":
             if change >= 1 and self._health + change <= self._maxHealth:
-                slowLinePrint(tabulate(
+                slowTablePrint(tabulate(
                     [[f"You are healed for {change} health points."]], tablefmt="fancy_outline"))
             elif self._health + change > self._maxHealth:
                 if self._maxHealth - self._health == 1:
-                    slowLinePrint(tabulate(
+                    slowTablePrint(tabulate(
                         [[f"You are healed for {self._maxHealth - self._health} health point. Overspent a bit there."]], tablefmt="fancy_outline"))
                 else:
-                    slowLinePrint(tabulate(
+                    slowTablePrint(tabulate(
                         [[f"You are healed for {self._maxHealth - self._health} health points. Overspent a bit there."]], tablefmt="fancy_outline"))
         if attribute == "mana":
             if change > 1 and self._mana + change <= self._maxMana:
-                slowLinePrint(tabulate(
+                slowTablePrint(tabulate(
                     [[f"Your mana regenerates {change} points.\n"]], tablefmt="fancy_outline"))
             elif change < 1:
-                slowLinePrint(
+                slowTablePrint(
                     tabulate([[f"You expend {change} mana."]], tablefmt="fancy_outline"))
             elif self._mana != 50:
-                slowLinePrint(tabulate(
+                slowTablePrint(tabulate(
                     [[f"Your mana regenerates {50 - self._mana} points."]], tablefmt="fancy_outline") + "\n")
 
     # displays appropriate message
     def melee_attack(self, target):
         attempt, damage = super().melee_attack(target)
         if attempt <= self._accuracy and damage > 0:
-            slowLinePrint(tabulate(
+            slowTablePrint(tabulate(
                 [[f"You hit {target.name} and deal {damage} damage!"]], tablefmt="fancy_outline"))
         elif attempt <= self._accuracy and (damage - target.defense) > 0:
-            slowLinePrint(tabulate(
+            slowTablePrint(tabulate(
                 [[f"You attempt to attack with your {self._equippedWeapon.name}, but it glances off of their {target.equippedShield.name}!"]], tablefmt="fancy_outline"))
 
     # casts fireball on input target
     def cast_fireball(self, target):
         target.modify_attribute("health", -int((self._damage * 0.75) // 1))
-        slowLinePrint(tabulate(
+        slowTablePrint(tabulate(
             [[f"The fire engulfs {target.name} and deals {int((self._damage * 0.75) // 1)} damage!"]], tablefmt="fancy_outline"))
 
     # adds/subtracts turns to shield duration
     def modify_shieldDuration(self, turns):
         if turns > 0 and self._shieldDuration > 0:
-            slowLinePrint(tabulate(
+            slowTablePrint(tabulate(
                 [["Your mana flows out to reinforce your protection."]], tablefmt="fancy_outline"))
         elif turns > 0:
-            slowLinePrint(tabulate(
+            slowTablePrint(tabulate(
                 [["Your mana surges out into a shining shield, helping to protect you from harm."]], tablefmt="fancy_outline"))
             self._defense = self._defense * 2
         self._shieldDuration += turns
         if self._shieldDuration == 0:
-            slowLinePrint(tabulate([["Your shield flickers and dies."]],
+            slowTablePrint(tabulate([["Your shield flickers and dies."]],
                                    tablefmt="fancy_outline"))
             self._defense = self._defense / 2
 
@@ -325,109 +325,109 @@ class Player(Entity):
         if selected != self._equippedWeapon and selected != self._equippedShield:
             if selected.itemType == "Weapon":
                 if selected.name != "Fists" and self._equippedWeapon.name != "Fists":
-                    slowLinePrint(tabulate(
+                    slowTablePrint(tabulate(
                         [[f"You stow away your {self._equippedWeapon.name} and equip your {selected.name}."]], tablefmt='fancy_outline') + "\n")
                 elif self._equippedWeapon.name != "Fists":
-                    slowLinePrint(tabulate(
+                    slowTablePrint(tabulate(
                         [[f"You stow away your {self._equippedWeapon.name}."]], tablefmt="fancy_outline") + "\n")
                 else:
-                    slowLinePrint(tabulate(
+                    slowTablePrint(tabulate(
                         [[f"You equip your {selected.name}."]], tablefmt="fancy_outline") + "\n")
                 self._equippedWeapon = selected
             if selected.itemType == "Shield":
                 if selected.name != "Fists" and self._equippedShield.name != "Fists":
-                    slowLinePrint(tabulate(
+                    slowTablePrint(tabulate(
                         [[f"You stow away your {self._equippedShield} and equip your {selected.name}."]], tablefmt="fancy_outline") + "\n")
                 elif self._equippedShield.name != "Fists":
-                    slowLinePrint(tabulate(
+                    slowTablePrint(tabulate(
                         [[f"You stow away your {self._equippedShield.name}."]], tablefmt="fancy_outline") + "\n")
                 else:
-                    slowLinePrint(tabulate(
+                    slowTablePrint(tabulate(
                         [[f"You equip your {selected.name}."]], tablefmt="fancy_outline") + "\n")
                 self._equippedShield = selected
         else:
-            slowLinePrint(tabulate(
+            slowTablePrint(tabulate(
                 [[f"You decided what you have is good enough for now."]], tablefmt="fancy_outline") + "\n")
 
     # opens player inventory
     def openInventory(self):
         while True:
             # displays full inventory
-            slowLinePrint(self.inventory_table("Full"))
+            slowTablePrint(self.inventory_table("Full"))
             try:
                 # displays player options
-                slowLinePrint(tabulate([["What would you like to do?"], ["1: Equip Weapon"], ["2: Equip Shield"], [
+                slowTablePrint(tabulate([["What would you like to do?"], ["1: Equip Weapon"], ["2: Equip Shield"], [
                     "3: Use Item"], ["4: Go Back"]], headers="firstrow", tablefmt="fancy_outline"))
                 inventoryChoice = int(input("? "))
                 print("")
             except:
-                slowLinePrint(invalidChoice)
+                slowTablePrint(invalidChoice)
                 continue
             match inventoryChoice:
                 case 1:  # case 1 is equip weapon
                     # prints available weapons
-                    slowLinePrint(
+                    slowTablePrint(
                         tabulate([["Which weapon would you like to equip?"]], tablefmt="fancy_grid"))
-                    slowLinePrint(self.inventory_table("Weapon"))
+                    slowTablePrint(self.inventory_table("Weapon"))
                     try:
                         # gets player selection
                         weaponChoice = int(input("? "))
                         print("")
                     except:
-                        slowLinePrint(invalidChoice)
+                        slowTablePrint(invalidChoice)
                         continue
                     if weaponChoice > len(self._inventory["Weapon"]) + 1:
-                        slowLinePrint(invalidChoice)
+                        slowTablePrint(invalidChoice)
                         continue
                     # equips selected weapon
                     for count, weapon in enumerate(self._inventory["Weapon"]):
                         if count + 1 == weaponChoice:
                             self.equip_item(self._inventory["Weapon"][weapon])
                             continue
-                    slowLinePrint(tabulate(
+                    slowTablePrint(tabulate(
                         [[f"You decided what you have is good enough for now."]], tablefmt="fancy_outline") + "\n")
                 case 2:  # case 2 is equip shield
                     # prints available shields
-                    slowLinePrint(
+                    slowTablePrint(
                         tabulate([["Which shield would you like to equip?"]], tablefmt="fancy_grid"))
-                    slowLinePrint(self.inventory_table("Shield"))
+                    slowTablePrint(self.inventory_table("Shield"))
                     try:
                         # gets player selection
                         shieldChoice = int(input("? "))
                         print("")
                     except:
-                        slowLinePrint(invalidChoice)
+                        slowTablePrint(invalidChoice)
                         continue
                     if shieldChoice > len(self._inventory["Shield"]) + 1:
-                        slowLinePrint(invalidChoice)
+                        slowTablePrint(invalidChoice)
                         continue
                     # equips selected shield
                     for count, shield in enumerate(self._inventory["Shield"]):
                         if count + 1 == shieldChoice:
                             self.equip_item(self._inventory["Shield"][shield])
                             continue
-                    slowLinePrint(tabulate(
+                    slowTablePrint(tabulate(
                         [[f"You decided what you have is good enough for now."]], tablefmt="fancy_outline") + "\n")
                 case 3:  # case 3 is use item
                     # prints available items
-                    slowLinePrint(
+                    slowTablePrint(
                         tabulate([["Which item would you like to use?"]], tablefmt="fancy_grid"))
-                    slowLinePrint(self.inventory_table("Consumable"))
+                    slowTablePrint(self.inventory_table("Consumable"))
                     try:
                         itemChoice = int(input("? "))  # gets player selection
-                        slowLinePrint("")
+                        slowTablePrint("")
                     except:
-                        slowLinePrint(invalidChoice)
+                        slowTablePrint(invalidChoice)
                         continue
                     if itemChoice > len(self._inventory["Consumable"]) + 1:
-                        slowLinePrint(invalidChoice)
+                        slowTablePrint(invalidChoice)
                         continue
                     # uses selected item
                     for count, item in enumerate(list(self._inventory["Consumable"].keys())):
                         if count + 1 == itemChoice:
                             self.use_item(self._inventory["Consumable"][item])
                             continue
-                    slowLinePrint(
+                    slowTablePrint(
                         tabulate([["You decided against using anything."]], tablefmt="fancy_outline"))
                 case 4:
                     break
@@ -436,10 +436,10 @@ class Player(Entity):
     def use_item(self, item=Item()):
         if item.name in self._inventory["Consumable"]:
             if "Potion" in item.name:
-                slowLinePrint(tabulate(
+                slowTablePrint(tabulate(
                     [[f"You pop the cork from the vial, and down the {item.name} within."]], tablefmt="fancy_outline") + "\n")
             else:
-                slowLinePrint(tabulate(
+                slowTablePrint(tabulate(
                     [[f"You quickly scarf down the {item.name}."]], tablefmt="fancy_outline") + "\n")
             item.quantity = item.quantity - 1
             if item.quantity == 0:
@@ -532,42 +532,42 @@ class Enemy(Entity):
         # displays appropriate messages
         if attribute == "health":
             if change >= 1 and self._health + change < self._maxHealth:
-                slowLinePrint(tabulate(
+                slowTablePrint(tabulate(
                     [[f"{self._name} is healed for {change} health points."]], tablefmt="fancy_outline"))
             elif change >= 1 and self._health != self._maxHealth:
                 if self._maxHealth - self._health == 1:
-                    slowLinePrint(tabulate(
+                    slowTablePrint(tabulate(
                         [[f"{self._name} is healed for {self._maxHealth - self._health} health point."]], tablefmt="fancy_outline"))
                 else:
-                    slowLinePrint(tabulate(
+                    slowTablePrint(tabulate(
                         [[f"{self._name} is healed for {self._maxHealth - self._health} health points."]], tablefmt="fancy_outline"))
         if attribute == "mana":
             if change > 1 and self._mana + change <= self._maxMana:
-                slowLinePrint(tabulate(
+                slowTablePrint(tabulate(
                     [[f"{self._name}'s mana regenerates {change} points.\n"]], tablefmt="fancy_outline"))
             elif change < 1:
-                slowLinePrint(tabulate(
+                slowTablePrint(tabulate(
                     [[f"{self._name}'s expends {change} mana."]], tablefmt="fancy_outline"))
             elif self._mana != 50:
-                slowLinePrint(tabulate(
+                slowTablePrint(tabulate(
                     [[f"{self._name}'s mana regenerates {50 - self._mana} points."]], tablefmt="fancy_outline") + "\n")
 
     # displays appropriate message
     def melee_attack(self, target):
         attempt, damage = super().melee_attack(target)
         if attempt <= self._accuracy and damage > 0:
-            slowLinePrint(tabulate(
+            slowTablePrint(tabulate(
                 [[f"{self._name} hits you and deals {((self._damage + self._equippedWeapon.stats['Damage']) - (target.defense + target._equippedShield.stats['Defense']))} damage!"]], tablefmt="fancy_outline"))
         elif attempt <= self._accuracy and ((self._damage + self._equippedWeapon.stats["Damage"]) - target.defense) > 0:
-            slowLinePrint(tabulate(
+            slowTablePrint(tabulate(
                 [[f"{self._name} attempts to attack with its {self._equippedWeapon.name}, but you deflect it with your {target.equippedShield.name}!"]], tablefmt="fancy_outline"))
         else:
-            slowLinePrint(tabulate(
+            slowTablePrint(tabulate(
                 [[f"{self._name} tries to attack you, but misses."]], tablefmt="fancy_outline"))
 
     # displays death message, delete self from encounter
     def death(self, encounter):
-        slowLinePrint(tabulate(
+        slowTablePrint(tabulate(
             [[f"{self._name} falls on the floor, dead."]], tablefmt="fancy_outline"))
         del encounter.enemies_dict[self._name]
 
@@ -586,5 +586,5 @@ c = Enemy("Reman")
 b.reader({"_level":1, "_levelProgress":0, "_nextLevel":0, "_levelTable":[20, 10, 0, 0, 3, 3, 1, 1], "_health": 0, "_maxHealth": 0, "_mana":0, "_maxMana":0, "_damage": 0, "_accuracy": 0, "_inventory": {"Equipped": {"Weapon": "Fists", "Shield": "Fists"}, "Weapon": {"Fists": {"stats": {"Damage": 0}, "quantity": 1}, "Wooden Sword": {"stats": {"Damage": 5}, "quantity": 1}}, "Shield": {"Fists": {"stats": {"Defense": 0}, "quantity": 1}, "Wooden Shield": {"stats": {"Defense": 2}, "quantity": 1}}}, "quantity": 0})
 c.reader({"_level":3, "_levelProgress":0, "_nextLevel":0, "_levelTable":[20, 10, 0, 0, 3, 3, 1, 1], "_health": 0, "_maxHealth": 0, "_mana":0, "_maxMana":0, "_damage": 0, "_accuracy": 0, "_inventory": {"Equipped": {"Weapon": "Fists", "Shield": "Fists"}, "Weapon": {"Fists": {"stats": {"Damage": 0}, "quantity": 1}, "Wooden Sword": {"stats": {"Damage": 5}, "quantity": 1}}, "Shield": {"Fists": {"stats": {"Defense": 0}, "quantity": 1}, "Wooden Shield": {"stats": {"Defense": 2}, "quantity": 1}}}, "quantity": 0})
 
-slowLinePrint(a.__str__())
-slowLinePrint(tabulate([["Name", "Level", "Health", "Mana", "Damage", "Defense"], b.get_stats_list(), c.get_stats_list()], headers="firstrow", tablefmt="fancy_outline"))"""
+slowTablePrint(a.__str__())
+slowTablePrint(tabulate([["Name", "Level", "Health", "Mana", "Damage", "Defense"], b.get_stats_list(), c.get_stats_list()], headers="firstrow", tablefmt="fancy_outline"))"""

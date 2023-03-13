@@ -7,7 +7,7 @@ from EntityClasses import Enemy
 from EntityClasses import Player
 from tabulate import tabulate
 from random import randint
-from SlowPrint import slowLinePrint
+from SlowPrint import slowTablePrint
 
 invalidChoice = "\n" + \
     tabulate([["I'm sorry, that is not a valid choice."]], tablefmt="fancy_outline") + "\n"
@@ -110,20 +110,20 @@ class CombatEncounter:
                 self._expReward += randint(self._enemies_dict[enemy].maxHealth // 4, self._enemies_dict[enemy].maxHealth // 2) + self._enemies_dict[enemy].damage + \
                     self._enemies_dict[enemy].defense + self._enemies_dict[enemy].equippedWeapon.stats["Damage"] + \
                     self._enemies_dict[enemy].equippedShield.stats["Defense"]
-            slowLinePrint(tabulate([[self.encounterText()], ["\n\n".join(self._startDescription)]],
+            slowTablePrint(tabulate([[self.encounterText()], ["\n\n".join(self._startDescription)]],
                   tablefmt="fancy_grid") + "\n")  # prints encounter start description
             while len(self._enemies_dict) > 0:
-                slowLinePrint(f"{self.__str__()}")  # displays enemy stats
+                slowTablePrint(f"{self.__str__()}")  # displays enemy stats
 
-                slowLinePrint(player.__str__())  # displays player stats
+                slowTablePrint(player.__str__())  # displays player stats
 
                 # displays combat actions, gets choice of player
                 try:
-                    slowLinePrint(f"{tabulate([['What would you like to do?'], ['1: Melee Attack'], ['2: Cast Magic'], ['3: Use Item']], headers='firstrow', tablefmt='fancy_outline')}")
+                    slowTablePrint(f"{tabulate([['What would you like to do?'], ['1: Melee Attack'], ['2: Cast Magic'], ['3: Use Item']], headers='firstrow', tablefmt='fancy_outline')}")
                     choice = int(input("? "))
                     print("")
                 except:
-                    slowLinePrint(invalidChoice)
+                    slowTablePrint(invalidChoice)
                     continue
 
                 # fulfills action chosen by player
@@ -137,17 +137,17 @@ class CombatEncounter:
                             for count, enemy in enumerate(self._enemies_dict):
                                 enemyTable.append(
                                     [f"{count + 1}: {self._enemies_dict[enemy].name}"])
-                            slowLinePrint(tabulate(enemyTable, headers="firstrow",
+                            slowTablePrint(tabulate(enemyTable, headers="firstrow",
                                   tablefmt="fancy_outline"))
                             # gets target selection from player
                             try:
                                 attackEnemy = int(input("? "))
                                 print("")
                                 if attackEnemy > len(self._enemies_dict):
-                                    slowLinePrint(invalidChoice)
+                                    slowTablePrint(invalidChoice)
                                     continue
                             except:
-                                slowLinePrint(invalidChoice)
+                                slowTablePrint(invalidChoice)
                                 continue
                         # if only one enemy is present, they are the target by default
                         else:
@@ -160,12 +160,12 @@ class CombatEncounter:
                     case 2:
                         # displays available spells, gets spell selection from player
                         try:
-                            slowLinePrint(tabulate([["What would you like to cast?"]], tablefmt="fancy_outline") + "\n" + tabulate([["Name", "Mana Cost", "Effect"], ["1: Fireball", 5, "Deals 75% Base Damage to All Enemies"], [
+                            slowTablePrint(tabulate([["What would you like to cast?"]], tablefmt="fancy_outline") + "\n" + tabulate([["Name", "Mana Cost", "Effect"], ["1: Fireball", 5, "Deals 75% Base Damage to All Enemies"], [
                                         "2: Force Shield", 15, "Doubles Defense for 3 Turns"], ["3: Heal", "Variable", "Converts 2x Mana Cost to Health"]], headers="firstrow", tablefmt="fancy_outline"))
                             spell = int(input("? "))
                             print("")
                         except:
-                            slowLinePrint(invalidChoice)
+                            slowTablePrint(invalidChoice)
                             continue
                         # casts spell chosen by player
                         match spell:
@@ -206,23 +206,23 @@ class CombatEncounter:
                                     print("You don't have enough mana.")
                                     continue
                             case _:
-                                slowLinePrint(invalidChoice)
+                                slowTablePrint(invalidChoice)
                                 continue
                     # case 3 is using an item
                     case 3:
                         # prints available items
-                        slowLinePrint(
+                        slowTablePrint(
                             tabulate([["Which item would you like to use?"]], tablefmt="fancy_grid"))
-                        slowLinePrint(player.inventory_table("Consumable"))
+                        slowTablePrint(player.inventory_table("Consumable"))
                         try:
                             # gets player selection
                             itemChoice = int(input("? "))
                             print("")
                         except:
-                            slowLinePrint(invalidChoice)
+                            slowTablePrint(invalidChoice)
                             continue
                         if itemChoice > len(player.inventory["Consumable"]) + 1:
-                            slowLinePrint(invalidChoice)
+                            slowTablePrint(invalidChoice)
                             continue
                         # uses selected item
                         for count, item in enumerate(list(player.inventory["Consumable"].keys())):
@@ -230,10 +230,10 @@ class CombatEncounter:
                                 player.use_item(
                                     player.inventory["Consumable"][item])
                                 continue
-                            slowLinePrint(
+                            slowTablePrint(
                                 tabulate([["You decided against using anything."]], tablefmt="fancy_outline"))
                     case _:
-                        slowLinePrint(invalidChoice)
+                        slowTablePrint(invalidChoice)
                         continue
 
                 print("")  # adds newline between player and enemy turn
@@ -250,7 +250,7 @@ class CombatEncounter:
                 # triggers passive actions
                 turn = self.passive_actions(turn, player)
             # prints long encounter end description
-            slowLinePrint(
+            slowTablePrint(
                 tabulate([["\n\n".join(self._endDescription)]], tablefmt="fancy_grid"))
             player.level_up(self._expReward)
             # sets trigger chance to what it should be after the first encounter

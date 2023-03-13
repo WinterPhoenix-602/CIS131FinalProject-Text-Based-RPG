@@ -65,4 +65,4 @@ class Item:
 
 '''# Testing
 a = Item("Bob", "Feesh", {"Gubible":100})
-slowLinePrint(a.__str__())'''
+slowTablePrint(a.__str__())'''
