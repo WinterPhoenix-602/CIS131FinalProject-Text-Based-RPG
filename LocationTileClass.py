@@ -4,7 +4,7 @@
 # Final Project: Location Tile Class
 
 import textwrap
-from PlayerClass import Player
+from EntityClasses import Player
 from CombatEncounterClass import CombatEncounter
 from tabulate import tabulate
 
